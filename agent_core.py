@@ -169,7 +169,21 @@ def call_model(state: AgentState):
     print(f"\n📊 [效能面板] E2E延时: {e2e_latency:.2f}s | "
           f"输入: {input_tokens} tokens | 输出: {output_tokens} tokens | "
           f"吞吐量: {throughput:.1f} t/s | TPOT: {tpot*1000:.1f} ms/t")
-    # ==========================================
+
+    # ---- 评估系统追踪点：捕获每次 LLM 调用的遥测数据 ----
+    try:
+        from eval.eval_tracer import EvalContext
+        ctx = EvalContext.get()
+        if ctx and ctx.enabled:
+            ctx.capture_telemetry(
+                e2e_latency=e2e_latency,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                tpot=tpot,
+                throughput=throughput,
+            )
+    except Exception:
+        pass
 
     return {"messages": [response]}
 

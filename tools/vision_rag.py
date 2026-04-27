@@ -459,7 +459,22 @@ def search_vision_knowledge(query: str, paper_id: Optional[str] = None) -> str:
     # 3. RRF 融合与截断
     # --------------------------------------------------
     fused_results = rrf_fusion(vision_res, text_res)[:top_k]
-    
+
+    # ---- 评估系统追踪点：捕获双路检索 + RRF 融合的完整中间数据 ----
+    try:
+        from eval.eval_tracer import EvalContext
+        ctx = EvalContext.get()
+        if ctx and ctx.enabled:
+            ctx.capture_retrieval(
+                query=query,
+                paper_id=paper_id,
+                vision_hits=[{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in vision_res],
+                text_hits=[{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in text_res],
+                fused_hits=[{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in fused_results],
+            )
+    except Exception:
+        pass  # 评估追踪失败不影响主流程
+
     if not fused_results: return "未在知识库中找到相关片段。"
     print(f"👁️ RRF 融合成功，交由底层解析图文语义...")
     
