@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import gc
 import sys
 import time
 import uuid
@@ -125,6 +126,109 @@ class EvalRunner:
         print(f"Loaded {len(self.dataset)} eval cases from {path}")
 
     # -----------------------------------------------------------
+    # 受限 Agent（仅检索，禁止下载/网页搜索以防 OOM）
+    # -----------------------------------------------------------
+    def _get_eval_app(self):
+        """创建仅含 search_vision_knowledge 的受限 Agent。
+
+        与正式 Agent (agent_core.app) 的区别：
+        - 工具：仅 search_vision_knowledge（无 search_academic_papers / download_and_ingest_vision_paper）
+        - 系统提示词：仅从已有知识库检索，不触发下载流程
+        - 无记忆压缩节点（每个评估用例用独立 thread_id，上下文极短）
+
+        GPU 内存管理：复用 agent_core 已加载的 llm（ChatOpenAI HTTP 客户端本身不占 GPU），
+        避免重复初始化模型。仅 search_vision_knowledge 工具内部会按需懒加载 ColPali/BGE-M3。
+        """
+        if hasattr(self, '_eval_app'):
+            return self._eval_app
+
+        from langgraph.graph import StateGraph, START, END
+        from langgraph.prebuilt import ToolNode
+        from langgraph.checkpoint.sqlite import SqliteSaver
+        from langchain_openai import ChatOpenAI
+        from langchain_core.messages import SystemMessage
+        from tools.vision_rag import search_vision_knowledge
+        from agent_core import AgentState
+        from config import Config
+        import sqlite3
+        import os
+
+        eval_tools = [search_vision_knowledge]
+        eval_llm = ChatOpenAI(
+            base_url=Config.LLM_API_BASE,
+            api_key="EMPTY",
+            model=Config.LLM_MODEL_NAME,
+        )
+        eval_llm_with_tools = eval_llm.bind_tools(eval_tools)
+
+        EVAL_SYSTEM_PROMPT = (
+            "You are an academic research assistant being evaluated on RAG quality.\n\n"
+            "【CRITICAL - EVALUATION MODE RULES】:\n"
+            "1. You have ONE tool: `search_vision_knowledge`. Use it to query the local vector database.\n"
+            "2. DO NOT search the web, download papers, or attempt any other actions.\n"
+            "3. Answer questions based SOLELY on what `search_vision_knowledge` returns.\n"
+            "4. If the database lacks relevant information, honestly state: 'The current knowledge base "
+            "does not contain sufficient information to answer this question fully.'\n"
+            "5. Use elegant Markdown formatting. Cite your sources at the end.\n"
+            "6. DO NOT say '好的', '我将为您', '请稍等'. Answer directly in English or Chinese as the query uses.\n"
+        )
+
+        def call_eval_model(state):
+            messages = state["messages"]
+            sys_msg = SystemMessage(content=EVAL_SYSTEM_PROMPT)
+            invoke_messages = [sys_msg] + messages
+
+            t_start = time.time()
+            response = eval_llm_with_tools.invoke(invoke_messages)
+            e2e_latency = time.time() - t_start
+
+            usage = response.usage_metadata
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
+            tpot = (e2e_latency / output_tokens) if output_tokens > 0 else 0
+            throughput = (output_tokens / e2e_latency) if e2e_latency > 0 else 0
+
+            print(f"📊 [Eval] E2E: {e2e_latency:.2f}s | in: {input_tokens} | out: {output_tokens}")
+
+            # 评估遥测捕获
+            try:
+                from eval.eval_tracer import EvalContext
+                ctx = EvalContext.get()
+                if ctx and ctx.enabled:
+                    ctx.capture_telemetry(
+                        e2e_latency=e2e_latency,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        tpot=tpot,
+                        throughput=throughput,
+                    )
+            except Exception:
+                pass
+
+            return {"messages": [response]}
+
+        def should_continue(state) -> str:
+            last_message = state["messages"][-1]
+            if hasattr(last_message, "tool_calls") and last_message.tool_calls:
+                return "continue"
+            return "end"
+
+        workflow = StateGraph(AgentState)
+        workflow.add_node("agent", call_eval_model)
+        workflow.add_node("tools", ToolNode(eval_tools))
+        workflow.add_edge(START, "agent")
+        workflow.add_conditional_edges("agent", should_continue, {"continue": "tools", "end": END})
+        workflow.add_edge("tools", "agent")
+
+        os.makedirs("chat_history", exist_ok=True)
+        db_path = os.path.join("chat_history", "eval_agent_memory.sqlite")
+        conn = sqlite3.connect(db_path, check_same_thread=False)
+        memory = SqliteSaver(conn)
+
+        self._eval_app = workflow.compile(checkpointer=memory)
+        return self._eval_app
+
+    # -----------------------------------------------------------
     # 运行单个用例（后台线程 + 队列）
     # -----------------------------------------------------------
     def _run_single_case(self, case: EvalCase) -> CaseResult:
@@ -138,12 +242,13 @@ class EvalRunner:
         shared_state: dict = {}  # 跨线程共享容器
 
         def _run_agent():
+            from eval.eval_tracer import EvalContext
             # 在 agent 线程内启用追踪
             ctx = EvalContext.enable()
             shared_state["ctx_ready"] = True
 
             try:
-                from agent_core import app
+                app = self._get_eval_app()
                 inputs = {"messages": [HumanMessage(content=case.query)]}
                 thread_cfg = {"configurable": {"thread_id": f"eval_{case.id}_{uuid.uuid4().hex[:8]}"}}
 
@@ -258,6 +363,15 @@ class EvalRunner:
                     answer=result.final_answer,
                     gt_facts=case.gt_answer_facts,
                 )
+
+        # ---- 用例完成后的内存清理（防止 GPU 碎片化累积导致 OOM） ----
+        gc.collect()
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
 
         return result
 

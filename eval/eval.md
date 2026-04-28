@@ -392,7 +392,7 @@ run_evaluation()
 "
 
 # 方式 3：使用 EvalRunner 进行更精细控制
-python -c "
+/home/c2216-3090/ProgramFile/conda/miniconda3/envs/ai_agent/bin/python -c "
 from eval import EvalRunner
 
 runner = EvalRunner()
