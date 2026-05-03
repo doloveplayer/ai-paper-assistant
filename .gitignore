@@ -38,3 +38,10 @@ __pycache__/
 # 系统文件
 .DS_Store
 Thumbs.db
+
+#测试脚本与数据
+eval/reports
+eval/history
+eval/data
+
+.chainlit/

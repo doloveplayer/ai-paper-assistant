@@ -115,9 +115,29 @@ async def on_message(message: cl.Message):
                         await current_step.update()
                         current_step = None
 
-                # --- 场景 3：后台静默压缩记忆 ---
-                elif node_name == "summarize_conversation":
+                # --- 场景 3：分层记忆系统后台节点 ---
+                elif node_name == "manage_context":
                     step = cl.Step(name="🧠 系统后台操作", type="run")
-                    step.output = "检测到上下文达到阈值，已自动触发 Token 压缩与长期记忆归档。"
+                    step.output = "检测到上下文达到阈值，已自动触发分层记忆整理与归档。"
                     step.status = "success"
                     await step.send()
+
+                elif node_name == "cleanup_ephemeral":
+                    # 静默：中间消息压缩为内部备忘
+                    pass
+
+                elif node_name == "retrieve_memory":
+                    # 静默：长期记忆检索
+                    pass
+
+                elif node_name == "extract_memory":
+                    # 静默：后台线程归档长期记忆
+                    pass
+
+                elif node_name == "update_profile":
+                    # 静默：用户画像更新
+                    pass
+
+                elif node_name == "init_core":
+                    # 静默：核心指令初始化
+                    pass

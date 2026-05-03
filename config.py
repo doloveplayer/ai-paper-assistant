@@ -31,6 +31,11 @@ class Config:
     CHUNK_SIZE = 1024
     CHUNK_OVERLAP = 200
 
+    # 4. 分层记忆系统超参数
+    USER_MEMORY_COLLECTION = "user_memory"       # Qdrant 长期记忆集合
+    WORKING_CONTEXT_MAX_ROUNDS = 5                # 工作记忆最大对话轮数
+    MEMORY_RETRIEVAL_TOP_K = 3                    # 长期记忆检索返回条数
+
 
 # 确保下载目录存在
 os.makedirs(Config.DOWNLOAD_DIR, exist_ok=True)
@@ -48,7 +53,8 @@ os.makedirs(Config.DATA_DIR, exist_ok=True)
 #     --quantization awq \
 #     --port 8000 \
 #     --enable-auto-tool-choice \
-#     --tool-call-parser hermes
+#     --tool-call-parser hermes \
+#     --enable-prefix-caching
 
 # VLM 视觉模型 (无状态 API，每次请求结束自动释放 KV Cache)
 # max-model-len = 文本 + 图片vision_tokens 总和上限，3图约需 6000-8000 tokens
@@ -59,7 +65,8 @@ os.makedirs(Config.DATA_DIR, exist_ok=True)
 #     --gpu-memory-utilization 0.25 \
 #     --limit-mm-per-prompt '{"image": 3}' \
 #     --enforce-eager \
-#     --port 8001
+#     --port 8001 \
+#     --enable-prefix-caching
 
 # curl http://localhost:8000/v1/chat/completions \
 #   -H "Content-Type: application/json" \

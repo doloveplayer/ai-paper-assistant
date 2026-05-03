@@ -32,21 +32,27 @@
 
 ```
 User (Chainlit / CLI)
-  → agent_core.py: LangGraph 状态机
-      → LLM (Qwen2.5-7B, vLLM :8000) 决定调用工具
+  → agent_core.py: LangGraph 状态机 (分层记忆系统)
+      → LLM (Qwen2.5-7B, vLLM :8000, --enable-prefix-caching) 决定调用工具
           ├── search_academic_papers     → Arxiv + Semantic Scholar
           ├── download_and_ingest_paper  → 下载 + ColPali/BGE 双路编码 + Qdrant 入库
-          └── search_vision_knowledge   → 双路检索 + RRF 融合 + LLM 摘要 + VLM 图文分析
-      → summarize_conversation (Token > 5000 时自动压缩长期记忆)
+          └── search_vision_knowledge   → 双路检索 + RRF 融合
+                                          → ColPali ROI 智能裁剪 (视觉 Token 剪枝)
+                                          → LLM 文本摘要 + VLM 图文分析
+      → 分层记忆管线 (四层):
+          Layer 1: 核心指令 (不可变)  |  Layer 2: 用户画像 (动态 JSON)
+          Layer 3: 工作上下文 (滑动窗口)  |  Layer 4: 临时执行层 (替换为轻量备忘)
+          → Qdrant user_memory (BGE-M3 编码长期记忆事实)
       → SQLite 持久化对话历史
 ```
 
-### 双路向量存储 (Qdrant `vrag_hybrid_collection`)
+### 双路向量存储
 
-| 通道 | 模型 | 维度 | 类型 |
-|------|------|------|------|
-| `colpali_vision` | ColPali (8-bit) | 128 | Multi-vector (MAX_SIM) |
-| `text_dense` | BGE-M3 | 1024 | Dense (COSINE) |
+| 集合 | 通道 | 模型 | 维度 | 类型 |
+|------|------|------|------|------|
+| `vrag_hybrid_collection` | `colpali_vision` | ColPali (8-bit) | 128 | Multi-vector (MAX_SIM) |
+| `vrag_hybrid_collection` | `text_dense` | BGE-M3 | 1024 | Dense (COSINE) |
+| `user_memory` | `dense` | BGE-M3 | 1024 | Dense (COSINE) — 长期记忆 |
 
 ## 环境要求
 
@@ -99,14 +105,16 @@ python -m vllm.entrypoints.openai.api_server \
   --served-model-name qwen2.5-7b-instruct \
   --max-model-len 8192 --gpu-memory-utilization 0.35 \
   --quantization awq --port 8000 \
-  --enable-auto-tool-choice --tool-call-parser hermes
+  --enable-auto-tool-choice --tool-call-parser hermes \
+  --enable-prefix-caching
 
 # 3. vLLM 视觉模型 (端口 8001)
 python -m vllm.entrypoints.openai.api_server \
   --model ./models/llm/qwen/Qwen2-VL-2B-Instruct-AWQ \
   --served-model-name qwen2-vl-7b-instruct \
   --max-model-len 12288 --gpu-memory-utilization 0.30 \
-  --limit-mm-per-prompt '{"image": 3}' --enforce-eager --port 8001
+  --limit-mm-per-prompt '{"image": 3}' --enforce-eager --port 8001 \
+  --enable-prefix-caching
 
 # 4. Chainlit Web UI (端口 8053)
 python -m chainlit run app_ui.py --port 8053
@@ -127,10 +135,29 @@ python tools/vision_ingest.py # 纯视觉入库
 python tools/text_ingest.py   # 纯文本入库（LlamaIndex）
 ```
 
+## 核心特性
+
+### 分层记忆系统
+- **Layer 1 — 核心指令层**：SOP 永久保留，配合 vLLM `--enable-prefix-caching` 实现 KV Cache 长久命中
+- **Layer 2 — 实体与偏好层**：自动提取论文 ID 和研究兴趣，以 JSON 维护用户画像
+- **Layer 3 — 工作上下文层**：保留最近 5 轮 Q&A，旧对话自动归档
+- **Layer 4 — 临时执行层**：工具中间结果替换为轻量备忘（非物理删除），节省 ~90% Token 的同时保留短期溯源能力
+- **外部化长期记忆**：对话事实经 BGE-M3 编码存入 Qdrant `user_memory` 集合，每次提问时检索 Top-3 相关历史
+
+### ColPali ROI 视觉 Token 剪枝
+- 利用 ColPali 的 patch 级相似度热力图，定位查询相关区域
+- 裁剪核心公式/表格 ROI（含 25% 上下文边距），替代全页图片发送给 VLM
+- 超出 VLM 图片限制（3 张）时自动拼接为合成图
+- 预计节省视觉 Token 约 60%
+
+### vLLM Prefix Caching
+- 文本 LLM 和视觉 VLM 均启用 `--enable-prefix-caching`
+- 配合静态→半静态→动态的 Prompt 拼接顺序，确保 ≥60% 缓存命中率
+
 ## 重要说明
 
 - **GPU 显存紧张**：ColPali (~4GB) + vLLM 文本 + vLLM 视觉共用一张 GPU，模型采用懒加载模式延迟分配
-- **vLLM 无状态**：每次请求结束后 KV Cache 自动释放，`--max-model-len` 为单次请求上限
+- **vLLM 无状态**：每次请求结束后 KV Cache 自动释放，`--max-model-len` 为单次请求上限；`--enable-prefix-caching` 在显存中缓存公共前缀的 KV 矩阵
 - **逐页渲染 PDF**：防止长 PDF 导致 OOM
 - **Monkey Patch**：transformers PEFT 对 PaliGemma 架构存在兼容性问题，`vision_rag.py` 和 `mix_ingest.py` 中已内置热修复
 - 首次使用前需在 `config.py` 中确认所有路径与实际环境一致

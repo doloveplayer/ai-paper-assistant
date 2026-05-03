@@ -24,14 +24,16 @@ python -m vllm.entrypoints.openai.api_server \
   --served-model-name qwen2.5-7b-instruct \
   --max-model-len 8192 --gpu-memory-utilization 0.35 \
   --quantization awq --port 8000 \
-  --enable-auto-tool-choice --tool-call-parser hermes
+  --enable-auto-tool-choice --tool-call-parser hermes \
+  --enable-prefix-caching
 
 # 3. vLLM vision model on port 8001 (Qwen2-VL-2B-Instruct-AWQ)
 python -m vllm.entrypoints.openai.api_server \
   --model ./models/llm/qwen/Qwen2-VL-2B-Instruct-AWQ \
   --served-model-name qwen2-vl-7b-instruct \
   --max-model-len 8192 --gpu-memory-utilization 0.25 \
-  --limit-mm-per-prompt '{"image": 3}' --enforce-eager --port 8001
+  --limit-mm-per-prompt '{"image": 3}' --enforce-eager --port 8001 \
+  --enable-prefix-caching
 
 # 4. Chainlit web UI on port 8053
 python -m chainlit run app_ui.py --port 8053
@@ -44,10 +46,12 @@ CLI mode (no web UI): `python agent_core.py`
 ```
 User (Chainlit UI / CLI)
   → agent_core.py: LangGraph state machine
-    nodes: call_model → tools → call_model → ...
-           summarize_conversation (triggered when >5000 tokens)
-    edges: START → check_memory → agent ⇄ tools → END
+    nodes: init_core → check_memory → agent ⇄ tools → cleanup_ephemeral → update_profile → END
+           manage_context (triggered when >5000 tokens)
+           extract_memory (fire-and-forget background thread)
     checkpoint: SQLite at chat_history/global_agent_memory.sqlite
+    memory layers: Core SOP (immutable) | Profile (dynamic JSON) | Working Context (sliding window) | Ephemeral Traces (replaced with memos)
+    long-term memory: Qdrant collection `user_memory` (BGE-M3 embeddings)
 ```
 
 The LLM (Qwen2.5-7B via vLLM on port 8000) is given three tools and decides which to call:

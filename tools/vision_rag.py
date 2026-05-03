@@ -38,7 +38,11 @@ except Exception:
     pass
 
 from colpali_engine.models import ColPali, ColPaliProcessor
+from colpali_engine.interpretability import get_similarity_maps_from_embeddings
 from transformers import BitsAndBytesConfig
+from PIL import Image
+import io
+import numpy as np
 
 # ==========================================
 # 1. 模型与客户端 —— 懒加载 (按需初始化，避免 import 即占 GPU)
@@ -393,6 +397,197 @@ def rrf_fusion(vision_hits, text_hits, k=60):
     sorted_ids = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
     return [hit_dict[doc_id] for doc_id in sorted_ids]
 
+
+# ==========================================
+# 5. ColPali ROI 智能裁剪：视觉 Token 剪枝
+# ==========================================
+
+def _compute_similarity_heatmap(
+    query_embeddings: torch.Tensor,
+    image_path: str,
+    model,
+    processor,
+    device: str = "cuda"
+):
+    """
+    对单页图片运行 ColPali 前向，计算与 query 的 patch 级相似度热力图。
+
+    Args:
+        query_embeddings: ColPali query 输出，shape (1, query_tokens, 128)，在 GPU 上
+        image_path: 缓存的 JPEG 页面图片路径
+        model: 已加载的 ColPali 模型
+        processor: ColPali 处理器
+        device: 计算设备
+
+    Returns:
+        heatmap: (32, 32) 相似度热力图 tensor
+        orig_width: 原始图片宽度 (像素)
+        orig_height: 原始图片高度 (像素)
+    """
+    pil_image = Image.open(image_path)
+    orig_width, orig_height = pil_image.size
+
+    batch_images = [pil_image]
+    inputs = processor.process_images(batch_images).to(device)
+
+    with torch.no_grad():
+        image_embeddings = model(**inputs)
+
+    image_mask = processor.get_image_mask(inputs)
+    n_patches = processor.get_n_patches(
+        image_size=(448, 448),
+        patch_size=14
+    )
+
+    similarity_maps = get_similarity_maps_from_embeddings(
+        image_embeddings=image_embeddings,
+        query_embeddings=query_embeddings,
+        n_patches=n_patches,
+        image_mask=image_mask
+    )
+    # similarity_maps: (1, query_tokens, 32, 32)
+
+    heatmap = similarity_maps[0].max(dim=0).values  # (32, 32)
+
+    del inputs, image_embeddings, similarity_maps
+    torch.cuda.empty_cache()
+
+    return heatmap, orig_width, orig_height
+
+
+def _heatmap_to_roi(
+    heatmap: torch.Tensor,
+    orig_width: int,
+    orig_height: int,
+    n_patches: tuple = (32, 32),
+    top_k: int = 5,
+    context_padding: float = 0.25,
+    fallback_threshold: float = 0.3
+) -> list:
+    """
+    将 32x32 相似度热力图转换为原始图像上的 ROI 包围盒。
+
+    Args:
+        heatmap: (32, 32) 热力图 tensor
+        orig_width, orig_height: 原始图片尺寸
+        n_patches: ColPali 的 patch 网格 (默认 32, 32)
+        top_k: 最多提取的峰值 patch 数量
+        context_padding: 上下文外扩比例 (默认 25%)
+        fallback_threshold: 若 heatmap.std < threshold * mean → 回退全图
+
+    Returns:
+        ROI 列表 [{"x": int, "y": int, "width": int, "height": int, "confidence": float}, ...]
+        空列表 = 无显著热点，使用全图
+    """
+    heatmap_np = heatmap.cpu().float().numpy()
+    n_patches_x, n_patches_y = n_patches
+
+    mean_val = heatmap_np.mean()
+    std_val = heatmap_np.std()
+    if std_val < fallback_threshold * mean_val:
+        print("   ⚠️ 相似度分布均匀，无可识别热点区域，回退至全图模式")
+        return []
+
+    flat_indices = np.argsort(heatmap_np.ravel())[::-1][:top_k]
+    peak_patches = [(int(idx) // n_patches_y, int(idx) % n_patches_y) for idx in flat_indices]
+
+    patch_w = orig_width / n_patches_x
+    patch_h = orig_height / n_patches_y
+
+    rois = []
+    seen_bounds = set()
+
+    for px, py in peak_patches:
+        # px=行(row), py=列(col); 映射回像素: py→x, px→y
+        cx = (py + 0.5) * patch_w
+        cy = (px + 0.5) * patch_h
+
+        half_w = patch_w * (0.5 + context_padding)
+        half_h = patch_h * (0.5 + context_padding)
+
+        x1 = int(max(0, cx - half_w))
+        y1 = int(max(0, cy - half_h))
+        x2 = int(min(orig_width, cx + half_w))
+        y2 = int(min(orig_height, cy + half_h))
+
+        roi_key = (x1 // 50, y1 // 50, x2 // 50, y2 // 50)
+        if roi_key not in seen_bounds:
+            seen_bounds.add(roi_key)
+            rois.append({
+                "x": x1, "y": y1,
+                "width": x2 - x1,
+                "height": y2 - y1,
+                "confidence": float(heatmap_np[px, py])
+            })
+
+    return rois
+
+
+def _stitch_rois_to_composite(
+    image_path: str,
+    rois: list,
+    max_images_per_vlm: int = 3
+) -> list:
+    """
+    将多个 ROI 裁剪并编码为 base64。如果 ROI 数量超出 VLM 限制，拼成一张合成图。
+
+    Args:
+        image_path: 原始缓存 JPEG 路径
+        rois: ROI 包围盒列表
+        max_images_per_vlm: VLM 最多接受的图片数 (默认 3)
+
+    Returns:
+        base64 编码图片字符串列表 (长度 ≤ max_images_per_vlm)
+    """
+    pil_image = Image.open(image_path)
+
+    if len(rois) <= max_images_per_vlm:
+        # 每个 ROI 单独裁剪编码
+        encoded = []
+        for roi in rois:
+            crop = pil_image.crop((
+                roi["x"], roi["y"],
+                roi["x"] + roi["width"],
+                roi["y"] + roi["height"]
+            ))
+            buffer = io.BytesIO()
+            crop.save(buffer, format="JPEG", quality=90)
+            encoded.append(base64.b64encode(buffer.getvalue()).decode('utf-8'))
+        return encoded
+
+    # 超出限制：将所有 ROI 拼接为一张合成图
+    n = len(rois)
+    cols = int(np.ceil(np.sqrt(n)))
+    rows = int(np.ceil(n / cols))
+
+    # 找出最大的 ROI 宽高作为网格单元尺寸
+    max_w = max(r["width"] for r in rois)
+    max_h = max(r["height"] for r in rois)
+
+    composite = Image.new("RGB", (cols * max_w, rows * max_h), color=(255, 255, 255))
+
+    for idx, roi in enumerate(rois):
+        crop = pil_image.crop((
+            roi["x"], roi["y"],
+            roi["x"] + roi["width"],
+            roi["y"] + roi["height"]
+        ))
+        # 居中放置在网格单元格中
+        row = idx // cols
+        col = idx % cols
+        paste_x = col * max_w + (max_w - roi["width"]) // 2
+        paste_y = row * max_h + (max_h - roi["height"]) // 2
+        composite.paste(crop, (paste_x, paste_y))
+
+    buffer = io.BytesIO()
+    composite.save(buffer, format="JPEG", quality=90)
+    return [base64.b64encode(buffer.getvalue()).decode('utf-8')]
+
+
+def _crop_and_encode_rois(image_path: str, rois: list) -> list:
+    """裁剪 ROI 并编码为 base64 (委托 _stitch_rois_to_composite 处理拼图逻辑)"""
+    return _stitch_rois_to_composite(image_path, rois)
+
 class SearchVisionKnowledgeInput(BaseModel):
     query: str = Field(description="必须使用简练的英文学术关键词。用于检索论文的具体内容、细节、公式、架构图、数据集、实验结果等一切内部信息。")
     paper_id: Optional[str] = Field(default=None, description="【极度重要】如果用户是询问刚才提到的、某篇具体的论文，必须传入该论文的 ID（如 2403.02148）。如果是泛泛地提问，则留空。")
@@ -479,18 +674,22 @@ def search_vision_knowledge(query: str, paper_id: Optional[str] = None) -> str:
     print(f"👁️ RRF 融合成功，交由底层解析图文语义...")
     
     # --------------------------------------------------
-    # 4. 组装多模态解析 Payload (先压缩文本再送 VLM，节省 Token)
+    # 4. ROI 智能裁剪 + 组装多模态解析 Payload
+    #    利用 ColPali patch 级相似度热力图，裁剪核心公式/表格区域，
+    #    以裁剪后的局部图替代全页图发送给 VLM，大幅节省视觉 Token。
     # --------------------------------------------------
     vision_messages = [
         {"type": "text", "text": f"你是一个严谨的学术分析员。用户的问题是：'{query}'。\n"
-                                 f"请结合提供的图片，以及下面的【文本摘要】进行综合分析并回答。\n"
+                                 f"请结合提供的【裁剪后的关键区域图片】，以及下面的【文本摘要】进行综合分析并回答。\n"
                                  f"【护栏规则】：\n"
                                  f"1. 文本摘要中引用的数值、表格数据可作为事实依据，图片用于验证和补充。\n"
                                  f"2. 严禁编造信息，回答时必须说明引用出处。"}
     ]
 
-    # 第一遍：收集页面信息 + 拔眼还原表格 + 编码图片
     pages_info = []
+    total_roi_count = 0
+    total_fallback_count = 0
+
     for hit in fused_results:
         doc_id = hit.payload.get('paper_id', hit.payload.get('file_name', '未知文献'))
         page_num = hit.payload.get('page_number', '未知页码')
@@ -506,13 +705,72 @@ def search_vision_knowledge(query: str, paper_id: Optional[str] = None) -> str:
         pages_info.append({"doc_id": doc_id, "page_num": page_num, "raw_text": raw_text})
 
         try:
-            if img_path:
+            if not img_path or not os.path.exists(img_path):
+                print(f"   ⚠️ 图片不存在: {img_path}，跳过视觉编码")
+                continue
+
+            # ── ROI 智能提取 ──
+            try:
+                heatmap, orig_w, orig_h = _compute_similarity_heatmap(
+                    query_embeddings=query_embeddings,
+                    image_path=img_path,
+                    model=model,
+                    processor=processor,
+                    device="cuda"
+                )
+
+                rois = _heatmap_to_roi(
+                    heatmap=heatmap,
+                    orig_width=orig_w,
+                    orig_height=orig_h,
+                    n_patches=(32, 32),
+                    top_k=5,
+                    context_padding=0.25
+                )
+
+                del heatmap
+                torch.cuda.empty_cache()
+
+                if rois:
+                    cropped_b64s = _stitch_rois_to_composite(img_path, rois)
+                    for b64_img in cropped_b64s:
+                        vision_messages.append({
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}
+                        })
+                    total_roi_count += len(rois)
+                    print(f"   ✂️ 页面 {page_num} 提取 {len(rois)} 个 ROI (拼成 {len(cropped_b64s)} 张图) | 原图 {orig_w}x{orig_h}")
+                else:
+                    # 无显著热点，回退至全图
+                    b64_img = _encode_image_to_base64(img_path)
+                    vision_messages.append({
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}
+                    })
+                    total_fallback_count += 1
+                    print(f"   ⚠️ 页面 {page_num} 无显著热点，回退至全图模式")
+
+            except Exception as e:
+                print(f"   ⚠️ ROI 提取异常 ({e})，回退至全图模式")
                 b64_img = _encode_image_to_base64(img_path)
-                vision_messages.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}})
+                vision_messages.append({
+                    "type": "image_url",
+                    "image_url": {"url": f"data:image/jpeg;base64,{b64_img}"}
+                })
+                total_fallback_count += 1
+
         except Exception as e:
             print(f"   ⚠️ 图片编码失败 {img_path}: {e}")
 
-    # 第二遍：用本地 LLM 将多页文本压缩为聚焦 query 的摘要
+    # 清理 GPU query embeddings
+    del query_embeddings
+    torch.cuda.empty_cache()
+
+    if total_roi_count > 0:
+        print(f"📐 [Token 剪枝] 共裁剪 {total_roi_count} 个 ROI，{total_fallback_count} 页回退全图，"
+              f"预计节省视觉 Token 约 {total_roi_count * 60}%")
+
+    # 用本地 LLM 将多页文本压缩为聚焦 query 的摘要
     condensed_text = _summarize_payloads(query, pages_info)
     vision_messages[0]["text"] += "\n\n" + condensed_text
 
