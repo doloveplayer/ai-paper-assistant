@@ -1,0 +1,918 @@
+You are a professional academic text summarizer. Below are 10 noisy text snippets extracted from PDF papers.
+
+For each snippet, produce a concise academic summary in Chinese (≤200 words). Keep ALL specific model names (e.g. YOLOv8, DETR, ResNet-50), numerical metrics (mAP, AP50, F1, etc.), and key experimental findings. Use Markdown formatting.
+
+CRITICAL: Return ONLY a valid JSON array. Each element MUST have exactly two keys:
+  - "id": the exact data ID string as given (do not modify)
+  - "summary": your refined summary string (Markdown, ≤200 words)
+
+Example output:
+[{"id": "2403.02148_page5", "summary": "YOLOv8 在雾天场景下..."},
+ {"id": "2310.xxxxx_page3", "summary": "..."}]
+
+DO NOT add any text before or after the JSON array.
+
+============================================================
+
+[ID: Domain_Adaptation_based_Object_Detection_for_Autonomous_Driving_in_Foggy_and_Rainy_Weather.pdf_page2]
+This article has been accepted for publication in IEEE Transactions on Intelligent Vehicles. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TIV.2024.3419689
+2
+framework follows an unsupervised setting, similar to previous
+works [23]–[25]. In this setting, we have well-labeled clear-
+weather images as the source domain, while the foggy and
+rainy weather images, which serve as the target domains, lack
+any annotations. This unsupervised setting is because adverse
+weather images with labeling (manual annotating) are time-
+consuming and costly. Inspired by [23], [26], the proposed
+method aims to reduce the domain feature discrepancies in
+both image style and object appearance. To enhance robustness
+and prevent data-level overfitting, we propose a Dynamic
+Masking Process to generate masked images by “dropping”
+some pixel regions. To achieve domain-invariant features, we
+incorporate both image-level and object-level domain classi-
+fiers as components to facilitate domain adaptation in our CNN
+architecture. These classifiers are responsible for distinguish-
+ing between different domains. By employing an adversarial
+approach, our detection model learns to generate features
+that are invariant to domain variations, thereby confusing
+the domain classifiers. This adversarial design encourages the
+network to produce features that are agnostic to the specific
+weather conditions, leading to improved object detection per-
+formance in foggy and rainy weather scenarios.
+II. RELATED WORK
+A. Detection for intelligent vehicles
+The contemporary realm of intelligent vehicles has garnered
+considerable attention, primarily directing towards the en-
+hancement of road safety, mitigation of traffic congestion, and
+the overall optimization of transportation systems [29], [30].
+Recent strides in deep learning have been pivotal in propelling
+the field of intelligent vehicles forward [31]–[33]. Within this
+landscape, object detection has emerged as a focal point of
+extensive research endeavors, encompassing the identification
+and classification of objects such as vehicles, pedestrians, traf-
+fic signs, traffic lights, and assessing road conditions [34], [35].
+Deep learning methods have been prominently introduced
+to address object detection tasks, generally falling into two
+distinct categories: two-stage object detectors and one-stage
+object detectors. Faster RCNN [18] and Mask RCNN [19]
+are one of the classic two-stage methods, which typically
+consist of two main stages: region proposal generation and
+object classification/localization. While YOLO series [36] and
+SSD [37] are one of the representative one-stage methods,
+which typically use a set of predefined anchor boxes or default
+boxes at different scales and aspect ratios to densely cover
+the image. [38] designed an edge intelligence-based vehicle
+detection algorithm based on YOLOv4 to augment vehicle
+detection capabilities. [39], on the other hand, proposed a
+multistage algorithm that initially leverages the YOLOv3
+network for object detection. It’s also worth noting that
+Faster R-CNN and Mask R-CNN have been conventionally
+employed for vehicle detection in the context of intelligent
+vehicles [40], attesting to their commendable performance in
+various scenarios. However, the direct application of these
+methods in autonomous driving settings is often constrained by
+the formidable challenges posed by adverse real-world weather
+conditions.
+Furthermore, we propose a novel methodology for domain
+adaptation (DA). Current existing domain adaptation meth-
+ods [23], [25]–[28] might ignore: 1) the different challenging
+levels of various training samples, 2) the domain-level feature
+metric distance to the third related domain by only involving
+the source domain and target domain. This paper investigates
+the incorporation of hard example mining and an additional
+related domain to further strengthen the model’s ability to
+learn robust and transferable representations. We propose a
+novel Adversarial Gradient Reversal Layer (AdvGRL) and
+introduce an auxiliary domain through data augmentation.
+The AdvGRL is designed to perform adversarial mining on
+challenging examples, thereby improving the model’s ability
+to learn in challenging scenarios. Additionally, the auxiliary
+domain is leveraged to enforce a new domain-level metric reg-
+ularization during the transfer learning process. In summary,
+the contributions of this paper can be summarized as follows:
+B. Detection for intelligent vehicles under foggy and rainy
+weather
+In recent years, considerable research has been dedicated to
+addressing the challenges posed by various weather conditions
+encountered in autonomous driving scenarios. Researchers
+have generated various datasets [22], [41] and proposed nu-
+merous methods [42]–[47] to improve object detection under
+adverse weather conditions. One notable example is the Foggy
+Cityscape dataset, which is a synthetic dataset created by
+applying fog simulation to the Cityscape dataset [22]. In the
+context of object detection research in rainy weather, several
+synthesized rainy datasets have been proposed [46]–[48]. [43]
+devised a fog simulation technique to augment existing real
+lidar datasets, thereby enhancing their quality and realism.
+The simulated foggy data offers valuable opportunities to
+enhance object detection methods that are specifically tailored
+for foggy weather conditions. For leveraging information from
+multiple sensors, [45] designed a network to integrate data
+from different sensors e.g., LiDAR, camera, and radar. [44]
+proposed a method that exploits both LiDAR and radar signals
+to obtain object proposals. The features extracted from the
+regions of interest in both sensors are fused together to
+• This paper proposes a novel unsupervised domain adapta-
+tion method to enhance object detection for autonomous
+vehicles under foggy and rainy conditions, including the
+image-level and object-level adaptations.
+• This paper proposes to perform adversarial mining for
+hard examples during domain adaptation to further im-
+prove the model’s transfer learning capabilities under
+challenging samples, which is accomplished by our pro-
+posed AdvGRL.
+• This paper proposes a new domain-level metric regular-
+ization to improve transfer learning, i.e., the regulariza-
+tion constraint between source domain, added auxiliary
+domain, and target domain.
+• This paper explores the intensive transfer learning exper-
+iments of clear→foggy, clear→rainy, cross-camera adap-
+tation, and also carefully studies the different-intensity
+(small, medium, large) fog and rain adaptations.
+2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:36:36 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Assessment_of_Efficient_and_Cost-Effective_Vehicle_Detection_in_Foggy_Weather.pdf_page1]
+Assessment of Efficient and Cost-Effective Vehicle
+Detection in Foggy Weather
+Naeem Raza
+Department of Computer Science
+National Textile University
+Faisalabad, Pakistan
+naeemraza1248@gmail.com
+Mudassar Ahmad
+Department of Computer Science
+National Textile University
+Faisalabad, Pakistan
+mudassar.utm@gmail.com
+Muhammad Asif Habib
+College of Computer and Information Sciences
+Imam Mohammad Ibn Saud Islamic University (IMSIU)
+Riyadh,11432, Kingdom of Saudi Arabia
+dr.m.asif.habib@gmail.com
+2024 18th International Conference on Open Source Systems and Technologies (ICOSST) | 979-8-3315-0869-2/24/$31.00 2024 IEEE | DOI: 10.1109/ICOSST64562.2024.10871157
+camera sensors to locate and classify objects in indoor and
+outdoor environments. Because the cameras are now more
+accurate at detecting objects and are more cost-effective than
+other sensors [2]. A Convolutional Neural Network (CNN)
+comprises neurons with learnable weights and biases. The
+network includes an input, output, and multiple hidden layers.
+The hidden layers typically consist of convolutional, pooling,
+fully-connected, and various normalization layers [3]. You
+Only Look Once (YOLO) transforms object detection into a
+regression problem. YOLO uses a single CNN to generate
+object bounding boxes and directly predict class-level proba-
+bilities from the input images. Primarily, the YOLO algorithm
+divides the input images into grid cells, predicting class-
+level probabilities, confidence scores, and bounding boxes, and
+finally, detecting objects based on IOU thresholds [4] as shown
+in Fig. 1.
+Abstract—Efficient and cost-effective vehicle detection under
+foggy and smoggy weather conditions remains a significant
+challenge in the domains of Intelligent Transportation Systems
+(ITS), Advanced Driver Assistance Systems (ADAS), Collision
+Avoidance Systems (CAS), and traffic surveillance. Vehicle detec-
+tion in foggy weather, a critical requirement for preventing road
+collisions and ensuring driver assistance, has not been adequately
+evaluated. The state-of-the-art deep learning algorithm, YOLO-
+V11 network architecture, is studied and evaluated for efficient
+and cost-effective vehicle detection in diverse foggy weather road
+driving conditions. To our knowledge, YOLO-V11 performance
+has not been evaluated in diverse foggy weather road driving
+conditions. The vehicle Detection in Adverse Weather Nature
+(DAWN) and Foggy Driving (FD) datasets are utilized for the
+performance evaluation across diverse object detection perfor-
+mance metrics. The DAWN and FD datasets are customized
+and self-annotated to four vehicle detection classes: buses, cars,
+motorcycles, and trucks. Extensive experiments are performed to
+assess the efficiency and cost-effectiveness of YOLO-V11 models
+on DAWN and FD datasets. YOLO-V11s model outperformed
+with 73.1 % mAP and 71 % F1 score on the DAWN dataset
+and YOLO-V11m outperformed with 47.7 % mAP and 47 % F1
+score. The recall and precision score of YOLO-V11m is higher
+on the DAWN dataset. Whereas, the recall score of the YOLO-
+V11l model is higher on the DAWN dataset and the precision
+score of YOLO-V11n is higher on the FD dataset. YOLO-V11
+outperformed with an inference speed of 26 FPS on the DAWN
+dataset and YOLO-V11n outperformed with an inference speed
+of 13 FPS on the FD dataset. The comparative analysis concludes
+that the YOLO-V11n and YOLO-V11s models detect vehicles
+with faster inference speeds while maintaining high accuracy.
+Conversely, YOLO-V11m and YOLO-V11l models detect vehicles
+with enhanced accuracy but at the cost of slower inference speeds.
+Index Terms—Vehicle Detection, DAWN, FD, mAP50, FPS,
+Foggy Weather.
+Fig. 1. YOLO Working
+The main research objectives and contributions of the proposed
+research work are:
+I. INTRODUCTION
+Computer vision aims to equip computers to recognize and
+understand visual elements, similar to human vision. Computer
+vision-based object detection algorithms use the computational
+power of modern high-end Central Processing Unit (CPU)
+and Graphical Processing Unit (GPU) systems, which are
+used for traffic surveillance, autonomous vehicles, augmented
+reality, and manufacturing [1]. Object detection algorithms use
+• To explore the architectural components of the state-of-
+the-art YOLO-V11 algorithm.
+• To propose a research methodology to assess the effi-
+ciency and cost-effectiveness of YOLO-V11 algorithmic
+models: YOLO-V11n, YOLO-V11s, YOLO-V11m, and
+YOLO-V11l.
+• To train, validate, and test the YOLO-V11 algorithmic
+models using customized and self-annotated DAWN and
+FD foggy weather vehicle detection datasets.
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:15 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page29]
+Algorithms 2024, 17, 103
+29 of 36
+7.3. Future Research Trends
+1.
+It has become more important to address the real-time requirements for OD in real-
+world applications. Deep neural networks, however, frequently require large amounts
+of computational power, which presents difficulties for embedded systems. To prop-
+erly fulfill these objectives, resource-efficient technique development has become
+essential. To ensure the practical usefulness of the suggested methodologies, future
+research should focus heavily on their computational components, offering both
+quantitative and qualitative analysis.
+2.
+The existing deep neural network techniques for difficult item detection mainly
+depend on large-scale annotated datasets. However, creating these databases is
+expensive and time-consuming. Consequently, there is an urgent need to create OD
+algorithms that can train with little to no labeled information.
+3.
+The employment of various evaluation metrics and IoU criteria for OD in difficult
+situations has resulted in the absence of a clear benchmark standard, which makes
+comparing methods difficult. For future research in this area to be uniform and
+comparable, a global baseline must be established.
+4.
+Creation of extensive simulation environments should occur that imitate inclement
+weather to thoroughly test and improve object identification algorithms.
+5.
+To develop comprehensive solutions for adverse weather OD, researchers, engineers,
+and policymakers should collaborate more closely.
+6.
+It is necessary to study the psychology and behavior of human drivers in adverse
+weather, with an emphasis on developing successful communication and trust with AVs.
+7.
+Creation of novel tactics for the real-time modification of OD algorithms for AVs in
+response to changing environmental circumstances should be achieved.
+8.
+Investigation into cutting-edge techniques for combining current weather data with
+weather forecasts to enable proactive decisionmaking during unfavorable weather
+conditions is necessary.
+9.
+Improvements in sensor fusion methods should be attained, which integrate information
+from several sensor types to provide more accurate and dependable identification in
+adverse weather.
+10.
+To develop behavior prediction models for AVs, leveraging machine learning and
+deep learning to forecast the actions of vehicles, pedestrians, and cyclists should
+occur. These models will operate effectively in adverse weather, improving AV
+decisionmaking for enhanced safety and efficiency.
+8. Conclusions
+This paper reviewed the traditional and DL approaches for vehicles, pedestrians,
+and road lane detection in AVs under adverse weather conditions. We first studied the
+architecture of AVs with sensor technologies and other components and also discussed
+the challenges for AVs in adverse weather. After an overview of almost all the datasets
+related to AVs covering different weather conditions, we explained the basic structure of
+OD and the evaluation matrices used for it. Then, we explained the traditional approaches
+and DL approaches and discussed the traditional feature extraction methods that were
+prevalent for detection and classification but had limitations in adverse conditions. Manual
+feature extraction made them less suitable for complex applications. DL has become
+much more popular and prominent than regular algorithms in more recent times. DL
+approaches explain the structure of YOLOV8 (one-stage detectors) and Faster R-CNN (two-
+stage detectors). Two-stage algorithms tend to deliver superior accuracy, while one-stage
+algorithms offer faster processing speeds. Notably, the reasons behind the lower accuracy
+of one-stage algorithms remain unclear. In addition, the statistics about the status quo of
+traditional and DL approaches for OD in AVs were provided based on the works collected
+in this survey paper. We found that DL was intensively used for vehicles, pedestrians,
+and road lane detection in AVs compared with the traditional approaches. Specifically,
+one-stage detectors were frequently used for vehicle detection compared with two-stage
+
+---
+
+[ID: AL-YOLO_Accurate_and_Lightweight_Vehicle_and_Pedestrian_Detector_in_Foggy_Weather.pdf_page4]
+Fig. 4. Outputs of the AL-YOLO network on samples from the Foggy Cityscape dataset.
+TABLE I
+FOGGY CITYSCAPE DATASET
+Train
+Validation
+Images
+Instances
+Images
+Instances
+2975
+43575
+500
+7802
+three types of losses: box loss, objectness loss, and classi-
+fication loss. The box loss measures the difference between
+the predicted and ground truth bounding box using Complete
+IoU (CIoU) loss, which incorporates the overlap area, center
+distance, and aspect ratio. The CIoU formula is given by:
+CIoU(p, t) = 1 −IoU(p, t) + ρ2(p, t)
+Fig. 5. Mean Average of Precision for Each Model
+c2
++ αv
+(1)
+where ρ(p, t) is the Euclidean distance between the centers,
+c is the diagonal length of the smallest enclosing box, v
+measures aspect ratio similarity, and α is a trade-off parameter.
+The box loss Lbox is the average CIoU loss across all matched
+anchors, given by:
+IV. EXPERIMENTAL RESULTS AND ANALYSIS
+A. Dataset
+The Foggy-Cityscapes [23] dataset is a synthetically gen-
+erated dataset based on the Cityscapes [24] dataset, where
+fog is added to simulate real-world conditions. The dataset
+includes annotations for several classes, but we focus on the
+pedestrian and car classes for this study to evaluate our model’s
+performance. We present information about Foggy-Cityscape’s
+Category in Table I and label correlogram in Fig. 7. This
+dataset has three levels of fog intensity that are denoted by
+β. We set β = 0.02 which means most foggy images.
+N
+X
+Lbox = 1
+i=1
+(1 −CIoU(pi, ti))
+(2)
+N
+where N is the number of matched anchors.
+The objectness loss measures how well the model predicts
+the presence of an object in each anchor box using Binary
+Cross-Entropy (BCE) loss, defined as:
+B. Evaluation Metrics
+We use the mean average precision (mAP) and the F1-
+Score as evaluation metrics to evaluate our method with other
+networks. These are calculated using the following equations:
+Lobj = −(p log(ˆp) + (1 −p) log(1 −ˆp))
+(3)
+The classification loss evaluates the accuracy of predicting the
+class of the object in each anchor box, also using BCE loss,
+defined as:
+AP =
+Z 1
+0
+P(R) dR
+(6)
+C
+X
+where R and P are recall and precision, respectively.
+Lcls = −
+j=1
+(cj log(ˆcj) + (1 −cj) log(1 −ˆcj))
+(4)
+c
+X
+mAP = 1
+i=1
+APi
+(7)
+c
+where C is the number of classes. The total loss is the
+weighted sum of these three losses, with weights λbox, λobj,
+and λcls as hyperparameters. It is computed as:
+where c denotes the total number of classes, and APi repre-
+sents the average precision calculated for each individual class
+i.
+F1-Score = 2 P R
+Ltotal = λbox Lbox + λobj Lobj + λcls Lcls
+(5)
+P + R
+(8)
+We set λbox, λobj, and λcls, 0.05, 1.0 and 0.5, respectively.
+where R and P are recall and precision, respectively.
+134
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:39 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Multiple_Adverse_Weather_Conditions_Adaptation_for_Object_Detection_via_Causal_Intervention.pdf_page4]
+ZHANG ET AL.: MULTIPLE ADVERSE WEATHER CONDITIONS ADAPTATION FOR OBJECT DETECTION VIA CAUSAL INTERVENTION
+1745
+counterfactual framework for zero-shot learning and open-
+set recognition, which aims to learn the generalized feature
+representation for unseen classes. The most similar to our
+work is VC R-CNN [37], which uses the causal intervention
+to learn the discriminative region features for the task of
+object detection. Speciﬁcally, the visual common sense is
+ﬁrst proposed to explore the relationship between the target
+objects and their surrounding context. In a nutshell, they
+ﬁrst construct the confounder dictionary, and then use the
+causal intervention do-expression to discover the causal
+association between objects. Since the global confounders
+can not be described by one speciﬁc feature representation,
+the model proposed in [37] could not be used for our task.
+Fig. 2. A graphical representation of our model. X denotes the natural
+image, Y is the corresponding object label, and C is the confounder dic-
+tionary. (a) Traditional models where the recognition results are affected
+by the confounder. (b) The causal intervention model where the spurious
+correlations between C and X are removed.
+3
+PROBLEM STATEMENT
+3.2
+Task Deﬁnition
+Given the object candidate xi and the confounder dictionary
+C, we aim to learn a robust visual classiﬁer based on the
+causal intervention. Speciﬁcally, we want to train the visual
+object classiﬁers, which could adapt to different weather con-
+ditions. The critical step to introducing the causal interven-
+tion is to develop the confounder dictionary. Considering
+our task, we treat the objects under the speciﬁc condition as
+the typical confounder representations [58]. Inspired by the
+examplar SVM [59], we compute the object predictions
+under different confounders by exploiting the feature simi-
+larities between the object candidates and confounders.
+In this section, we provide background deﬁnitions and for-
+mally deﬁne the task of causal intervention for learning the
+discriminative feature representations.
+3.1
+Preliminaries
+Let X 2 RNd be a set of object feature representations,
+where N is the number of objects and d is the dimension of
+feature representation. And the corresponding labels are
+Y 2 RL, where L is the number of categories. In the tradi-
+tional Bayesian framework, the categories of the inputs are
+predicted by computing the likelihood PYjX, where the
+performance would be inﬂuenced by the distribution of the
+training samples due to the spurious association between
+the object features and their categories. When there are con-
+founder factors, the likelihood could be computed by:
+To systematically understand how the confounder harms
+the object detector, we propose to use the causal graph to
+explain the hidden correlations between the classiﬁer and fea-
+ture representations. Fig. 2 shows our causal graph for the
+object detector. We use C to denote various confounders, and
+Y indicates categorical labels. C produces the nuisance fea-
+tures Xz in images, which together with the core object fea-
+tures Xo constructs the feature representation of natural
+image X. The nuisance feature refers to the object irrelevant
+features generated by the external noises, which cause the
+object detector to lose efﬁcacy. X ! Y. The object factors in X
+directly cause Y, which means that the object label is deter-
+mined by the core object feature, such as textures, shapes, etc.,
+instead of the weather conditions, camera viewpoints, back-
+grounds. C ! X and C ! Y: As there exist various confound-
+ers, which are caused by the global and local disturbance
+factors as shown in Fig. 1. All these confounders would inﬂu-
+ence both the object features and the categorical label. For
+example, the weather conditions would lead to the domain
+gap.C ! Y denotes the inﬂuences of confounder C on Y.
+X
+PYjX; cPcjX;
+(1)
+PYjX
+c
+where PcjX denotes the bias caused by the imbalance in
+the training samples. For example, in our task c can be seen
+as the different weather conditions e.g., foggy and sunny,
+where the images under sunny are more than the foggy
+ones. Therefore, Pc sunnyjX would be larger than Pc 
+foggyjX, and then PYjX; c sunny contributes more to
+predict the category labels Y. Thus, the representations of
+the objects will be dominated by the images under the
+sunny conditions rather than the foggy, which leads to the
+classiﬁer’s bias.
+To mitigate the feature bias, the causal intervention
+PYjdoX is used to cut off the correlation between X and c:
+X
+Our goal is to achieve the true causality between X and Y
+to develop the invariant feature representation, which can
+mitigate the gap between the source and the target sets.
+However, traditional object detection models focus on com-
+puting the likelihood of Y given X, which fails to capture
+the true causality. To alleviate the bias caused by the spuri-
+ous correlations via C ! Y, we need to use the causal inter-
+vention PYjdoX instead of the likelihood PYjX for
+learning the feature representations.
+PYjX; cPc;
+(2)
+PYjdoX
+c
+where Pc is the prior of the confounder factor. Therefore,
+the prediction of Y should incorporate all the confounder
+prior Pc to achieve a robust object classiﬁer. Compared to
+Eq. (1) the confounder c is not correlated with the training
+samples X, which makes the category prediction to incorpo-
+rate all the confounder context. For example, when we con-
+sider the confounder c as the weather condition, the category
+classiﬁer PYjX; c is required to capture the universal dis-
+criminative features of the objects under different weather
+conditions. Thus, the classiﬁer bias caused by the imbalanced
+distribution of the training samples could be alleviated.
+4
+OUR METHOD
+Our proposed model consists of three modules: the front-
+end module for object candidates extraction, the confounder
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 07:23:11 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object_Detection_With_Physical_Prior_and_AWConv_in_Foggy_Weather_for_Traffic_Scenes.pdf_page11]
+This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+HAN et al.: OBJECT DETECTION WITH PHYSICAL PRIOR AND AWConv IN FOGGY WEATHER
+11
+Fig. 11. Visualization results on the Foggy Cityscapes dataset.
+Furthermore, while R-YOLOX achieves slightly higher accu-
+racy in some categories, our method outperforms it by at least
+12.7% in the “bicycle” and “bus” categories. This demon-
+strates that our approach achieves a better balance between
+accuracy and computational cost. In addition, to ensure a fair
+comparison, we transfer the proposed method to YOLOv5 m
+and YOLOX m, further verifying its generalizability and
+superiority.
+4) Comparative Statistics on Cityscapes: To demonstrate
+that AWConv is still suitable for general object detectors
+and outperforms other mainstream models, we conduct com-
+parison experiments on a normal weather dataset, as shown
+in Table XII. Our method achieves the best performance
+while maintaining a low model complexity. This performance
+improvement mainly beneﬁts from the adaptive weighting
+mechanism and multiscale information fusion strategy intro-
+duced by the AWConv module, which signiﬁcantly enhances
+the model’s ability to perceive small-scale and occluded traﬃc
+objects, such as distant cars and pedestrians. As a result,
+AWConv demonstrates strong robustness, improving detection
+performance and reducing model complexity under both nor-
+mal and adverse weather conditions.
+5) Visualization on Foggy Cityscapes: We performed a
+visual comparison of our model with the baseline models
+YOLOv8 as well as YOLOv5 and YOLOv10, as shown in
+Fig. 11, with objects missed at baseline marked by arrows.
+The dataset used in the evaluation has a higher concentration
+of fog compared to other datasets, and for both single and
+dense objects, as well as small objects, our model is able
+to eﬀectively identify traﬃc objects and surpasses the per-
+formance of other detectors. Notably, in the last image, only
+the baseline model YOLOv8 fails to detect the car entering
+from the right. This is primarily because YOLOv8, compared
+to YOLOv5, removes the mechanism of object conﬁdence is
+multiplied by class conﬁdence, and instead relies solely on
+TABLE XII
+COMPARISONS WITH DIFFERENT OBJECT DETECTORS ON CITYSCAPES
+VAL SET. OURS DENOTES AWCONV
+class probability for object prediction. In addition, YOLOv8
+does not incorporate the one-to-one and one-to-many matching
+strategies used in YOLOv10. Although the structure is more
+streamlined, it tends to miss detections in scenarios involving
+small objects or low contrast.
+As a result, when the conﬁdence threshold is set to 0.4,
+the detection result of this car is ﬁltered out by YOLOv8. In
+contrast, our method, which integrates a defogging algorithm
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:23 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object Detection in Adverse Weather for Autonomous Driving
+through Data Merging and YOLOv8.pdf_page1]
+sensors
+Article
+Object Detection in Adverse Weather for Autonomous Driving
+through Data Merging and YOLOv8
+Debasis Kumar *
+and Naveed Muhammad
+Institute of Computer Science, University of Tartu, Narva Maantee 18, 51009 Tartu, Estonia;
+naveed.muhammad@ut.ee
+* Correspondence: debasis.kumar@ut.ee
+Abstract: For autonomous driving, perception is a primary and essential element that fundamentally
+deals with the insight into the ego vehicle’s environment through sensors. Perception is challenging,
+wherein it suffers from dynamic objects and continuous environmental changes. The issue grows
+worse due to interrupting the quality of perception via adverse weather such as snow, rain, fog,
+night light, sand storms, strong daylight, etc. In this work, we have tried to improve camera-based
+perception accuracy, such as autonomous-driving-related object detection in adverse weather. We
+proposed the improvement of YOLOv8-based object detection in adverse weather through transfer
+learning using merged data from various harsh weather datasets. Two prosperous open-source
+datasets (ACDC and DAWN) and their merged dataset were used to detect primary objects on the
+road in harsh weather. A set of training weights was collected from training on the individual
+datasets, their merged versions, and several subsets of those datasets according to their characteristics.
+A comparison between the training weights also occurred by evaluating the detection performance
+on the datasets mentioned earlier and their subsets. The evaluation revealed that using custom
+datasets for training signiﬁcantly improved the detection performance compared to the YOLOv8
+base weights. Furthermore, using more images through the feature-related data merging technique
+steadily increased the object detection performance.
+Keywords: autonomous driving; harsh weather; object detection; data merging; deep neural
+networks; YOLOv8
+Citation: Kumar, D.; Muhammad, N.
+Object Detection in Adverse Weather
+for Autonomous Driving through
+Data Merging and YOLOv8. Sensors
+1. Introduction
+2023, 23, 8471. https://doi.org/
+Autonomous driving has promised many beneﬁts for society, with the most important
+being safe transportation. The rapid development of computing technology and the low-
+cost manufacturing of sensors have signiﬁcantly impacted autonomous driving research.
+An autonomous vehicle’s autonomy is divided into six levels based on the level of human
+involvement during its operation [1]. It is inescapably reliant on autonomy subsystems
+such as perception, localization, behavior prediction, planning, control, etc. Among these,
+perception is a vital component of autonomous driving that deals with understanding
+the ego vehicle’s environment using sensors. Then, the perception result helps to execute
+consequent tasks through this environmental information. Due to dynamic objects and
+ongoing environmental changes, perception can be challenging. Moreover, the quality of
+perception becomes worse as a result of interruptions in the perception quality caused by
+inclement weather such as snow, rain, fog, night light, sand storms, etc. In this instance,
+studying weather conditions leads to achieving the weather invariant perception and
+creating a research community to address the shortcomings. There are various seasonal
+inﬂuences on vision and perception everywhere on the earth or, at the very least, varied
+day and night circumstances in the periodic cycle. It is common for a sensor to be unable
+to identify lane markings, road markings, landmarks, roadside units, trafﬁc signs, and
+signals in bad weather. Investigating the potential weather variation for the sensors to
+10.3390/s23208471
+Academic Editors: Enrico Meli
+and Ikhlas Abdel-Qader
+Received: 30 August 2023
+Revised: 11 October 2023
+Accepted: 12 October 2023
+Published: 14 October 2023
+Copyright:
+ 2023 by the authors.
+Licensee MDPI, Basel, Switzerland.
+This article is an open access article
+distributed
+under
+the
+terms
+and
+conditions of the Creative Commons
+Attribution (CC BY) license (https://
+creativecommons.org/licenses/by/
+4.0/).
+Sensors 2023, 23, 8471. https://doi.org/10.3390/s23208471
+https://www.mdpi.com/journal/sensors
+
+---
+
+[ID: MASFNet_Multiscale_Adaptive_Sampling_Fusion_Network_for_Object_Detection_in_Adverse_Weather.pdf_page2]
+4702815
+IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING, VOL. 63, 2025
+end-to-end network that better balances model complexity and
+performance while enhancing input image features to mitigate
+the effects of adverse weather. In this article, we propose
+a multiscale adaptive sampling fusion network for object
+detection in adverse weather which is an end-to-end network
+without changing the input image. First, we design a feature
+adaptive enhancement network (FAENet) to improve the fea-
+ture information of the model. Meanwhile, we introduce a
+multiscale sampling fusion module to enhance the semantic
+information of the feature maps. As shown in Fig. 1, our
+method achieves a favorable trade-off between detection accu-
+racy and speed, outperforming existing approaches.
+The main contributions of this article are as follows.
+1) We propose a multiscale adaptive sampling fusion
+network object detection framework called MASFNet,
+which achieves excellent performance on the RTTS,
+FDD, and ExDark datasets, thus proving that our method
+can be widely applied to object detection in adverse
+weather.
+2) We introduce the Laplacian pyramid to fuse the recep-
+tive field fusion enhancement module (RFEM), the
+lightweight attention module (LAM), and the affine
+transformation enhancement module (ATEM) into a
+FAENet to enhance the feature information of images
+in adverse weather.
+3) We propose a multiscale sampling fusion pyramid
+network (MSFNet) through different sample methods,
+which can enhance the semantic information with little
+increasing the parameters. The FAENet and MSFNet
+form MASFNet to improve object detection performance
+in adverse weather.
+The rest of this article is organized as follows. Section II
+summarizes the related works, including object detection in
+adverse weather. Section III describes the architecture of our
+MASFNet. Section IV presents the experimental results on
+different datasets. Finally, Section V concludes our work.
+Fig. 1.
+Comparison with other object detectors on the RTTS [12] dataset.
+The MASFNet achieves SOTA performance. Circle sizes indicate the number
+of parameters. The proposed method achieves a better tradeoff between model
+complexity and performance.
+comparison with multistage algorithms, benefiting from a
+single feature extraction process.
+The two-stage object detection algorithms were proposed
+by Girshick as RCNN [39], generating region propos-
+als on the image by using the selective search method.
+In this category, the other classic algorithms include Cascade-
+RCNN [40], Boosting R-CNN [41], and DynamicDet [42].
+Recent research has focused on anchor-free object detec-
+tion algorithms, including CenterNet [43], PETDet [44], and
+KRRNet [45]. CenterNet [43] utilizes targets using center
+points and obtains the final detection boxes using offsets,
+widths, and heights. Additionally, numerous vision transformer
+(ViT) detectors [46], [47], [48] have emerged. The Relation-
+DETR [48] introduces an encoder to construct position relation
+embeddings for progressive attention refinement to address the
+conflicts between nonduplicate predictions and positive super-
+vision. However, the limitations of the DETR-like structure
+prevent it from showing sufficient dominance in the small
+model region, where YOLOs remain the SOTA of accuracy
+and velocity balance.
+II. RELATE WORK
+A. Object Detection
+Traditional object detection algorithms commonly employ
+the sliding window technique for detection. However, these
+tasks require multiple steps and human involvement. Since
+the convolutional neural network (CNN) methods have been
+applied in various fields [24], [25], [26], [27], [28], researchers
+proposed object detection algorithms based on CNNs [29]
+to address the limitations of traditional methods. In terms
+of computational speed and accuracy, CNN-based detection
+algorithms far outperform traditional detection algorithms.
+Meanwhile, CNN methods have been applied to many other
+domains [30], [31]. Recently, CNN-based object detection
+methods have been primarily categorized into anchor-based
+and anchor-free methods. In the anchor-based methods,
+there are single- and two-stage object detection algorithms.
+Representative single-stage algorithms are: SSD [32], Reti-
+naNet [33], and the YOLO series [34], [35], [36], [37].
+Notably, YOLO has also been applied in the field of
+image captioning [38]. YOLOv4 [36] enjoys faster processing
+B. Object Detection in Adverse Weather
+Compared with object detection in normal conditions, there
+has been limited research into object detection in adverse
+weather scenarios. In adverse weather, there is a lot of noise
+in the feature extracted from the backbone, which limits
+the detection accuracy. Previous methods typically employed
+preprocessing techniques, such as dehazing or deraining meth-
+ods, to process images in adverse weather before performing
+object detection [13], [15], [49]. However, these preprocess-
+ing methods increase the overall complexity of the object
+detection system and affect its real-time performance and
+efficiency. To address these challenges, a groundbreaking
+joint learning-based method has been developed, seamlessly
+integrating image restoration and object detection tasks.
+DSNet [8], TogetherNet [50], and BADNet [51] integrate
+image restoration and object detection into unified end-to-end
+frameworks. However, this approach significantly increases the
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:54 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Domain_Adaptation_based_Object_Detection_for_Autonomous_Driving_in_Foggy_and_Rainy_Weather.pdf_page8]
+This article has been accepted for publication in IEEE Transactions on Intelligent Vehicles. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TIV.2024.3419689
+8
+intensity level as the target domain during training for both fog
+and rain. After training, the trained models on the validation
+set of Rainy Cityscapes and Foggy Cityscapes with images of
+different intensity levels are evaluated. For the three intensity
+levels of fog and rain, as shown in Table IV, the ‘Baseline’
+model after domain adaptation could get better detection
+performance compared to the ‘Source only’ without DA, while
+the Proposed Method could continue to further improve the
+performance compared to the ‘Baseline’ method. Alternatively,
+our proposed DA method could significantly mitigate the
+impact of fog and rain under Small, Medium, and Large
+intensity levels.
+G. Adaptation of Cross Cameras
+Fig. 7. Visualization of the qualitative detection on Foggy/Rainy Cityscapes
+(validation sets). First column (Source only): original Faster R-CNN w/
+DA, Second column (Baseline): Faster R-CNN with image-level and object-
+level adaptations w/ GRL, Third column: Proposed DA Method. Top: foggy
+weather, Bottom: rainy weather.
+We conducted an experiment specifically targeting real-
+world cross-camera adaptation for different autonomous driv-
+ing datasets with varying camera settings. We applied our DA
+method for cross-camera adaptation i.e., Cityscapes dataset
+(source) →KITTI dataset (target). To accommodate the un-
+aligned nature of the datasets, we simply removed the LR
+obj
+term (Eq. 8) during the adaptation process. Following the pre-
+vious work [23], we used the KITTI training set, consisting of
+7,481 images as the target domain. Specifically, we evaluated
+the AP of the Car category on the target domain. Table V
+demonstrated the outstanding performance of our proposed
+DA+ method compared to recent comparison methods.
+domain. Table II presents the results of domain adaptation
+from clear to rainy weather. Due to the page limit, we choose
+the methods with the publicly available source code which
+perform very well in the Clear to Foggy Adaptation experiment
+as the comparison methods in this Clear to Rainy Adaptation
+experiment, i.e., DA-Faster [23], MS-DAYOLO [79]. Similar
+to the Clear to Foggy Adaptation, our proposed DA+ method
+got the best overall mAP (46.0%) detection performance on
+Rainy Cityscapes compared to the comparison methods.
+H. Feature Distribution Visualization via Adaptation
+To investigate the capability of our proposed DA method
+to overcome the domain shift (clear weather →rainy/foggy
+weather), we visualize these domain feature distributions by
+utilizing t-SNE [80] before and after the domain adaptation
+in foggy and rainy weather. Fig. 8 obviously presents that our
+proposed DA method could align the feature distributions to
+bridge the domain gap (clear weather →rainy/foggy weather).
+E. Ablation Study of Components
+We conduct an analysis of the individual proposed com-
+ponents of our DA object detection method. The experi-
+ments are conducted on the Cityscapes→Foggy Cityscapes
+and Cityscapes→Rainy Cityscapes tasks, using the ResNet-
+50 backbone. The results of the ablation study are pre-
+sented in Table III. In the first row of the table, image-
+level and object-level adaptation modules are labels as ‘img’
+and ‘obj’, respectively. ‘AdvGRL’ and ‘Reg’ indicate the
+proposed Adversarial GRL and domain-level metric regular-
+ization, respectively. The ‘img+obj+GRL’ configuration rep-
+resents the Baseline model used in our experiments. We also
+evaluate two additional configurations: ‘img+obj+AdvGRL’
+and ‘img+obj+AdvGRL+Reg’. Additionally, we include the
+‘Source only’ configuration, which refers to the Faster R-
+CNN model trained solely on labeled source domain images
+without any DA methods. The ablation study presented in
+Table III provides clear evidence of the positive impact of each
+proposed component in the DA method for both foggy and
+rainy weather scenarios. Furthermore, we provide qualitative
+visualization of the object detection results in Fig. 7.
+I. Experiments on Different Parameters
+We analyze the detection performance on different hyper-
+parameters in Section III, .i.e, Eq.9 and Eq.5 for the
+Cityscapes→Foggy
+Cityscapes
+case,
+and
+several
+hyper-
+parameters were investigated. First of all, mAPγ can be
+obtained mAP0.1 = 42.34, mAP0.01 = 41.30, mAP0.001 =
+41.19, where γ represents loss balance weight in Eq. 9. Then,
+in the AdvGRL (Eq. 5), the (α, β), where β represents the
+overflow threshold and α represents hardness threshold are
+set as (a) (0.63, 30), (b) (0.63, 10), (c) (0.54, 30), and (d)
+(0.54, 10), where α = 0.54 is obtained by averaging the values
+of Eq. 1 when Pi = 0.9, Gi = 1 and Pi = 0.1, Gi = 0. The
+corresponding detection mAP(s) are (a) 42.34, (b) 38.83, (c)
+39.38, (d) 40.47, respectively.
+F. Adaptation of Different-intensity Fog and Rain
+J. Visualization of Hard Examples
+By utilizing λadv of the proposed AdvGRL, we can identify
+hard examples during the domain adaptation process. Fig.9
+illustrates some of these hard examples. We compute the L1
+distance between the features F S
+i
+and F T
+i
+obtained from the
+Moreover, both simulated Foggy and Rainy Cityscapes
+datasets contain three levels of intensity, namely Small,
+Medium, and Large as depicted in Fig. 6. Following the
+previous works [23], [26], [54], we only utilize the Large
+2024 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:36:36 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object Detection in Adverse Weather for Autonomous Driving
+through Data Merging and YOLOv8.pdf_page26]
+Sensors 2023, 23, 8471
+26 of 29
+(a)
+(b)
+(c)
+(d)
+(e)
+(f)
+Figure A6. Some missed detections (test images from the ACDC and DAWN datasets) by our trained
+weight (MERGEDv5.pt) (except (a) that is detected by ’yolov8x.pt’). Different colors are used for
+different types of objects (0—person (red), 2—car (orange), 6—train (olive), 7—truck (green), 9—trafﬁc
+light (ocean blue)).
+References
+1.
+Taxonomy and Deﬁnitions for Terms Related to Driving Automation Systems for On-Road Motor Vehicles (J3016B). 2018.
+Available online: https://www.sae.org/standards/content/j3016_201806/ (accessed on 10 October 2023).
+2.
+Zhang, Y.; Carballo, A.; Yang, H.; Takeda, K. Perception and Sensing for Autonomous Vehicles under Adverse Weather Conditions:
+A Survey. ISPRS J. Photogramm. Remote Sens. 2023, 196, 146–177. [CrossRef]
+3.
+Bijelic, M.; Gruber, T.; Mannan, F.; Kraus, F.; Ritter, W.; Dietmayer, K.; Heide, F. Seeing through Fog without Seeing Fog: Deep
+Multimodal Sensor Fusion in Unseen Adverse Weather. In Proceedings of the 2020 IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR), Seattle, WA, USA, 13–19 June 2020; IEEE: New York, NY, USA, 2020.
+4.
+Lee, U.; Jung, J.; Shin, S.; Jeong, Y.; Park, K.; Shim, D.H.; Kweon, I.S. EureCar Turbo: A Self-Driving Car That Can Handle Adverse
+Weather Conditions. In Proceedings of the 2016 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS),
+Daejeon, Republic of Korea, 9–14 October 2016; IEEE: New York, NY, USA, 2016.
+5.
+Qian, K.; Zhu, S.; Zhang, X.; Li, L.E. Robust Multimodal Vehicle Detection in Foggy Weather Using Complementary Lidar and
+Radar Signals. In Proceedings of the 2021 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), Nashville,
+TN, USA, 20–25 June 2021; IEEE: New York, NY, USA, 2021.
+6.
+Mohammed, A.S.; Amamou, A.; Ayevide, F.K.; Kelouwani, S.; Agbossou, K.; Zioui, N. The perception system of intelligent
+ground vehicles in all weather conditions: A systematic literature review. Sensors 2020, 20, 6532. [CrossRef] [PubMed]
+7.
+Tao, N.; Xiangkun, J.; Xiaodong, D.; Jinmiao, S.; Ranran, L. Vehicle Detection Method with Low-Carbon Technology in Haze
+Weather Based on Deep Neural Network. Int. J. Low-Carbon Technol. 2022, 17, 1151–1157. [CrossRef]
+8.
+Tumas, P.; Nowosielski, A.; Serackis, A. Pedestrian Detection in Severe Weather Conditions. IEEE Access 2020, 8, 62775–62784.
+[CrossRef]
+9.
+Redmon, J.; Farhadi, A. YOLOv3: An Incremental Improvement. arXiv 2018, arXiv:1804.02767.
+
+---
+

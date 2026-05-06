@@ -8,7 +8,8 @@ AI-powered academic research agent with hybrid vision+text RAG for analyzing com
 
 ## Environment
 
-- Conda env: `ai_agent` (Python 3.10)
+- LLM Conda env: `ai_agent` (Python 3.10)
+- Agent core Conda env: `vision_agent` (Python 3.10)
 - Working directory: `/home/c2216-3090/disB/hyh/AI`
 
 ## Service startup order (all four required for full functionality)

@@ -1,0 +1,915 @@
+You are a professional academic text summarizer. Below are 10 noisy text snippets extracted from PDF papers.
+
+For each snippet, produce a concise academic summary in Chinese (≤200 words). Keep ALL specific model names (e.g. YOLOv8, DETR, ResNet-50), numerical metrics (mAP, AP50, F1, etc.), and key experimental findings. Use Markdown formatting.
+
+CRITICAL: Return ONLY a valid JSON array. Each element MUST have exactly two keys:
+  - "id": the exact data ID string as given (do not modify)
+  - "summary": your refined summary string (Markdown, ≤200 words)
+
+Example output:
+[{"id": "2403.02148_page5", "summary": "YOLOv8 在雾天场景下..."},
+ {"id": "2310.xxxxx_page3", "summary": "..."}]
+
+DO NOT add any text before or after the JSON array.
+
+============================================================
+
+[ID: Object Detection in Adverse Weather for Autonomous Driving
+through Data Merging and YOLOv8.pdf_page5]
+Sensors 2023, 23, 8471
+5 of 29
+driving footage from different American cities, including New York, Berkeley, and San
+Francisco. In addition to images of the usual weather, there are images of fog, rain, snow,
+clouds, overcast weather, and night light. Though the dataset is rich in terms of the
+number of images, it contains fewer images according to harsh weather features. Only
+23 fog images, 213 rain images, 765 snow images, and 345 night images are useful to
+contribute to learning the weather features [57]. Therefore, a manual search was required
+to elicit those useful images from the huge dataset, which might not be feasible, and it
+is better to focus on a different useful dataset containing more harsh weather images
+and feature diversity compared to natural weather conditions. A few other datasets
+also suffer from similar problems or associated shortcomings, which are summarized
+in Table 1. Therefore, we want to choose some perfect datasets with fewer images but
+more intensive features from a weather characteristics standpoint; then, we could extend
+our study later with more normal weather images. In such a manner, the “Adverse
+Condition Dataset with Correspondance” dataset [57], also known as the “ACDC dataset”
+(https://acdc.vision.ee.ethz.ch/ (accessed on 10 October 2023)), has 4006 camera images
+from Zurich (Switzerland) recorded in four weather conditions: rain, fog, snow, and night.
+The ACDC has all photos with one of any of the weather features and 4006 images that are
+evenly distributed for each weather characteristic, which was very useful despite having a
+much smaller number of images than the BDD or Eurocity datasets. Therefore, from the
+perspective of usefulness, this dataset was more prosperous than the other dataset described
+previously. The 19 classes provided by Cityscape [27] were annotated on the ACDC dataset
+using pixel-level semantic segmentation and a trustworthy ground truth. This paper
+tested multiple existing neural networks and compared their performance outcomes on the
+dataset. The “Vehicle Detection in Adverse Weather Nature” dataset [58], also known as
+the “DAWN dataset” (https://data.mendeley.com/datasets/766ygrbt8y/3 (accessed on
+10 October 2023)), which only contains 1027 photos gathered from web searches on Google
+and Bing, was another highly relevant dataset. However, it was selected for its extremely
+harsh weather qualities, which can serve as a real-world example for training and testing
+under adverse conditions. It also includes several sand storm images that offer distinctive
+aspects compared to the other datasets mentioned earlier. Seven thousand eight hundred
+forty-ﬁve bounding boxes for vehicles, buses, trucks, motorcycles, bicycles, pedestrians,
+and riders were labeled in the DAWN dataset and annotated by the LabelMe tool. The
+ACDC and DAWN datasets’ primary distinguishing feature includes having every image
+in adverse weather. Therefore, based on the above discussion, the criteria for choosing the
+datasets are clear now. However, we can collect them by manually selecting the relevant
+images from the abovementioned datasets, which might be time-consuming but relevant to
+extend this work further. However, we discovered that the ACDC and DAWN datasets
+were the most helpful for our analysis.
+Table 1. Usefulness and shortcomings of some relevant datasets.
+Datasets
+BDD [56]
+Eurocity [59]
+Mapillary [60]
+P.F.B. [61]
+ApolloScape [62]
+GLARE [63]
+No. of images
+100,000
+47,300
+25,000
+254,064
+143,906
+2157
+Huge number
+of images
+collected from
+various cities of
+USA.
+The most
+diverse dataset
+in the
+geographical
+context.
+Gathered from
+31 cities across
+12 European
+countries.
+Huge number
+of images.
+Contains sun
+glare images.
+Contains sun
+glare images.
+Pros
+Lower number
+of harsh
+weather
+images.
+Lower number
+of harsh
+weather
+images.
+Lower number
+of harsh
+weather images
+(artiﬁcial).
+Lower number
+of harsh
+weather
+images.
+Mainly focused
+on pedestrian
+detection.
+For trafﬁc sign
+detection only.
+Cons
+
+---
+
+[ID: Assessment_of_Efficient_and_Cost-Effective_Vehicle_Detection_in_Foggy_Weather.pdf_page2]
+2024 18th International Conference on Open Source Systems and Technologies (ICOSST)
+• To compare and analyze the vehicle detection results.
+The overall organization of the paper is as follows. Section I
+provides a concise introduction to vehicle detection in foggy
+weather. Section II presents a review of the literature. Section
+III, presents the research methodology, dataset selection and
+pre-processing, training and validation parameters setup, and
+performance metrics. Section IV provides the training and
+validation results. The comparison and analysis of results are
+also discussed. Section V concludes the research findings and
+highlights the future work directions.
+II. LITERATURE REVIEW
+Vehicle detection in normal weather is evaluated extensively
+using single-stage and two-stage deep learning algorithms on
+diverse datasets. A research gap still exists for efficient and
+cost-effective vehicle detection in foggy weather conditions.
+The YOLO series of algorithms has emerged as a potential
+solution for detecting vehicles at higher inference speeds with
+reasonable accuracy. The YOLO series of algorithms has
+evolved into many versions. The YOLO version 11 (YOLO-
+V11) architecture is mainly based on YOLO version 5 (YOLO-
+V5) and YOLO version 8 (YOLO-V8) algorithms.
+The YOLO-V11 network architecture comprises a backbone
+network, neck, and head. The backbone of YOLO-V11 con-
+sists of convolutional layers, C3k2 (faster implementation of
+Cross Stage Partial (CSP) bottlenecks with 2 convolutional
+layers) layers, Spatial Pyramid Pooling Fast (SPPF) module,
+and C2PSA (2 convolutional layers with Position Sensitive
+attention (PSA) mechanism) module. The backbone of YOLO-
+V11 efficiently extracts the spatial features for enhanced fea-
+ture extraction, processing, and pooling of features at diverse
+scales. The neck aggregates the features using bottom-up and
+top-down paths towards the detection head. The detection
+head detects the objects using pre-defined anchor boxes. The
+main difference between YOLO-V5, YOLO-V8, and YOLO-
+V11 is bottleneck modules. YOLO-V5 contains C3 bottle-
+neck modules, YOLO-V8 contains C2f modules, and YOLO-
+V11 contain C3k2 modules. The architectural diagram of the
+YOLO-V11 algorithm is illustrated in Fig. 2.
+A comprehensive overview of the related work is discussed
+in this section. A diverse set of experiments was performed to
+evaluate the vehicle detection efficiency and cost-effectiveness
+of YOLO-V5, YOLO-V5 variants, and YOLO-V8 algorithms
+on DAWN and FD datasets. The proposed YOLO-V5 variants
+were based on Common Block Attention Module (CBAM),
+Normalized Attention Module (NAM), and Simplified Atten-
+tion Module (SimAM) modules integrated into the backbone
+of the baseline YOLO-V5 algorithm. They also evaluated the
+performance of YOLO-V5l with the Feature Pyramid Pooling
+(FPN) path [5].
+Another study evaluated the performance of the YOLO-V5
+algorithm in adverse weather conditions [6]. The YOLO-V5n
+model is on the DAWN dataset using Google Colab with fog,
+transfer learning, fog with down-sampling, and fog with down-
+sampling with transfer learning. The mAP50 score on DAWN-
+fog is 88.3 %, DAWN-fog with transfer learning is 84.4 %,
+Fig. 2. YOLO-V11 network architecture
+DAWN-fog with down-sampling is 85 %, and DAWN-fog with
+down-sampling and transfer learning is 78.3 % [7].
+III. RESEARCH METHODOLOGY
+The steps of the research methodology consist of dataset
+selection and preprocessing, vehicle detection algorithm selec-
+tion, experimental parameters, and performance metrics. The
+research methodology is illustrated in Fig. 3. The Google Co-
+lab platform is utilized for Google Drive integration, YOLO-
+V11 code and datasets management, a rich set of resource
+utilization, and results storage. There are four training and four
+validation experiments using YOLO-V11 algorithm models
+performed separately for both DAWN and FD datasets. The
+details of dataset selection and pre-processing, experimental
+parameters, and performance metrics are discussed in the
+subsequent sections.
+A. Datasets Selection and Pre-Processing
+The state-of-the-art DAWN [8] [9] and FD [10] [11] datasets
+are selected for vehicle detection in foggy weather. The
+DAWN dataset consists of 1000 foggy images and the FD
+dataset consists of 101 foggy images in a diverse fog density
+for normal to highway driving scenarios. These datasets are
+self-annotated and customized for vehicle detection for buses,
+cars, motorcycles, and trucks. The holdout method is utilized
+for the training and validation images split with a ratio of 80
+% training and 20 % validation images. The state-of-the-art
+979-8-3315-0869-2/24/$31.00 2024 IEEE
+2
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:15 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page25]
+Algorithms 2024, 17, 103
+25 of 36
+6.3. Practical Implications
+The practical implementation of DL models for pedestrian and vehicle detection in AVs
+is a critical area of research as it directly impacts the safety and reliability of these systems.
+Studies such as Kim et al. [145] have demonstrated the effectiveness of CNNs in low-light
+conditions, a significant advancement for nighttime AV navigation. Lai et al. [147] have
+further optimized the Mask R-CNN algorithm for low-light environments, enhancing
+detection rates and computational efficiency. Montenegro et al. [152] have shown that
+YOLO-v5 can be fine-tuned to maintain high detection accuracy across varying lighting
+conditions, ensuring consistent performance for AVs. Zaman et al. [153] have addressed
+the challenge of adverse weather conditions, a common obstacle for AVs, by developing DL
+models that can adapt to weather-induced distortions, thereby improving system reliability.
+These studies have identified key performance indicators (KPIs) such as detection accuracy,
+false negative rate, computational efficiency, and real-time processing capabilities, which
+are essential for evaluating the practicality of DL models in AVs, as shown in Table 6. The
+challenges faced, including limited visibility and dynamic lighting conditions, have been
+mitigated through model optimization, data augmentation, and sensor fusion techniques.
+The insights from these studies are invaluable for AV developers as they provide a roadmap
+for creating systems that can operate effectively in a wide range of environmental conditions,
+bringing us closer to a future where autonomous vehicles are a safe and integral part of our
+transportation infrastructure.
+Table 6. Practical implications of DL approaches.
+Ref.
+Approach
+Practical Implications
+KPIs
+Challenges
+Addressing Challenges
+Utilizes CNNs trained
+on nighttime images to
+recognize pedestrian
+features, potentially
+reducing false negatives.
+Enhances pedestrian
+detection in low-light
+conditions, improving
+safety and navigation
+for AVs.
+Detection Accuracy,
+False Negative Rate,
+Computational
+Efficiency
+Limited visibility,
+background noise
+interference
+[145]
+CNN-based Human
+Detection at Nighttime
+Adjusts model
+parameters, uses data
+augmentation, and
+employs hardware
+acceleration for real-time
+processing.
+Tailors the Mask R-CNN
+algorithm for low-light
+environments,
+maintaining high
+detection rates.
+Optimization for
+low-light conditions,
+computational
+complexity
+Detection Accuracy,
+Precision, Recall,
+Real-time Processing
+[147]
+Optimized Mask R-CNN
+for Low-Light
+Pedestrian Detection
+Fine-tunes the YOLO-v5
+model on diverse
+datasets, ensuring
+generalization across
+different lighting
+scenarios.
+Demonstrates the
+versatility of YOLO-v5
+across different lighting
+conditions, ensuring
+consistent performance.
+Balancing speed with
+accuracy in
+varying lighting
+[152]
+YOLO-v5 for Pedestrian
+Detection in Daytime
+and Nighttime
+Detection Speed,
+Accuracy, Robustness
+Uses DL models that
+learn to recognize
+patterns despite weather
+distortions and integrate
+multi-sensor data for
+enhanced detection.
+Improves detection
+reliability in adverse
+weather, crucial for AV
+safety and functionality.
+[153]
+DL Approaches for
+Adverse Weather
+Detection
+Detection Accuracy,
+Robustness, System
+Reliability
+Degradation of
+performance due to
+weather conditions
+7. Discussion, Limitations, and Future Research Trends
+7.1. Discussion
+Recent literature highlights the increasing use of DL approaches for OD, yielding
+promising results under typical conditions. However, there is a pressing need for further
+advancements, particularly in adverse weather and complex scenarios. Enhancing OD
+in such conditions is crucial, especially for AVs, to prevent accidents and ensure safety.
+In the following discussion, we delve into the key insights and implications drawn from
+our research on OD in adverse weather conditions for AVs. Our research has explored
+both traditional and DL methods for AV object detection, focusing on vehicles, pedestrians,
+and road lanes. Traditional methods, despite their foundational role, struggle with high
+
+---
+
+[ID: MASFNet_Multiscale_Adaptive_Sampling_Fusion_Network_for_Object_Detection_in_Adverse_Weather.pdf_page4]
+4702815
+IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING, VOL. 63, 2025
+R(LF) j
+∈R(h/2)(w/2)16( j
+= 1, 2, 3, 4). After that, the
+R(LF) j enter the DConv with dilation of 1, 2, 3, and a 7 
+7 convolution to expand their receptive field. Dilation is set
+according to hybrid dilated convolution (HDC) [56]. Suppose
+we have N convolutional layers with kernel size K K that
+have dilation rates of [r1, . . . ,ri, . . . ,rn] the goal of HDC
+is to let the final size of the receptive field of a series of
+convolutional operations fully covers a square region without
+any holes or missing edges, which is expressed as
+Mi = max
+
+Mi+1 −2ri, Mi+1 −2(Mi+1 −ri),ri
+
+(2)
+in our design of the three DConvs, Mi = [1, 2, 3] and all
+convolutional kernel size are 3. Since we obtain [M2 = 2] ≤3,
+the HDC have been fulfilled.
+Three DConvs and one Conv are applied to generate four
+outputs, which are then concatenated to form the current
+feature map, denoted as D(LF) ∈R(h/2)(w/2)64. Then, the
+D(LF) passes through two CL blocks to restore the channel
+count to match the input, resulting in
+˜
+LF2 ∈R(h/2)(w/2)3.
+The first branch ˜LF, serves as the Laplace pyramid of output,
+while the second branch concatenates with LF1, which acts as
+the input feature map for the LAM. The detailed calculations
+are as follows:
+Fig. 3.
+Structure of the FAENet, which mainly consists of the RFEM, LAM,
+and ATEM. The Laplacian pyramid decomposition splits the input image into
+two different components, a LF and a HF.
+LF ∈R(h/2)(w/2)c, and HF is HF ∈Rhwc, where h 
+w is the height and width of the image and c indicates
+the channels. The network comprises three modules, each of
+which is designed to process LF and HF. The LF enters the
+RFEM with three branch outputs. The first two branches are
+concatenated and fed into the LAM for further enhancement.
+The other branch serves as the
+˜LF, awaiting fusion with the
+HF output. Concurrently, the HF enters the ATEM, where
+it is fused with the output of the LAM to obtain the
+˜
+HF.
+Finally, the Laplacian pyramid fusion
+˜
+HF and ˜LF to generate
+the final output feature map. These modules perform adaptive
+enhancement operations on the components to produce feature
+maps that are conducive to detection tasks.
+1) Receptive Field Fusion Enhancement Module: Inspired
+by atrous spatial pyramid pooling (ASPP) [54], we propose
+a RFEM to expand the receptive field in the LF for feature
+enhancement. In this module, we utilize dilation convolution
+(DConv) [55] with different levels of dilation to expand the
+receptive field of the image and perform multibranch fusion.
+As shown in Fig. 3, the RFEM consists of multiple CL
+blocks and DConv, where CL is used for basic feature extrac-
+tion and channel count adjustment. The computation process
+of the entire CL block is expressed as
+˜LF = C′
+D3(CR(LF))i(i=1,2,3) ⊙Conv77(R(LF)4)
+
+(3)
+where C and C′ denote the CL module for the initial and
+final processing of the feature map, respectively. D3 is the
+result of three DConvs with dilation of 1, 2, 3. ⊙denotes
+the concatenation operation. The RFEM expands the receptive
+field and enhances the feature information of the feature map.
+Ablation experiments demonstrate that the RFEM significantly
+contributes to improving the performance of image object
+detection in adverse weather conditions.
+2) Lightweight Attention Module: Considering the overall
+lightweight of the model, we embed the lightweight attention
+mechanism in the module. To better combine the LF output
+with the HF input, we utilize efficient channel attention
+(ECA) [57] and a 3 3 convolution to design a LAM.
+The structure of LAM is shown in Fig. 3, input feature map
+of LAM is denoted as F ∈R(h/2)(w/2)3. Not only does
+LAM enhance the feature information within F, but it also
+provides the capability to adjust the number of channels to
+be integrated with the FEM. First, F is divided into two
+branches: F1 ∈R(h/2)(w/2)3 and F2 ∈R(h/2)(w/2)3. After
+passing through the global average pooling (GAP) without
+dimensionality reduction, the F1 ∈R116 enters a 1 
+1 convolution where kernel size is adaptively determined based
+on the number of input channels to capture of local context
+information. Then, perform a sigmoid operation on F1. At this
+moment, the output of F1 after performing the above operation
+is defined as ˜F1 ∈R116. Finally, F1 and F2 perform the
+element-wise product operation obtain the ˜F ∈R(h/2)(w/2)6.
+Then, we utilize an adaptive convolution (AConv), which can
+adaptively select the kernel size and is expressed as
+CL(X) = LeakyReLU(N(Conv33(X)))
+(1)
+where X represents the input feature map, Conv33 denotes
+the 3 3 convolution, N is the normalization operation, and
+LeakyReLU is the activation function.
+Then, we denote DConvi as the dilated convolution, where
+i is denoted as the dilation. When LF enters the RFEM,
+it will be divided into two identical branches, they have
+the same channels, and the three branches are denoted as
+LFi ∈R(h/2)(w/2)3(i = 1, 2). After passing through two CL
+blocks, the number of channels in LF2 changes from 3 to 64,
+obtaining richer feature information. The feature map at this
+point is denoted as R(LF) ∈R(h/2)(w/2)64. Then, we utilize
+the matrix splitting operation to split R(LF) into four branches
+K =
+log2(C) + b
+(4)
+γ
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:54 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Multi-Task Learning for UAV Aerial Object Detection in Foggy
+Weather Condition.pdf_page11]
+Remote Sens. 2023, 15, 4617
+11 of 18
+on professional dataset, as shown in Figure 8. It can be found that ODFC-YOLO can adapt
+to different lighting conditions, which is crucial for target detection in various scenarios.
+Figure 6. Detection results of our ODFC-YOLO and other advanced detection methods on Foggy Driv-
+ing dataset. Obviously, the proposed ODFC-YOLO can detect more objects with higher conﬁdence.
+Table 3. Performance comparisons of our ODFC-YOLO with other advanced detection methods on
+the RTTS dataset.
+Methods
+Person
+Bicyle
+Car
+Motorbike
+Bus
+mAP
+YOLOXs
+80.88
+64.27
+56.39
+52.74
+29.60
+56.74
+YOLOXs*
+76.28
+60.44
+64.73
+50.06
+24.86
+55.04
+AOD-YOLOXs*
+77.26
+62.43
+56.70
+53.45
+30.01
+55.83
+GCA-YOLOXs*
+79.12
+67.10
+56.41
+58.68
+34.17
+58.64
+DCP-YOLOXs*
+78.69
+67.99
+55.50
+57.57
+33.27
+58.32
+FFA-YOLOXs*
+77.12
+66.51
+64.23
+40.64
+23.71
+52.64
+MS-DAYOLO
+74.22
+44.13
+70.91
+38.64
+36.54
+57.39
+DS-Net
+68.81
+18.02
+46.13
+15.15
+15.44
+32.71
+IA-YOLO
+67.25
+35.84
+42.65
+22.52
+17.64
+37.89
+TogetherNet
+82.70
+57.27
+75.31
+55.40
+37.04
+61.55
+Ours
+79.63
+68.71
+74.26
+68.41
+34.23
+62.05
+Figure 7. Detection results of our ODFC-YOLO and other advanced detection methods on real-world
+foggy dataset (RTTS).
+
+---
+
+[ID: MASFNet_Multiscale_Adaptive_Sampling_Fusion_Network_for_Object_Detection_in_Adverse_Weather.pdf_page9]
+LIU et al.: MASFNet: MULTISCALE ADAPTIVE SAMPLING FUSION NETWORK FOR OBJECT DETECTION
+4702815
+Fig. 6.
+Detection results of different methods in misty scenarios on the RTTS dataset. The detection results by (a) Cascade-RCNN [40], (b) CenterNet [43],
+(c) AOD-Net [63], (d) GDIP-YOLO [22], (e) IA-YOLO [9], (f) TogetherNet [50], (g) MASFNet (Ours), and (h) GT. Our MASFNet performs well on real-world
+adverse weather datasets and discerns more targets with higher confidence.
+Fig. 7. Detection results of different methods in mid-foggy scenarios on the RTTS dataset. The detection results by (a) Cascade-RCNN [40], (b) CenterNet [43],
+(c) AOD-Net [63], (d) GDIP-YOLO [22], (e) IA-YOLO [9], (f) TogetherNet [50], (g) MASFNet (Ours), and (h) GT. Our MASFNet performs well on real-world
+adverse weather datasets and discerns more targets with higher confidence.
+Fig. 8. Detection results of different methods in high foggy scenarios on the RTTS dataset. The detection results by (a) Cascade-RCNN [40], (b) CenterNet [43],
+(c) AOD-Net [63], (d) GDIP-YOLO [22], (e) IA-YOLO [9], (f) TogetherNet [50], (g) MASFNet (Ours), and (h) GT. Our MASFNet performs well on real-world
+adverse weather datasets and discerns more targets with higher confidence.
+detect all the targets. By comparing with other methods, it can
+be found that the detection performance of the MASFNet
+in mist scenarios is obviously better than other methods.
+Fig. 7 shows the comparison results of the visualization of
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:54 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: CoDerainNet: Collaborative Deraining Network for
+Drone-view Object Detection in Rainy Weather Conditions.pdf_page12]
+Remote Sens. 2023, 15, 1487
+12 of 21
+Figure 6. Curves of LDR on the training set for medium rain.
+Figure 7. Curves of LDR and PSNR with ColTeaching.
+5.3.2. Comparison of Different Implementations of Our ColTeaching
+We further investigated three implementations of ColTeaching to select an optimal
+conﬁguration of the deraining feature extractor. The ﬁrst implementation, called “Baseline
+w Conv_1”, adopts the ﬁrst two convolution blocks of the detection subnetwork as the
+deraining feature extractor. The second implementation, called “Baseline w Conv_2”,
+adopts one more convolution block to learn deeper features. We continue exploring the
+deeper features as the deraining feature extractor with the ﬁnal implementation, called
+“Baseline w Conv_3”, which uses all convolution blocks. Table 3 compares the DroneDet
+accuracy of CoDerainNet with different convolution blocks. The experimental results
+demonstrate that “Baseline w Conv_1” can obtain the best DroneDet performance.
+To interpret the improved performance, note that, compared with Conv_2 and Conv_3,
+features extracted by Conv_1 have the maximum resolution and hence contain the richest
+spatial details. Deraining features extracted with the deeper convolutional blocks (Conv_2
+or Conv_3) contain less amount of spatial details due to their low resolution. The visibility
+enhancement for input images of these features is limited, which leads to the poor quality
+of features for the DroneDet Subnetwork.
+5.3.3. Learning Curves of the Proposed Deraining Subnetwork
+We aimed to verify that the proposed Deraining Subnetwork can converge stably
+during training and effectively remove rain streaks in a rainy image. The dataset consists of
+images selected randomly from our RainVisDrone for image deraining. It has 432 training
+pairs of rainy and clean images and another 20 pairs for evaluation, which is the same
+as DnCNN [41]. The resolution of the training patches randomly cropped from their
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page31]
+Algorithms 2024, 17, 103
+31 of 36
+23.
+Bimbraw, K. Autonomous cars: Past, present and future a review of the developments in the last century, the present scenario and
+the expected future of autonomous vehicle technology. In Proceedings of the 2015 12th International Conference on Informatics
+in Control, Automation and Robotics (ICINCO), Colmar, France, 21–23 July 2015; Volume 1, pp. 191–198.
+24.
+Lafrance, A. Your Grandmother’s Driverless Car. The Atlantic, 29 June 2016. Available online: https://www.theatlantic.com/
+technology/archive/2016/06/beep-beep/489029/ (accessed on 27 October 2023).
+25.
+Pomerleau, D.A. Alvinn: An autonomous land vehicle in a neural network. In NIPS’88: Proceedings of the 1st International
+Conference on Neural Information Processing Systems, 1 January 1988; MIT Press: Cambridge, MA, USA; pp. 305–313.
+26.
+SAE International. Surface Vehicle Recommended Practice. Joint SAE/RCCC Fuel Consumption Test Procedure (Short Term
+in-Service Vehicle) Type I. 1986. Available online: https://ca-times.brightspotcdn.com/54/02//j3
+016-202104.pdf (accessed on 1 May 2021)
+27.
+How Google’s Autonomous Car Passed the First US State Self-Driving Test. 2014. Available online: https://spectrum.ieee.org/
+how-googles-autonomous-car-passed-the-first-us-state-selfdriving-test (accessed on 31 December 2023).
+28.
+Claire, P. The Pathway to Driverless Cars: Summary Report and Action Plan; OCLC: London, UK, 2015.
+29.
+Briefs, U. Mcity Grand Opening. Res. Rev. 2015, 46, 1–3.
+30.
+Bellone, M.; Ismailogullari, A.; Mr, J.; Nissin, O.; Sell, R.; Soe, R.M. Autonomous driving in the real-world: The weather
+challenge in the Sohjoa Baltic project. In Towards Connected and Autonomous Vehicle Highways: Technical, Security and Social
+Challenges; Springer International Publishing: Cham, Switzerland, 2021; pp. 229–255.
+31.
+Lambert, F. Watch Tesla Autopilot Go through a Snowstorm. Available online: https://electrek.co/2019/01/28/tesla-autopilot-
+snow-storm/ (accessed on 2 January 2023).
+32.
+EUR-Lex. E.L. EUR-Lex-32019R2144-EN-EUR-Lex. 2014. Available online: https://eur-lex.europa.eu/legal-content/en/ALL/
+?uri=CELEX%3A32019R2144 (accessed on 13 October 2023).
+33.
+Waymo, W. Waymo Safety Report. 2020. Available online: https://waymo.com/safety/ (accessed on 18 August 2023).
+34.
+Gehrig, S.K.; Stein, F.J. Dead reckoning and cartography using stereo vision for an autonomous car. In Proceedings of the 1999
+IEEE/RSJ International Conference on Intelligent Robots and Systems. Human and Environment Friendly Robots with High
+Intelligence and Emotional Quotients (Cat. No.99CH36289), Kyongju, Republic of Korea, 17–21 October 1999; Volume 3, pp.
+1507–1512. [CrossRef]
+35.
+Rawashdeh, N.A.; Bos, J.P.; Abu-Alrub, N.J. Drivable path detection using CNN sensor fusion for autonomous driving in the
+snow. In Proceedings of the SPIE 11748, Autonomous Systems: Sensors, Processing, and Security for Vehicles and Infrastructure
+2021, Online, FL, USA, 12–17 April 2021; Volume 1174806. [CrossRef]
+36.
+Thrun, S.; Montemerlo, M.; Dahlkamp, H.; Stavens, D.; Aron, A.; Diebel, J.; Fong, P.; Gale, J.; Halpenny, M.; Hoffmann, G.; et al.
+Stanley: The robot that won the DARPA Grand Challenge. J. Field Robot. 2006, 23, 661–692. [CrossRef]
+37.
+Carballo, A.; Lambert, J.; Monrroy, A.; Wong, D.; Narksri, P.; Kitsukawa, Y.; Takeuchi, E.; Kato, S.; Takeda, K. LIBRE: The multiple
+3D LiDAR dataset. In Intelligent Vehicles Symposium (IV), Las Vegas, NV, USA, 19 October–13 November 2020; pp. 1094–1101.
+[CrossRef]
+38.
+Velodyne, HDL-64E Spec Sheet. Available online: https://velodynesupport.zendesk.com/hc/en-us/articles/
+-HDL-64E-Spec-Sheet (accessed on 13 October 2023).
+39.
+Bijelic, M.; Gruber, T.; Ritter, W. A benchmark for lidar sensors in fog: Is detection breaking down? In Proceedings of the
+Intelligent Vehicles Symposium (IV), Changshu, China, 26–30 June 2018; pp. 760–767. [CrossRef]
+40.
+Patole, S.M.; Torlak, M.; Wang, D.; Ali, M. Automotive radars: A review of signal processing techniques. IEEE Signal Process.
+Mag. 2017, 34, 22–35. [CrossRef]
+41.
+Navtech Radar, FMCW Radar. Available online: https://navtechradar.com/explore/fmcw-radar/ (accessed on 22 November 2021).
+42.
+Carullo, A.; Parvis, M. An ultrasonic sensor for distance measurement in automotive applications. IEEE Sens. J. 2001, 1, 143.
+[CrossRef]
+43.
+Frenzel, L.
+Ultrasonic Sensors:
+A Smart Choice for Shorter-Range Applications.
+2018.
+Available online:
+https:
+//www.electronicdesign.com/industrialautomation/article/21806202/ultrasonic-sensors-a-smart-choicefor-shorterrange-
+applications (accessed on 14 August 2023).
+44.
+Kamemura, T.; Takagi, H.; Pal, C.; Ohsumi, A. Development of a long-range ultrasonic sensor for automotive application. SAE
+Int. J. Passeng. Cars-Electron. Electr. Syst. 2008, 1, 301–306. [CrossRef]
+45.
+Tesla, Summon Your Tesla from Your Phone. Available online: https://www.tesla.com/blog/summon-your-tesla-your-phone
+(accessed on 2 November 2023).
+46.
+Pendleton, S.D.; Andersen, H.; Du, X.; Shen, X.; Meghjani, M.; Eng, Y.H.; Rus, D.; Ang, M.H., Jr. Perception, planning, control,
+and coordination for autonomous vehicles. Machines 2017, 5, 6. [CrossRef]
+47.
+Nasseri, A.; Shlomit, H. Autonomous Vehicle Technology Report. 2020. Available online: https://www.wevolver.com/article/
+(accessed on 28 October 2023).
+48.
+Rosique, F.; Navarro, P.J.; Fernndez, C.; Padilla, A. A systematic review of perception system and simulators for autonomous
+vehicles research. Sensors 2019, 19, 648. [CrossRef] [PubMed]
+49.
+Paden, B.; ˇCp, M.; Yong, S.Z.; Yershov, D.; Frazzoli, E. A survey of motion planning and control techniques for self-driving
+urban vehicles. IEEE Trans. Intell. Veh. 2016, 1, 33–55. [CrossRef]
+
+---
+
+[ID: Object_Detection_With_Physical_Prior_and_AWConv_in_Foggy_Weather_for_Traffic_Scenes.pdf_page3]
+This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+HAN et al.: OBJECT DETECTION WITH PHYSICAL PRIOR AND AWConv IN FOGGY WEATHER
+3
+has gradually become a key approach to improving model
+performance. Common networks used for feature extraction
+include ResNet [23] and CSPDarknet [4], which enhance the
+model’s feature representation ability through deep convolu-
+tional layers and residual connections. Feature fusion, on the
+other hand, depends on structures, such as feature pyramid
+networks (FPNs) [24] or path aggregation networks (PANs)
+[25], which improve detection performance by integrating
+multiscale features. On this basis, some structures improve the
+traditional modules [26]. The ﬁne-grained multilevel fusion
+structure [27] eﬀectively integrates depth and semantic infor-
+mation at diﬀerent levels to improve feature expressiveness.
+CATNet [28] enhances the global perception at multiple lev-
+els by introducing context modeling in the feature, spatial,
+and instance domains. Unlike traditional FPN or PAN, these
+methods focus more on contextual modeling and ﬁne-grained
+fusion in their architectural design, making the model more
+robust in challenging scenarios such as occlusion.
+The current object detection methods can be mainly clas-
+siﬁed into three categories. One class is the two-stage object
+detection methods based on candidate regions, such as the
+R-CNN series [3], [29], [30], [31], [32], [33], [34], which
+have high-detection accuracy but relatively slow inference
+speed. Another class is one-stage object detection methods,
+such as YOLO series [4], [5], [6], [7], [8], [9], [12], which
+signiﬁcantly improve the detection eﬃciency while main-
+taining higher accuracy, and are suitable for scenarios with
+higher real-time requirements. The third class is Transformer-
+based [35], [36], [37] object detection methods, such as
+DETR [35] and its improved versions, which achieve end-to-
+end prediction through global modeling capability, but their
+inference eﬃciency is low. For this reason, RT-DETR [38]
+and RT-DETRv2 [39] simplify the original structure, which
+signiﬁcantly improves the accuracy while maintaining the real-
+time performance, thereby expanding the application boundary
+of the Transformer-based approaches.
+In recent years, scholars have proposed various improve-
+ments to various classical object detectors and applied them to
+a variety of detection scenarios [40]. Slide-Transformer [41]
+proposes sliding attention, which utilizes common convolu-
+tional operations for high eﬃciency, ﬂexibility, and generality.
+FCFPN [42] proposes a foreground-guided feature fusion
+network for the problem of insuﬃcient feature learning
+in complex contexts, which can capture more foreground
+semantic features. Compared with traditional methods, these
+improved methods show greater advantages in complex sce-
+narios and real-time demanding tasks.
+mance [43], [44], [45], [46], [47]. IA-YOLO [43] proposes
+an image adaptive framework that improves robustness for
+detecting low-quality images. YOLOv3 En [45] introduces an
+image enhancement-guided object detection approach, which
+achieves end-to-end optimization of image enhancement and
+detection tasks. MSFFA-YOLO [46] presents the multiscale
+feature fusion attention structure for visibility enhancement
+in foggy weather. CPA-Enhancer [47] is based on receptive-
+ﬁeld attention convolution and integrates both channel and
+spatial attention mechanisms. It progressively enhances image
+quality without the need to preidentify the type of degradation,
+achieving a 1.8% improvement in mAP@0.5 on the RTTS
+dataset. Although image restoration methods can be ﬂexibly
+combined with various detectors, the improvement in image
+quality does not necessarily favor the detection performance
+(see the discussion in Section IV), and thus detection remains
+limited under severely degraded conditions.
+The core of the DA approach is to reduce the domain
+gap between normal and adverse weather, thus improving
+the cross-domain capability of the model. R-YOLO [48]
+designs an image quasi-translation network and a feature
+calibration network to gradually adapt the normal weather
+domain to the adverse weather domain. LRA [49] focuses on
+performing cross-domain alignment of box-localized branches,
+addressing the issue that existing methods ignore regression
+alignment. DAFormer [50], based on Transformer and incor-
+porates adaptive strategies for end-to-end training, signiﬁcantly
+improving the performance of unsupervised DA in semantic
+segmentation, providing valuable insights for object detection.
+Although such methods do not rely on annotations under
+adverse weather, most are still based on two-stage detectors,
+which involve high training complexity and remain prone to
+negative transfer because of domain shift. For example, on
+the Foggy Cityscapes dataset, R-YOLO achieves only 49.5%
+mAP@0.5, indicating substantial room for improvement.
+In conclusion, most methods are designed for normal
+weather, making them prone to missed and false detections
+under adverse weather. Meanwhile, the adaptability of existing
+object detection methods in foggy conditions remains subopti-
+mal. Improving object R while maintaining detection accuracy
+is still an important direction of current research.
+III. PROPOSED METHOD
+Our model is an anchor-free object detector consisting of a
+physical prior-based image-defogging algorithm, a backbone
+network with AWConv, an eﬃcient and fast PAN–FPN feature
+fusion network, and three decoupling heads with speciﬁc tasks.
+B. Object Detection in Foggy Weather
+A. Gamma Correction
+Compared with general object detection, there are fewer
+studies on object detection for traﬃc scenes under adverse
+weather conditions. Currently, there are two main approaches
+to address the diﬃculty of object detection caused by image
+quality degradation in adverse weather, one is the object
+detection method based on image restoration, and the other
+is the cross-domain detection method based on DA.
+Image restoration methods improve the image quality
+through preprocessing, thus enhancing the detection perfor-
+Gamma correction [51] is an image enhancement method
+that conforms to the visual characteristics of the human eye.
+By applying a nonlinear transformation to the pixel values
+of the input image, it balances overly dark or bright regions,
+thereby improving image visibility. This is particularly impor-
+tant for processing low-light, foggy, or low-contrast images,
+which helps enhance feature separability, as shown in the
+following equation:
+f (I) = Iγ
+(1)
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:23 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Multi-Task Learning for UAV Aerial Object Detection in Foggy
+Weather Condition.pdf_page9]
+Remote Sens. 2023, 15, 4617
+9 of 18
+Foggy Driving dataset [49], VisDrone [6] UAV aerial photography dataset and Real-world
+Task-driven Testing Set (RTTS) [14] are used for testing sets. All experiments are con-
+ducted using the Pytorch framework and run on 2 NVIDIA GeForce RTX 3090 GPUs for
+better performance.
+4.1. Datasets
+Considering the limited number of publicly datasets available for object detection
+under severe weather conditions, inspired by the Liu et al. [16], we generate a synthetic
+foggy dataset, called VOC-Foggy by adding haze to the PASCAL-VOC dataset. The
+atmospheric scattering model is used to generate the foggy images, and it is mathematically
+represented as follows:
+I(x) = J(x)e−βd(x) + A(1 −e−βd(x)),
+(4)
+where I(x) refers to the hazy images and J(x) is the clean images, the global atmospheric
+light component, denoted by A, which is set to 0.5. e−βd(x) represents the atmospheric
+transmission coefﬁcient, β is set to 0.01 ∗i + 0.05, and i can take an integer between 0 and 9.
+The value of d(x) is given by:
+d(x) = −0.04 ∗ρ +
+q
+max(row, col),
+(5)
+where ρ denotes the Euclidean distance between the current position and the center pixel,
+and row and col correspond to the number of rows and columns in the image, respectively.
+Table 1 presents the total number of images and instances per class for the used dataset.
+The RTTS dataset contains annotated real-world haze images 5 categories (cars, people,
+bused, bicycles, motorcycles), with a total of 4322 images. It is currently the largest real-
+world foggy object detection dataset. The Foggy Driving dataset consists 101 annotated
+images that depicting real-world foggy driving scenarios with 8 categories (car, bus, train,
+truck, bicycle, person, rider and motorcycle). In order to maintain the consistency of our
+experiments, we only select the same 5 categories for testing in the Foggy Driving dataset
+as in the RTTS dataset.
+Table 1. For statistics on the total number of images and the number of instances per class for
+all datasets used, including voc-fog-tv (VOC-Foggy-train), voc-fog-ts (VOC-Foggy-test), RTTS and
+FoggyD (Foggy Driving dataset). We select only ﬁve classes from the dataset: car, person, bus, bicycle
+(bic), motorcycle (motc).
+Dataset
+Images
+Person
+Bic
+Car
+Bus
+Motc
+Total
+voc-fog-tv
+8111
+13,256
+1064
+3267
+822
+1052
+19,561
+voc-fog-ts
+2734
+4528
+377
+1201
+211
+325
+6604
+RTTS
+4322
+7950
+534
+18,413
+1838
+862
+29,577
+FoggyD
+101
+269
+17
+425
+17
+9
+737
+4.2. Training Settings
+We employ the SGD optimizer with an initial learning rate of 1 10−2 to train our
+proposed ODFC-YOLO model. The total training epochs and batch size are to 100 and 32,
+respectively and the learning rate is adjusted dynamically during training using a cosine
+annealing decay strategy. Additionally, we do not use image augmentation techniques,
+commonly used in YOLO-based models, since these techniques would increase the difﬁculty
+of reconstructing images for the dehazing subnet, resulting in poor performance of the
+object detector. We set the image size for training and testing to 640 640 pixels.
+
+---
+

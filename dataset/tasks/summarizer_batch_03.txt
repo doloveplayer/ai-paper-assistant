@@ -1,0 +1,736 @@
+You are a professional academic text summarizer. Below are 10 noisy text snippets extracted from PDF papers.
+
+For each snippet, produce a concise academic summary in Chinese (≤200 words). Keep ALL specific model names (e.g. YOLOv8, DETR, ResNet-50), numerical metrics (mAP, AP50, F1, etc.), and key experimental findings. Use Markdown formatting.
+
+CRITICAL: Return ONLY a valid JSON array. Each element MUST have exactly two keys:
+  - "id": the exact data ID string as given (do not modify)
+  - "summary": your refined summary string (Markdown, ≤200 words)
+
+Example output:
+[{"id": "2403.02148_page5", "summary": "YOLOv8 在雾天场景下..."},
+ {"id": "2310.xxxxx_page3", "summary": "..."}]
+
+DO NOT add any text before or after the JSON array.
+
+============================================================
+
+[ID: Multi-Task Learning for UAV Aerial Object Detection in Foggy
+Weather Condition.pdf_page18]
+Remote Sens. 2023, 15, 4617
+18 of 18
+51.
+Wang, Y.; Yan, X.; Zhang, K.; Gong, L.; Xie, H.; Wang, F.L.; Wei, M. TogetherNet: Bridging Image Restoration and Object Detection
+Together via Dynamic Enhancement Learning. Comput. Graph. Forum 2022 , 41, 465–476. [CrossRef]
+52.
+Li, J.; Zhou, P.; Chen, Y.; Zhao, J.; Roy, S.; Shuicheng, Y.; Feng, J.; Sim, T. Task relation networks. In Proceedings of the 2019
+IEEE Winter Conference on Applications of Computer Vision (WACV), Waikoloa Village, HI, USA, 7–11 January 2019; IEEE:
+Manhattan, NY, USA, 2019; pp. 932–940.
+53.
+Yu, J.; Jiang, Y.; Wang, Z.; Cao, Z.; Huang, T. Unitbox: An advanced object detection network. In Proceedings of the 24th ACM
+International Conference on Multimedia, Amsterdam, The Netherlands, 15–19 October 2016; pp. 516–520.
+54.
+He, K.; Sun, J.; Tang, X. Single image haze removal using dark channel prior. IEEE Trans. Pattern Anal. Mach. Intell. 2010,
+33, 2341–2353. [PubMed]
+55.
+Li, B.; Peng, X.; Wang, Z.; Xu, J.; Feng, D. Aod-net: All-in-one dehazing network. In Proceedings of the IEEE International
+Conference on Computer Vision, Venice, Italy, 22–29 October 2017; pp. 4770–4778.
+56.
+Chen, D.; He, M.; Fan, Q.; Liao, J.; Zhang, L.; Hou, D.; Yuan, L.; Hua, G. Gated context aggregation network for image dehazing
+and deraining. In Proceedings of the 2019 IEEE Winter Conference on Applications of Computer Vision (WACV), Waikoloa
+Village, HI, USA, 7–11 January 2019; IEEE: Manhattan, NY, USA, 2019; pp. 1375–1383.
+57.
+Qin, X.; Wang, Z.; Bai, Y.; Xie, X.; Jia, H. FFA-Net: Feature fusion attention network for single image dehazing. In Proceedings of
+theAAAI Conference on Artiﬁcial Intelligence, New York, NY, USA, 7–12 February 2020; Volume 34, pp. 11908–11915.
+Disclaimer/Publisher’s Note: The statements, opinions and data contained in all publications are solely those of the individual
+author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to
+people or property resulting from any ideas, methods, instructions or products referred to in the content.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page13]
+Algorithms 2024, 17, 103
+13 of 36
+3.
+Road Lane Detection: Road lane detection is the ability of AVs to identify and under-
+stand the position and orientation of road lanes. This information is essential for the
+vehicle to navigate within its designated lane, follow traffic rules, and make correct
+turns, ensuring a smooth and safe driving experience.
+
+
+[TABLE_2_PLACEHOLDER]
+
+
+
+
+[TABLE_0_PLACEHOLDER]
+
+
+
+
+[TABLE_3_PLACEHOLDER]
+
+
+Figure 7. The basic framework for object detection systems.
+5. Overview of Traditional and DL Approaches for Object Detection in AVs
+The detection techniques are composed of three parts: the DL approach, the traditional
+technique, and a hybrid approach that utilizes both. The DL and traditional techniques are
+explained in detail in the section that follows. The performance graph of both approaches
+is shown in Figure 8.
+Deep learning
+performance
+Traditional 
+approaches
+Data
+Figure 8. Performance graph of traditional and DL approaches.
+5.1. Traditional Approach
+Various algorithms were developed for the purpose of OD. Prominent traditional
+feature extraction methods include Scale Invariant Feature Transform (SIFT) [83], Viola–
+Jones rectangles [84], Haar-Like-wavelets and Histogram of Oriented Gradient (HOG) [85],
+Adaptive Boosting (AdaBoost), non-linear Support Vector Machines (SVMs), and linear
+SVMs, which are common classical approaches for object classification. A number of steps
+are involved in the SIFT algorithm [83], which is well known for its ability to determine
+scale and rotation-invariant features, making it resistant to partial occlusion, clutter, noise,
+and lighting variations. These include the detection of scale-space extrema, the localization
+of key points, the assignment of orientations, the creation of keypoint descriptors, and
+the final step of using key point matching to recognize objects. Descriptors are used to
+compare and identify items in a database using methods like nearest neighbor indexing
+and the Hough transform. Nevertheless, SIFT has some drawbacks, including the absence
+of ongoing key point consistency in dynamic objects, the significant dimensions of feature
+descriptors that can affect matchmaking, and some restrictions related to patents.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page34]
+Algorithms 2024, 17, 103
+34 of 36
+97.
+Tian, Z.; Shen, C.; Chen, H.; He, T. Fcos: Fully convolutional one-stage object detection. In Proceedings of the 2019 IEEE/CVF
+International Conference on Computer Vision (ICCV), Seoul, Republic of Korea, 27 October–2 November 2019; pp. 9626–9635.
+[CrossRef]
+98.
+Lin, T.Y.; Goyal, P.; Girshick, R.; He, K.; Dollr, P. Focal loss for dense object detection.
+In Proceedings of the 2017 IEEE
+International Conference on Computer Vision (ICCV), Venice, Italy, 22–29 October 2017; pp. 2999–3007. [CrossRef]
+99.
+Galvao, L.G.; Abbod, M.; Kalganova, T.; Palade, V.; Huda, M.N. Pedestrian and vehicle detection in autonomous vehicle
+perception systems—A review. Sensors 2021, 21, 7267. [CrossRef]
+100. Jocher, G. Ultralytics/Yolov8, GitHub, GitHub Repository. 2023. Available online: https://github.com/ultralytics/ultralytics
+(accessed on 15 December 2023).
+101. Jia, S.J.; Zhai, Y.T.; Jia, X.W. Detection of Traffic and Road Condition Based on SVM and PHOW. Appl. Mech. Mater. 2014,
+513, 3651–3654. [CrossRef]
+102. Gao, D.; Zhou, J.; Xin, L. SVM-based detection of moving vehicles for automatic traffic monitoring. In Proceedings of the ITSC
+2001. 2001 IEEE Intelligent Transportation Systems. Proceedings (Cat. No.01TH8585), Oakland, CA, USA, 25–29 August 2001;
+pp. 745–749. [CrossRef]
+103. Zheng, F.; Luo, S.; Song, K.; Yan, C.W.; Wang, M.C. Improved lane line detection algorithm based on Hough transform. Pattern
+Recognit. Image Anal. 2018, 28, 254–260. [CrossRef]
+104. Vamsi, A.M.; Deepalakshmi, P.; Nagaraj, P.; Awasthi, A.; Raj, A. IOT based autonomous inventory management for warehouses.
+In EAI International Conference on Big Data Innovation for Sustainable Cognitive Computing; Haldorai, A., Ramu, A., Mohanram, S.,
+Onn, C., Eds.; EAI/Springer Innovations in Communication and Computing; Springer: Cham, Switzerland, 2020; pp. 371–376.
+105. Nagaraj, P.; Muneeswaran, V.; Sudar, K.M.; Ali, R.S.; Someshwara, A.; Kumar, T.S. Internet of Things based smart hospital saline
+monitoring system. In Proceedings of the 2021 5th International Conference on Computer, Communication and Signal Processing
+(ICCCSP), Chennai, India, 24–25 May 2021; pp. 53–58. [CrossRef]
+106. Wang, Z.; Zhan, J.; Duan, C.; Guan, X.; Yang, K. Vehicle detection in severe weather based on pseudo-visual search and HOG–LBP
+feature fusion. Proc. Inst. Mech. Eng. Part D J. Automob. Eng. 2022, 236, 1607–1618. [CrossRef]
+107. Abdullah, M.N.; Ali, Y.H. Vehicles detection system at different weather conditions. Iraqi J. Sci. 2021, 62, 2040–2052. [CrossRef]
+108. Wu, B.F.; Juang, J.H. Adaptive vehicle detector approach for complex environments. IEEE Trans. Intell. Transp. Syst. 2012,
+13, 817–827. [CrossRef]
+109. Padilla, D.A.; Villaverde, J.F.; Magdaraog, J.J.T.; Oconer, A.J.L.; Ranjo, J.P. Vehicle and Weather Detection Using Real Time Image
+Processing Using Optical Flow and Color Histogram. In Proceedings of the 2019 5th International Conference on Control,
+Automation and Robotics (ICCAR), Beijing, China, 19–22 April 2019; pp. 880–883. [CrossRef]
+110. Tian, Q.; Zhang, L.; Wei, Y.; Zhao, W.; Fei, W. Vehicle Detection and Tracking at Night in Video Surveillance. Int. J. Online Eng.
+2013, 9, 60–64. [CrossRef]
+111. Kuang, H.; Chen, L.; Chan, L.L.H.; Cheung, R.C.; Yan, H. Feature selection based on tensor decomposition and object proposal
+for night-time multiclass vehicle detection. IEEE Trans. Syst. Man Cybern. Syst. 2018, 49, 71–80. [CrossRef]
+112. Ewecker, L.; Asan, E.; Ohnemus, L.; Saralajew, S. Provident vehicle detection at night for advanced driver assistance systems.
+Auton. Robot. 2023, 47, 313–335. [CrossRef]
+113. Yaghoobi Ershadi, N. Improving vehicle tracking rate and speed estimation in dusty and snowy weather conditions with a
+vibrating camera. PLoS ONE 2017, 12, e0189145. [CrossRef]
+114. Yang, H.; Qu, S. Real-time vehicle detection and counting in complex traffic scenes using background subtraction model with
+low-rank decomposition. IET Intell. Transp. Syst. 2018, 12, 75–85. [CrossRef]
+115. Govardhan, P. Night Time Pedestrian Detection for Advanced Driving Assistance Systems (ADAS) Using Near Infrared Images.
+Ph.D. Thesis, National Institute of Technology, Rourkela, India, 2014.
+116. Sasaki, Y.; Emaru, T.; Ravankar, A.A. SVM based pedestrian detection system for sidewalk snow removing machines.
+In
+Proceedings of the 2021 IEEE/SICE International Symposium on System Integration (SII), Iwaki, Japan, 11–14 January 2021;
+pp. 700–701.
+117. Kang, S.; Byun, H.; Lee, S.W. Real-time pedestrian detection using support vector machines. In Pattern Recognition with Support
+Vector Machines. SVM 2002; Lee, S.W., Verri, A., Eds.; Lecture Notes in Computer Science; Springer: Berlin/Heidelberg, Germany,
+2002; Volume 2388, pp. 268–277.
+118. Jegham, I.; Khalifa, A.B. Pedestrian detection in poor weather conditions using moving camera. In Proceedings of the 2017
+IEEE/ACS 14th International Conference on Computer Systems and Applications (AICCSA), Hammamet, Tunisia, 30 October–3
+November 2017; pp. 358–362.
+119. Fan, Y. Research of Pedestrian Tracking Based on HOG Feature and Haar Feature. Comput. Sci. 2013, 40, 199–203.
+120. Ding, B.; Liu, Z.; Sun, Y. Pedestrian detection in haze environments using dark channel prior and histogram of oriented gradient.
+In Proceedings of the 2018 Eighth International Conference on Instrumentation & Measurement, Computer, Communication and
+Control (IMCCC), Harbin, China, 19–21 July 2018; pp. 1003–1008.
+121. Sotelo, M.; Parra, I.; Fernandez, D.; Naranjo, E. Pedestrian detection using SVM and multi-feature combination. In Proceedings
+of the 2006 IEEE Intelligent Transportation Systems Conference, Toronto, ON, Canada, 17–20 September 2006; pp. 103–108.
+[CrossRef]
+
+---
+
+[ID: Object Detection in Adverse Weather for Autonomous Driving
+through Data Merging and YOLOv8.pdf_page24]
+Sensors 2023, 23, 8471
+24 of 29
+(c)
+(d)
+(e)
+(f)
+Figure A4. Performance outcomes of YOLOv8’s base weights and weight trained on MERGED
+dataset (V5) on the test images (ACDC, DAWN). Different colors are used for different types of
+objects (2—car (orange), 7—truck (green)). (a) Detection by ‘yolov8n.pt’. (b) Detection by ‘yolov8s.pt’.
+(c) Detection by ‘yolov8m.pt’. (d) Detection by ‘yolov8l.pt’. (e) Detection by ‘yolov8x.pt’. (f) Detection
+by ‘MERGEDv5.pt’.
+Finally, Figure A6 shows some missed detections by our trained weight (MERGEDv5.pt)
+(except for Figure A6a). Figure A6a,b show the detection by ’yolov8x.pt’ and ’MERGEDv5.pt’
+on a foggy image, respectively. The vehicle that our trained weight missed (Figure A6b)
+was detected as a ’truck’ by YOLOv8 (Figure A6a); however, the vehicle was labeled as a
+’car’ in our test set. As shown in Figure A6c, the ’MERGEDv5.pt’ detected the car present on
+the right side of the image, and it also detected the person present in front of the car, but the
+name (’person’ ) and the conﬁdence score of the person was missing, while the label (zero)
+was showing for the detected person. Thus, we are confused about the missed detections.
+However, we have tested our trained weight on all of the test images and rarely found any
+missed detection. Nevertheless, for a few other images (Figure A6d–f), the ’MERGEDv5.pt’
+failed to detect some vehicles that were very far from the sight of the ego vehicle, and they
+were so small that it is even hard to see them in the images presented here. Those vehicles
+
+---
+
+[ID: Multiple_Adverse_Weather_Conditions_Adaptation_for_Object_Detection_via_Causal_Intervention.pdf_page1]
+1742
+IEEE TRANSACTIONS ON PATTERN ANALYSIS AND MACHINE INTELLIGENCE, VOL. 46, NO. 3, MARCH 2024
+Multiple Adverse Weather Conditions Adaptation
+for Object Detection via Causal Intervention
+Hua Zhang
+, Liqiang Xiao
+, Xiaochun Cao
+, Senior Member, IEEE, and
+Hassan Foroosh, Senior Member, IEEE
+Abstract—Most state-of-the-art object detection methods have achieved impressive perfomrace on several public benchmarks, which
+are trained with high deﬁnition images. However, existing detectors are often sensitive to the visual variations and out-of-distribution
+data due to the domain gap caused by various confounders, e.g. the adverse weathre conditions. To bridge the gap, previous methods
+have been mainly exploring domain alignment, which requires to collect an amount of domain-speciﬁc training samples. In this paper,
+we introduce a novel domain adaptation model to discover a weather condition invariant feature representation. Speciﬁcally, we ﬁrst
+employ a memory network to develop a confounder dictionary, which stores prototypes of object features under various scenarios.
+To guarantee the representativeness of each prototype in the dictionary, a dynamic item extraction strategy is used to update the
+memory dictionary. After that, we introduce a causal intervention reasoning module to explore the invariant representation of a speciﬁc
+object under different weather conditions. Finally, a categorical consistency regularization is used to constrain the similarities between
+categories in order to automatically search for the aligned instances among distinct domains. Experiments are conducted on several
+public benchmarks (RTTS, Foggy-Cityscapes, RID, and BDD 100K) with state-of-the-art performance achieved under multiple
+weather conditions.
+Index Terms—Domain adaptation model, object detection in the wild, causal intervention representation learning
+1
+INTRODUCTION
+E
+In the traditional DAOD paradigm, object detectors [17],
+[18], [19], [20], [21] are ﬁrst initialized with the samples in
+the source domain, and then multiple types of cross-domain
+alignment modules are introduced to learn the domain
+invariant feature representations. Different weather condi-
+tions could be seen as the distinct target domains, for which
+one would be required to train the corresponding domain
+classiﬁers. Therefore, the performance of detectors is depen-
+dent on the diversity of the target sets, which has been
+mostly neglecting the intrinsic properties under distinct
+weather conditions. On the other hand, as shown in Fig. 1,
+due to the variability of disturbance factors, building target
+domain sets under various new scenarios can be extremely
+time-consuming and labor-intensive. Moreover, there exist
+multiple types of visual degradations, which are caused by
+different disturbance factors. For example, the common
+visual degradations are unclear and obscured due to the
+rainy or hazy weather conditions.
+XISTING object detection models [1], [2], [3], [4], [5], [6]
+have achieved a signiﬁcant success by virtue of deep
+visual convolutional neural networks, which are trained
+based on high deﬁnition images and high-quality annotation
+labels, e.g. Pascal VOC [7], ImageNet [8] and COCO [9].
+However, when we deploy these detectors in realistic scenar-
+ios, they suffer from poor generalization ability due to the
+domain gap caused by multiple types of confounders, e.g.
+the adverse weather conditions [10], [11], [12]. To solve these
+issues, a series of domain adaptive object detection (DAOD)
+methods [13], [14], [15], [16] have been developed to discover
+domain invariant feature representations. A general guide-
+line to bridge the domain gap is to collect an amount of
+additional images for formatting the target domain, and
+hence learning better discriminative feature representations.
+Besides building the target domain set, there are several
+challenges involved in developing a weather condition
+adaptation model. First, in the aligning step of the source
+and the target domains, existing approaches [18], [22], [23],
+[24], [25] often assume that all pixels in a given image have
+been equally corrupted. In practice, however, the visual
+degradations caused by weather conditions are often spa-
+tially varying, and depend for instance on the size of objects
+or the distance from the camera. For example, in Fig. 1,
+under the hazy weather condition the truck and the bus are
+difﬁcult to distinguish as they would be only partially visi-
+ble with similar appearances. Such perturbations are unpre-
+dictable, which cannot be solved by adding the training
+samples. Second, the boundaries between objects and the
+cluttered background are blurred, which further affects the
+Hua Zhang and Liqiang Xiao are with the State Key Laboratory of Informa-
+tion Security, Institute of Information Engineering, Chinese Academy of Scien-
+ces, Beijing 100093, China. E-mail: {zhanghua, xiaoliqiang}@iie.ac.cn.
+
+Xiaochun Cao is with the State Key Laboratory of Information Security, Insti-
+tute of Information Engineering, Chinese Academy of Sciences, Beijing 100093,
+China, and also with School of Cyber Science and Technology, Shenzhen
+Campus, Sun Yat-sen University. E-mail: caoxiaochun@iie.ac.cn.
+
+Hassan Foroosh is with the Department of Computer Science, University
+of Central Florida, Orlando, FL 32816 USA. E-mail: foroosh@cs.ucf.edu.
+Manuscript received 30 Apr. 2021; revised 16 Feb. 2022; accepted 26 Mar. 2022.
+Date of publication 12 Apr. 2022; date of current version 5 Feb. 2024.
+This work was supported by the National Key R&D Program of China under
+Grant .
+(Corresponding author: Xiaochun Cao.)
+Recommended for acceptance by L. Liu, T. Hospedales, Y. LeCun, M. Long,
+J. Luo, W. Ouyang, M. Pietikinen, and T. Tuytelaars.
+Digital Object Identiﬁer no. 10.1109/TPAMI.2022.3166765
+0162-8828 2022 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See ht_tps://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 07:23:11 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page35]
+Algorithms 2024, 17, 103
+35 of 36
+122. Satyawan, A.S.; Fuady, S.; Mitayani, A.; Sari, Y.W. HOG Based Pedestrian Detection System for Autonomous Vehicle Operated
+in Limited Area.
+In Proceedings of the 2021 International Conference on Radar, Antenna, Microwave, Electronics, and
+Telecommunications (ICRAMET), Bandung, Indonesia, 23–24 November 2021; pp. 147–152.
+123. Jang, G.; Park, J.; Kim, M. Cascade-Adaboost for Pedestrian Detection Using HOG and Combined Features. In Advances in
+Computer Science and Ubiquitous Computing; Springer: Singapore, 2016; pp. 430–435.
+124. Zhang, X.; Zhu, X. Autonomous path tracking control of intelligent electric vehicles based on lane detection and optimal preview
+method. Expert Syst. Appl. 2019, 121, 38–48. [CrossRef]
+125. Gern, A.; Moebus, R.; Franke, U. Vision-based lane recognition under adverse weather conditions using optical flow.
+In
+Proceedings of the Intelligent Vehicle Symposium 2002, Versailles, France, 17–21 June 2002; Volume 2, pp. 652–657.
+126. Tran, T.T.; Son, J.H.; Uk, B.J.; Lee, J.H.; Cho, H.M. An adaptive method for detecting lane boundary in night scene. In Advanced
+Intelligent Computing Theories and Applications. With Aspects of Artificial Intelligence; Huang, D.S., Zhang, X., Reyes Garca, C.A.,
+Zhang, L., Eds.; ICIC 2010. Lecture Notes in Computer Science; Springer: Berlin/Heidelberg, Germany, 2010; Volume 6216,
+pp. 301–308.
+127. Chen, T.Y.; Chen, C.H.; Luo, G.M.; Hu, W.C.; Chern, J.C. Vehicle detection in nighttime environment by locating road lane
+and taillights. In Proceedings of the 2015 International Conference on Intelligent Information Hiding and Multimedia Signal
+Processing (IIH-MSP), Adelaide, SA, Australia, 23–25 September 2015; pp. 60–63.
+128. Guo, J.; Wei, Z.; Miao, D. Lane detection method based on improved RANSAC algorithm. In Proceedings of the 2015 IEEE
+Twelfth International Symposium on Autonomous Decentralized Systems, Taichung, Taiwan, 25–27 March 2015; pp. 285–288.
+129. Antonio, J.A.; Romero, M. Pedestrians’ Detection Methods in Video Images: A Literature Review. In Proceedings of the 2018
+International Conference on Computational Science and Computational Intelligence (CSCI), Las Vegas, NV, USA, 12–14 December
+2018; pp. 354–360.
+130. Papadimitriou, O.; Kanavos, A.; Mylonas, P.; Maragoudakis, M. Advancing Weather Image Classification using Deep Convolu-
+tional Neural Networks. In Proceedings of the 2023 18th International Workshop on Semantic and Social Media Adaptation &
+Personalization (SMAP) 18th International Workshop on Semantic and Social Media Adaptation & Personalization (SMAP 2023),
+Limassol, Cyprus, 25–26 September 2023; pp. 1–6.
+131. Alhammadi, S.A.; Alhameli, S.A.; Almaazmi, F.A.; Almazrouei, B.H.; Almessabi, H.A.; Abu-Kheil, Y. Thermal-Based Vehicle
+Detection System using Deep Transfer Learning under Extreme Weather Conditions. In Proceedings of the 2022 8th International
+Conference on Information Technology Trends (ITT), Dubai, United Arab Emirates, 25–26 May 2022; pp. 119–123.
+132. Arora, N.; Kumar, Y.; Karkra, R.; Kumar, M. Automatic vehicle detection system in different environment conditions using fast
+R-CNN. Multimed. Tools Appl. 2022, 81, 18715–18735. [CrossRef]
+133. Ghosh, R. On-road vehicle detection in varying weather conditions using faster R-CNN with several region proposal networks.
+Multimed. Tools Appl. 2021, 80, 25985–25999. [CrossRef]
+134. Cao, J.; Song, C.; Song, S.; Peng, S.; Wang, D.; Shao, Y.; Xiao, F. Front vehicle detection algorithm for smart car based on improved
+SSD model. Sensors 2020, 20, 4646. [CrossRef] [PubMed]
+135. Li, W. Vehicle detection in foggy weather based on an enhanced YOLO method. In Journal of Physics: Conference Series; IOP
+Publishing: Bristol, UK, 2022; Volume 2284, p. 012015.
+136. Ghosh, R. A modified yolo model for on-road vehicle detection in varying weather conditions. In Intelligent Computing and
+Communication Systems; Springer: Singapore, 2021; pp. 45–54.
+137. Miao, Y.; Liu, F.; Hou, T.; Liu, L.; Liu, Y. A nighttime vehicle detection method based on YOLO v3. In Proceedings of the 2020
+Chinese Automation Congress (CAC), Shanghai, China, 6–8 November 2020; pp. 6617–6621.
+138. Humayun, M.; Ashfaq, F.; Jhanjhi, N.Z.; Alsadun, M.K. Traffic management: Multi-scale vehicle detection in varying weather
+conditions using yolov4 and spatial pyramid pooling network. Electronics 2022, 11, 2748. [CrossRef]
+139. Wang, R.; Zhao, H.; Xu, Z.; Ding, Y.; Li, G.; Zhang, Y.; Li, H. Real-time vehicle target detection in inclement weather conditions
+based on YOLOv4. Front. Neurorobot. 2023, 17, 1058723. [CrossRef]
+140. Yao, J.; Fan, X.; Li, B.; Qin, W. Adverse Weather Target Detection Algorithm Based on Adaptive Color Levels and Improved
+YOLOv5. Sensors 2022, 22, 8577. [CrossRef] [PubMed]
+141. Razzok, M.; Badri, A.; Mourabit, I.E.; Ruichek, Y.; Sahel, A. Pedestrian detection under weather conditions using conditional
+generative adversarial network. Int. J. Artif. Intell. 2023, 12, 1557–1568. [CrossRef]
+142. Pawełczyk, M.; Wojtyra, M. Real world object detection dataset for quadcopter unmanned aerial vehicle detection. IEEE Access
+2020, 8, 174394–174409. [CrossRef]
+143. Yahiaoui, M.; Rashed, H.; Mariotti, L.; Sistu, G.; Clancy, I.; Yahiaoui, L.; Kumar, V.R.; Yogamani, S. Fisheyemodnet: Moving object
+detection on surround-view cameras for autonomous driving. arXiv 2019, arXiv:1908.11789.
+144. Ragesh, N.; Rajesh, R. Pedestrian detection in automotive safety: Understanding state-of-the-art. IEEE Access 2019, 7, 47864–47890.
+[CrossRef]
+145. Kim, J.H.; Hong, H.G.; Park, K.R. Convolutional neural network-based human detection in nighttime images using visible light
+camera sensors. Sensors 2017, 17, 1065. [CrossRef] [PubMed]
+146. Hsia, C.H.; Peng, H.C.; Chan, H.T. All-Weather Pedestrian Detection Based on Double-Stream Multispectral Network. Electronics
+2023, 12, 2312. [CrossRef]
+
+---
+
+[ID: Multi-Task Learning for UAV Aerial Object Detection in Foggy
+Weather Condition.pdf_page14]
+Remote Sens. 2023, 15, 4617
+14 of 18
+Table 5. Performance comparison of our ODFC-YOLO with other detection methods on the RainCi-
+tyscapes dataset. The mAP (mean Average Precision) used to evaluate object detection performance.
+Methods
+Without-Retrained
+retrained
+YOLOXs [12]
+35.49
+40.62
+GCA-YOLOXs [56]
+36.76
+39.15
+IA-YOLO [16]
+14.52
+15.32
+MS-DAYOLO [19]
+40.43
+44.37
+TogetherNet [51]
+35.34
+39.14
+Ours
+42.48
+48.20
+5. Ablation Study
+5.1. Effects of Different Components in ODFC-YOLO
+To further investigate the contribution of individual components and its internal
+structure in our ODFC-YOLO model, Table 6 reports a set of ablation experiments on the
+RTTS dataset with the same experimental conﬁguration. We consider different variants
+of the model such as CSP-Decoder* (without SKFusion layer), CSP-Decoder, and Global
+Context Enhancement Extraction (GCEE) module. By reassembling components in different
+ways, we are able to determine the optimal model performance.
+Table 6. Ablation study of different combination strategies of the proposed modules are performed
+on the RTTS dataset. Decoder represents the version of CSP-Decoder with SKFusion module, and
+Decoder* without SKFusion module.
+Modules
+Base
+Variants
+Variants
+Variants
+Variants
+Variants
+Decoder*
+w/o
+!
+w/o
+w/o
+!
+w/o
+Decoder
+w/o
+w/o
+!
+w/o
+w/o
+!
+GCEE
+w/o
+w/o
+w/o
+!
+!
+!
+mAP
+56.74
+59.06
+59.76
+57.76
+60.65
+62.05
+Given that the SKFusion module has demonstrated excellent performance in image
+restoration, we add it to our proposed ODFC-YOLO model to enhance the effect of the
+decoder. The experimental results demonstrate that the addition of the SKFusion module
+to CSP-Decoder signiﬁcantly improves our model’s performance. It can be seen that
+each component of our ODFC-YOLO contributes to the improvement of the detection
+performance. The proposed CSP-Decoder boosts the performance by 2% mAP over the
+base model. Additionally, the GCEE module also enhances the performance by 1% mAP
+without the CSP-Decoder. As expected, our network achieves state-of-the-art results when
+both modules are combined, indicating that the combination of the two modules can extract
+cleaner features.
+5.2. Loss Function
+In our proposed ODFC-YOLO, we employ a multi-task learning paradigm to optimize
+the network by assigning different roles to the dehazing and detection tasks. We report
+the impact of different combinations of loss weights on detection performance in Table 7.
+Experimental results demonstrate that reducing the proportion of detection loss Lde leads
+to an improvement in the network’s performance. This is because the values of Lde
+are much larger than those of the dehazing loss Lre, which causes the network to be
+dominated by the detection subnet, preventing the dehazing subnet from producing clean
+features. By reducing the proportion of detection loss, the overall loss value is also reduced,
+helping the network converge. Additionally, the addition of noise ϵ improves the model’s
+generalization ability. After conducting extensive experiments, we determined that the
+optimal loss weights are λ1 = 0.2 and λ2 = 0.8.
+
+---
+
+[ID: CoDerainNet: Collaborative Deraining Network for
+Drone-view Object Detection in Rainy Weather Conditions.pdf_page4]
+Remote Sens. 2023, 15, 1487
+4 of 21
+Table 1. Summary of the advantages and disadvantages of object detection under rainy weather conditions.
+Methods
+Advantages
+Disadvantages
+The pre-processing module increases the com-
+plexity of the original detectors. New rainy
+images need to be annotated to supervise the
+deraining process.
+ImageDe-based methods [17–19]
+Intuitive idea; adopts the deraining algo-
+rithms as a pre-processing module to improve
+the visibility of the input images.
+DA-based methods [13,14,20]
+Has no need to annotate new rainy images
+because they belong to unsupervised learning.
+Require a new alignment module for every new
+domain, which limits their generalization.
+2.1.1. ImageDe-Based Object Detection
+ImageDe-based object detection [17–19] improves the visibility of input using exist-
+ing deraining algorithms [17,18] as a pre-processing module, and then conducts object
+recognition. Early on, the two-stage fashion is very inefﬁcient because an image deraining
+module in the ﬁrst stage and an object detection module in the second stage are optimized
+separately. The image deraining module is not optimized for the task of object recognition
+but for human perception. Thus, improving image visibility with the image deraining
+module does not necessarily beneﬁt object detection performance. Furthermore, a uniﬁed
+fashion has been proposed to bridge the goals of image deraining and object detection.
+Very recently, Liu et al. [19] designed a fully differentiable image restoration module to
+recover the latent content for the sequential object recognition module. In this model, the
+two modules can be trained in an end-to-end fashion.
+The use of image deraining modules signiﬁcantly increases the complexity of the
+original detectors, making it infeasible to deploy them on drones with limited onboard
+computing resources. Moreover, annotating drone images is more time-consuming and
+laborious compared to annotating natural scene images, due to the presence of a large
+number of small objects in drone-captured images.
+2.1.2. DA-Based Object Detection
+DA-based object detection [13,14,20] bridges the domain gap between images collected
+in normal (source domain) and rainy weather (target domain) conditions by discovering
+domain invariant feature representations. Following the domain adaptation paradigm,
+ﬁrstly, samples from the source domain are used to train a detector. Secondly, domain
+invariant features for the target domain are learned by a feature alignment module in the
+detector. A multi-adversarial Faster-RCNN detector [20] was proposed for addressing
+the problem of domain adaptation between normal and rainy weather conditions. The
+multi-adversarial detector adopted a hierarchical feature alignment module for layer-wise
+domain invariant features. Sindagi et al. [13] proposed a prior-based domain adversarial
+framework to adapt existing detectors to inclement weather conditions. In this framework,
+a prior-adversarial loss was deﬁned to reduce the rainy weather-speciﬁc information. The
+novel loss was used to improve the detection performance under rainy weather. Very
+recently, for rainy scene segmentation, Lee et al. proposed a segmentation model FIFO [14],
+which was insensitive to images’ rain-style variation.
+From a probabilistic perspective, the DA-based methods focus on the latent rela-
+tionship between the two different domains aiming to discover the common knowledge
+between a clean domain and a rainy domain. Whereas our CoDerainNet attempts to ex-
+plore the process of image degradation from a clean domain to a rainy domain. Moreover,
+the DA-based methods require a new alignment module for every new domain, which
+limits their generalization ability.
+2.2. DroneDet
+DroneDet is an emerging and hot topic in aerial image processing. Aerial images are
+different from natural images and have unique characteristics. For instance, objects in
+
+---
+
+[ID: Fog-Aware_Adaptive_YOLO_for_Object_Detection_in_Adverse_Weather.pdf_page3]
+scattering and absorption of light, leading to a decrease in
+the visibility of images. This can degrade the performance of
+various image processing and computer-vision applications,
+including object detection in autonomous vehicles. Therefore,
+it is necessary to defog/dehaze the hazzy images before
+processing them. However, current dehazing methods remove
+haze without considering its fog level and occurrence fre-
+quency. For example, image-adaptive YOLO algorithm [6]
+tries to use a CNN network to defog the input images before
+using YOLO algorithm for object detection, but it does not
+consider the fog level of images and always applies the same
+defogging method on the images. Clearly, it can degrade image
+details that could be helpful for the object detection algorithm.
+Fig 2 compares the input images and dehazed images using
+this approach. clearly, although this algorithm has a good
+defogging network (2 but it removes some details when the
+input image is not foggy in fig. 2-b.
+According to Figs 2-a and 2-b, clearly, without utilizing
+a fog evaluator method, defogging approaches would fail to
+distinguish the level of image haziness and may remove useful
+details from the image. Comparing 2-b and 2-d shows that
+IA-YOLOv3 algorithm fails to detect the person seated on
+the ground in the normal image while detecting him in the
+foggy image. However, based on the input images, Figs 2-a
+and 2-c, the normal image has significantly better resolution
+and details.
+The proposed method involves utilizing a model named the
+Haziness Degree Evaluator (HDE) [7], which can estimate
+haze density from a single image without the need for a
+corresponding haze-free image, a digital terrain model, or
+extensive training data. It is very important to rely on a
+method that does not need a ground-truth image as in real-
+life scenarios, there is no possibility to have normal image
+from exactly the same view.
+The HDE measures the amount of haze present in an
+image using an objective function that considers three im-
+portant haze-related features, including saturation, brightness,
+and sharpness, that are obtained through computation and
+correlation analysis. The objective function aims to enhance
+these features in the image while minimizing the dark channel,
+and it helps to quantify the level of haze present in the image.
+This evaluator would rate the level of haziness in the image
+from 0 to 1 where the higher value represents higher level of
+fog presence.
+Contrast, Tone and Sharpen [8]. The high-resolution input
+images are processed by DIP’s filters to aid YOLOv3 achieve
+high detection performance in foggy images.
+The problem with image-adaptive YOLOv3 is that we
+observed that this algorithm was unable to accurately detect
+objects in normal images as it would apply fog removal
+changes, even if there was no fog in the image. This resulted in
+a decrease in the accuracy of object detection. Fig. 3 compares
+the results of this algorithm for normal and foggy images for
+different classes. Clearly, if the algorithm works as expected,
+we expect to have better accuracy for normal images as we will
+have more details and visibility in this condition. However,
+based on Fig. 3, this algorithm fails to meet our expectations.
+The reason behind this issue is that although this algorithm
+has been trained with a combination of normal and foggy
+images with different levels of haziness, it is optimized to
+detect objects on foggy images. As a result, when it has a
+normal input, it tries to apply defogging CNN network on it
+and this will filter out useful details in the normal images.
+Consequently, although normal images generally have more
+details, the detection accuracy drops by 3% for the normal
+inputs.
+To address this issue, we introduced a fog evaluator model
+that quantifies haze density in the image. This model allowed
+us to distinguish between foggy and non-foggy images, and
+we used this information to switch between the Yolov3 and
+Image-adaptive Yolov3 algorithms accordingly. By using the
+fog evaluator, we were able to accurately detect objects in
+both foggy and non-foggy images, ensuring a higher level of
+accuracy and performance in our object detection system.
+D. Architecture of proposed method
+Fig. 1 shows the block diagram of the proposed method.
+Our approach has two main blocks including an HDE (brown
+block) and an adaptive object detection block. The main idea
+is that before object detection, we could find out the level of
+the fogginess of the image and if it does not have a fog level
+higher than the threshold (the green arrow), there is no need
+to pre-process the input image to defog it. If it has a high level
+of fogginess (red arrows), then we can use the image-adaptive
+YOLO [6] block (blue block) to defog the image and then
+apply the YOLOv3 algorithm to it.
+III. SIMULATION RESULTS
+In the simulation section, we utilized the Pascal VOC
+(Visual Objects Classes) dataset [9], focusing only on 5 object
+classes related to autonomous vehicles. We augmented the
+dataset by adding 10 levels of synthetic fog to each of the
+8,111 original train images, resulting in a combined train set
+of 89,221 images. In order to add 10 different levels of fog to
+each image, we set A to 0.5 and β to 0.01 ∗i + 0.05 in eq.1,
+where i is an integer ranging from 0 to 9.
+We trained the IA-YOLOv3 algorithm with this dataset,
+randomly selecting the train images between original and
+foggy images with varying levels of synthetic fog based on the
+[6]. The VOC dataset contains 2,734 test images with related
+C. Object detection block
+In our object detection block, we have utilized two different
+algorithms, Yolov3 and Image-adaptive Yolov3, based on the
+level of fog in the input image. The blue block in figure 1
+shows the architecture of image-adaptive YOLOv3 algorithm.
+This method learns a YOLO with a small CNN-based param-
+eter predictor (CNN-PP), which employs the down-sampled
+input image to predict the hyper-paramters of filters in the
+Differentiable Image Processing (DIP) module. This module
+consists of six differentiable filters with adjustable hyper-
+parameters, including Defog, White Balance(WB), Gamma,
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:26:58 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page32]
+Algorithms 2024, 17, 103
+32 of 36
+50.
+Shladover, S.E.; Desoer, C.A.; Hedrick, J.K.; Tomizuka, M.; Walrand, J.; Zhang, W.B.; McMahon, D.H.; Peng, H.; Sheikholeslam,
+S.; McKeown, N. Automated vehicle control developments in the PATH program. IEEE Trans. Veh. Technol. 1991, 40, 114–130.
+[CrossRef]
+51.
+Geiger, A.; Lenz, P.; Stiller, C.; Urtasun, R. Vision meets robotics: The kitti dataset. Int. J. Robot. Res. 2013, 32, 1231–1237.
+[CrossRef]
+52.
+Sun, H.; Zhang, W.; Yu, R.; Zhang, Y. Motion planning for mobile robots—Focusing on deep reinforcement learning: A systematic
+review. IEEE Access 2021, 9, 69061–69081. [CrossRef]
+53.
+Rai, M.; Khosla, B.; Dhawan, Y.; Kharotia, H.; Kumar, N.; Bandi, A. CLEAR: An Efficient Traffic Sign Recognition Technique for
+Cyber-Physical Transportation Systems. In Proceedings of the 2022 IEEE/ACM 15th International Conference on Utility and
+Cloud Computing (UCC), Vancouver, WA, USA, 6 December 2022; pp. 418–423.
+54.
+Sakaridis, C.; Dai, D.; Van Gool, L. ACDC: The adverse conditions dataset with correspondences for semantic driving scene
+understanding. In Proceedings of the IEEE/CVF International Conference on Computer Vision, Montreal, QC, Canada, 10–17
+October 2021; pp. 10765–10775.
+55.
+Geyer, J.; Kassahun, Y.; Mahmudi, M.; Ricou, X.; Durgesh, R.; Chung, A.S.; Hauswald, L.; Pham, V.H.; Mhlegg, M.; Dorn, S.; et al.
+A2d2: Audi autonomous driving dataset. arXiv 2020, arXiv:2004.06320.
+56.
+Sun, P.; Kretzschmar, H.; Dotiwalla, X.; Chouard, A.; Patnaik, V.; Tsui, P.; Guo, J.; Zhou, Y.; Chai, Y.; Caine, B.; et al. Scalability in
+perception for autonomous driving: Waymo open dataset. In Proceedings of the 2020 IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR), Seattle, WA, USA, 13–19 June 2020; pp. 2443–2451. [CrossRef]
+57.
+Caesar, H.; Bankiti, V.; Lang, A.H.; Vora, S.; Liong, V.E.; Xu, Q.; Krishnan, A.; Pan, Y.; Baldan, G.; Beijbom, O. nuscenes: A
+multimodal dataset for autonomous driving. In Proceedings of the 2020 IEEE/CVF Conference on Computer Vision and Pattern
+Recognition (CVPR), Seattle, WA, USA, 13–19 June 2020; pp. 11621–11631. [CrossRef]
+58.
+Yu, F.; Chen, H.; Wang, X.; Xian, W.; Chen, Y.; Liu, F.; Madhavan, V.; Darrell, T. Bdd100k: A diverse driving dataset for
+heterogeneous multitask learning. In Proceedings of the 2020 IEEE/CVF Conference on Computer Vision and Pattern Recognition
+(CVPR), Seattle, WA, USA, 13–19 June 2020; pp. 2636–2645. [CrossRef]
+59.
+Huang, X.; Wang, P.; Cheng, X.; Zhou, D.; Geng, Q.; Yang, R. The apolloscape open dataset for autonomous driving and its
+application. IEEE Trans. Pattern Anal. Mach. Intell. 2019, 42, 2702–2719. [CrossRef] [PubMed]
+60.
+Ros, G.; Sellart, L.; Materzynska, J.; Vazquez, D.; Lopez, A.M. The synthia dataset: A large collection of synthetic images for
+semantic segmentation of urban scenes. In Proceedings of the 2016 IEEE Conference on Computer Vision and Pattern Recognition
+(CVPR), Las Vegas, NV, USA, 26 June–1 July 2016; pp. 3234–3243. [CrossRef]
+61.
+Carlevaris-Bianco, N.; Ushani, A.K.; Eustice, R.M. University of Michigan North Campus long-term vision and lidar dataset. Int.
+J. Robot. Res. 2016, 35, 1023–1035. [CrossRef]
+62.
+Pitropov, M.; Garcia, D.E.; Rebello, J.; Smart, M.; Wang, C.; Czarnecki, K.; Waslander, S. Canadian adverse driving conditions
+dataset. Int. J. Robot. Res. 2021, 40, 681–690. [CrossRef]
+63.
+Zheng, J.Y. IUPUI driving videos and images in all weather and illumination conditions. arXiv 2021, arXiv:2104.08657.
+64.
+Bos, J.P.; Chopp, D.; Kurup, A.; Spike, N. Autonomy at the end of the earth: An inclement weather autonomous driving data set.
+In Proceedings of the Autonomous Systems: Sensors, Processing, and Security for Vehicles and Infrastructure 2020, Online, CA,
+USA, 27 April–9 May 2020; Volume 11415, pp. 36–48. [CrossRef]
+65.
+Vora, S.; Lang, A.H.; Helou, B.; Beijbom, O. Pointpainting: Sequential fusion for 3d object detection. In Proceedings of the 2020
+IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), Seattle, WA, USA, 13–19 June 2020; pp. 4603–4611.
+[CrossRef]
+66.
+Chang, M.F.; Lambert, J.; Sangkloy, P.; Singh, J.; Bak, S.; Hartnett, A.; Wang, D.; Carr, P.; Lucey, S.; Ramanan, D.; et al. Argoverse:
+3d tracking and forecasting with rich maps. In Proceedings of the 2019 IEEE/CVF Conference on Computer Vision and Pattern
+Recognition (CVPR), Long Beach, CA, USA, 15–20 June 2019; pp. 8748–8757. [CrossRef]
+67.
+Meyer, M.; Kuschk, G. Automotive radar dataset for deep learning based 3d object detection. In Proceedings of the 2019 16th
+European Radar Conference (EuRAD), Paris, France, 2–4 October 2019; pp. 129–132.
+68.
+Bijelic, M.; Gruber, T.; Mannan, F.; Kraus, F.; Ritter, W.; Dietmayer, K.; Heide, F. Seeing through fog without seeing fog: Deep
+multimodal sensor fusion in unseen adverse weather. In Proceedings of the 2020 IEEE/CVF Conference on Computer Vision and
+Pattern Recognition (CVPR), Seattle, WA, USA, 15–20 June 2020; pp. 11682–11692.
+69.
+Sakaridis, C.; Dai, D.; Van Gool, L. Semantic foggy scene understanding with synthetic data. Int. J. Comput. Vis. 2018, 126, 973–992.
+[CrossRef]
+70.
+Kim, J.; Rohrbach, A.; Darrell, T.; Canny, J.; Akata, Z. Textual Explanations for Self-Driving Vehicles. In Computer Vision–ECCV
+2018; Ferrari, V., Hebert, M., Sminchisescu, C., Weiss, Y., Eds.; Lecture Notes in Computer Science; Springer: Cham, Switzerland,
+2018; Volume 11206.
+71.
+Neuhold, G.; Ollmann, T.; Rota Bulo, S.; Kontschieder, P. The mapillary vistas dataset for semantic understanding of street
+scenes. In Proceedings of the 2017 IEEE International Conference on Computer Vision (ICCV), Venice, Italy, 22–29 October 2017;
+pp. 4990–4999.
+72.
+Braun, M.; Krebs, S.; Flohr, F.; Gavrila, D.M. Eurocity persons: A novel benchmark for person detection in traffic scenes. IEEE
+Trans. Pattern Anal. Mach. Intell. 2019, 41, 1844–1861. [CrossRef]
+
+---
+

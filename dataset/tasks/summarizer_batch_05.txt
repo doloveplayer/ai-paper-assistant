@@ -1,0 +1,713 @@
+You are a professional academic text summarizer. Below are 10 noisy text snippets extracted from PDF papers.
+
+For each snippet, produce a concise academic summary in Chinese (≤200 words). Keep ALL specific model names (e.g. YOLOv8, DETR, ResNet-50), numerical metrics (mAP, AP50, F1, etc.), and key experimental findings. Use Markdown formatting.
+
+CRITICAL: Return ONLY a valid JSON array. Each element MUST have exactly two keys:
+  - "id": the exact data ID string as given (do not modify)
+  - "summary": your refined summary string (Markdown, ≤200 words)
+
+Example output:
+[{"id": "2403.02148_page5", "summary": "YOLOv8 在雾天场景下..."},
+ {"id": "2310.xxxxx_page3", "summary": "..."}]
+
+DO NOT add any text before or after the JSON array.
+
+============================================================
+
+[ID: Nakamura_Active_Domain_Adaptation_with_False_Negative_Prediction_for_Object_Detection_CVPR_2024_paper.pdf_page9]
+References
+Vision and Pattern Recognition (CVPR), pages 7272–7281,
+2021. 1, 2
+[12] Yarin Gal and Zoubin Ghahramani. Dropout as a bayesian
+approximation:
+Representing model uncertainty in deep
+learning. In Proceedings of the 33rd International Confer-
+ence on Machine Learning (ICML), pages 1050–1059, 2016.
+5
+[13] Yaroslav Ganin and Victor Lempitsky.
+Unsupervised do-
+main adaptation by backpropagation.
+In Proceedings of
+the 32nd International Conference on Machine Learning
+(ICML), pages 1180–1189, 2015. 2, 4
+[14] Changlong Gao, Chengxu Liu, Yujie Dun, and Xueming
+Qian. Csda: Learning category-scale joint feature for domain
+adaptive object detection. In Proceedings of the IEEE/CVF
+International Conference on Computer Vision (ICCV), pages
+11421–11430, 2023. 1, 2, 7
+[15] Andreas Geiger, Philip Lenz, and Raquel Urtasun. Are we
+ready for autonomous driving? the kitti vision benchmark
+suite. In Proceedings of the IEEE Conference on Computer
+Vision and Pattern Recognition (CVPR), pages 3354–3361,
+2012. 6
+[16] Denis Gudovskiy, Alec Hodgkinson, Takuya Yamaguchi,
+and Sotaro Tsukizawa.
+Deep active learning for biased
+datasets via fisher kernel self-supervision. In Proceedings of
+the IEEE/CVF Conference on Computer Vision and Pattern
+Recognition (CVPR), pages 9041–9049, 2020. 1
+[17] Han-Kai Hsu, Chun-Han Yao, Yi-Hsuan Tsai, Wei-Chih
+Hung, Hung-Yu Tseng, Maneesh Singh, and Ming-Hsuan
+Yang. Progressive domain adaptation for object detection. In
+Proceedings of the IEEE/CVF Winter Conference on Appli-
+cations of Computer Vision (WACV), pages 749–757, 2020.
+7
+[18] Duojun Huang, Jichang Li, Weikai Chen, Junshi Huang,
+Zhenhua Chai, and Guanbin Li. Divide and adapt: Active
+domain adaptation via customized learning. In Proceedings
+of the IEEE/CVF Conference on Computer Vision and Pat-
+tern Recognition (CVPR), pages 7651–7660, 2023. 1, 2
+[19] Sehyun Hwang, Sohyun Lee, Sungyeon Kim, Jungseul Ok,
+and Suha Kwak. Combating label distribution shift for active
+domain adaptation. In Proceedings of the European Confer-
+ence on Computer Vision (ECCV), pages 549–566, 2022. 1,
+2
+[20] Matthew Johnson-Roberson, Charles Barto, Rounak Mehta,
+Sharath Nittur Sridhar, Karl Rosaen, and Ram Vasudevan.
+Driving in the matrix: Can virtual worlds replace human-
+generated annotations for real world tasks? In Proceedings
+of the IEEE International Conference on Robotics and Au-
+tomation (ICRA), pages 746–753, 2017. 6
+[21] Divya Kothandaraman, Sumit Shekhar, Abhilasha Sancheti,
+Manoj Ghuhan, Tripti Shukla, and Dinesh Manocha. Salad:
+Source-free active label-agnostic domain adaptation for clas-
+sification, segmentation and detection. In Proceedings of the
+IEEE/CVF Winter Conference on Applications of Computer
+Vision (WACV), pages 382–391, 2023. 1, 2
+[22] Suraj Kothawade, Saikat Ghosh, Sumit Shekhar, Yu Xiang,
+and Rishabh Iyer. Talisman: Targeted active learning for ob-
+ject detection with rare classes and slices using submodular
+[1] Sharat Agarwal, Saket Anand, and Chetan Arora. Reducing
+annotation effort by identifying and labeling contextually di-
+verse classes for semantic segmentation under domain shift.
+In Proceedings of the IEEE/CVF Winter Conference on Ap-
+plications of Computer Vision (WACV), pages 5904–5913,
+2023. 1, 2
+[2] Shengcao Cao, Dhiraj Joshi, Liang-Yan Gui, and Yu-Xiong
+Wang. Contrastive mean teacher for domain adaptive ob-
+ject detectors. In Proceedings of the IEEE/CVF Conference
+on Computer Vision and Pattern Recognition (CVPR), pages
+23839–23848, 2023. 1, 2, 7
+[3] Meilin Chen, Weijie Chen, Shicai Yang, Jie Song, Xin-
+chao Wang, Lei Zhang, Yunfeng Yan, Donglian Qi, Yueting
+Zhuang, Di Xie, and Shiliang Pu. Learning domain adaptive
+object detection with probabilistic teacher. In Proceedings
+of the 39th International Conference on Machine Learning
+(ICML), pages 3040–3055, 2022. 2, 4, 7
+[4] Yuhua Chen, Wen Li, Christos Sakaridis, Dengxin Dai, and
+Luc Van Gool. Domain adaptive faster r-cnn for object de-
+tection in the wild. In Proceedings of the IEEE Conference
+on Computer Vision and Pattern Recognition (CVPR), pages
+3339–3348, 2018. 1, 2, 7
+[5] Jiwoong Choi, Ismail Elezi, Hyuk-Jae Lee, Clement Fara-
+bet, and Jose M. Alvarez.
+Active learning for deep ob-
+ject detection via probabilistic modeling. In Proceedings of
+the IEEE/CVF International Conference on Computer Vision
+(ICCV), pages 10264–10273, 2021. 1, 2
+[6] Marius Cordts, Mohamed Omran, Sebastian Ramos, Timo
+Rehfeld,
+Markus Enzweiler,
+Rodrigo Benenson,
+Uwe
+Franke, Stefan Roth, and Bernt Schiele.
+The cityscapes
+dataset for semantic urban scene understanding. In Proceed-
+ings of the IEEE Conference on Computer Vision and Pattern
+Recognition (CVPR), pages 3213–3223, 2016. 6
+[7] Antoine de mathelin, Francois Deheeger, Mathilde Mougeot,
+and Nicolas Vayatis. Discrepancy-based active learning for
+domain adaptation. In Proceedings of the International Con-
+ference on Learning Representations (ICLR), 2022. 1, 2
+[8] Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li,
+and Li Fei-Fei. Imagenet: A large-scale hierarchical image
+database. In Proceedings of the IEEE Conference on Com-
+puter Vision and Pattern Recognition (CVPR), pages 248–
+255, 2009. 7
+[9] Jinhong Deng, Wen Li, Yuhua Chen, and Lixin Duan. Unbi-
+ased mean teacher for cross-domain object detection. In Pro-
+ceedings of the IEEE/CVF Conference on Computer Vision
+and Pattern Recognition (CVPR), pages 4091–4101, 2021.
+1, 2
+[10] Ismail Elezi, Zhiding Yu, Anima Anandkumar, Laura Leal-
+Taixe, and Jose M. Alvarez. Not all labels are equal: Ratio-
+nalizing the labeling costs for training object detection. In
+Proceedings of the IEEE/CVF Conference on Computer Vi-
+sion and Pattern Recognition (CVPR), pages 14492–14501,
+2022. 1, 2
+[11] Bo Fu, Zhangjie Cao, Jianmin Wang, and Mingsheng Long.
+Transferable query selection for active domain adaptation.
+In Proceedings of the IEEE/CVF Conference on Computer
+28790
+
+---
+
+[ID: Multi-Task Learning for UAV Aerial Object Detection in Foggy
+Weather Condition.pdf_page7]
+Remote Sens. 2023, 15, 4617
+7 of 18
+that complex loss functions will bring unnecessary training burden, we prefer to choose
+simple L1 loss for better performance balance.
+3.3. Detection Sub-Network
+We choose YOLOX as our detection subnet, which boasts a lightweight architecture
+while maintaining strong performance on various benchmark datasets. However, like many
+other existing object detectors, YOLOX also suffers from performance degradation when it
+encountering harsh weather conditions.
+Our detection subnet is composed of three key components: backbone network, neck
+module, and head module. The backbone network is based on the feature extraction archi-
+tecture of YOLOV4 [30] and we replace the cross-stage partial module with our proposed
+GCEE module to obtain better feature modeling capabilities. To augment the localization
+capability of the feature representation, the neck module employs top-down feature fusion
+and horizontal connections strategy, which improves the accuracy of detecting small objects
+in hazy scenes. Lastly, the head module is designed to independently perform classiﬁcation
+and localization of objects at multiple scales.
+Traditional Convolutional Neural Networks use deep module stacks to enhance the
+receptive ﬁelds and extract contextual high-level semantic information. However, this
+design is computationally expensive and may produce redundant features that do not
+contribute to the ﬁnal output. To this end, we propose the Global Context Enhanced
+Extraction (GCEE) module, which is designed to expand the regional receptive ﬁeld and
+capture long-range contextual dependencies while improving computationally efﬁcient.
+The GCEE module enhance the representation capabilities of the detection subnet by selec-
+tively extracting the most useful features, while reducing computation cost and avoiding
+unnecessary feature generation.
+In Figure 4, our GCEE module ﬁrst uses two local awareness branches to increase
+the inﬂuence regions, which improves the model’s ability to transform features. Next, we
+gather information from different local perspectives to create global awareness features. To
+establish long-range dependencies, GCEE module further enhances the original features
+using an attention-like mechanism. Speciﬁcally, the context of the globally aware features
+is calculated by the global interactions of all pixel values using pixel-level dot products
+of linear units (1 1 convolutions and so f tmax layers). Furthermore, only two linear
+projections and a LayerNorm layer are utilized to improve feature diversity. Finally, the
+global awareness features are reweighted to the position of each context feature to obtain
+complex and long-term global context dependencies. In this way, by associating the input
+features with attention features that have long dependencies to perceive local objects, our
+network can extract more information that is beneﬁcial to detection due to its better feature
+extraction ability, as demonstrated in Figure 5.
+To train the detection subnet, we employ the loss function consisting of three parts,
+which can be expressed as:
+Lde =
+λLreg + Lcls + Lobj
+Npos
+,
+(2)
+where Lreg is the bounding box regression loss, which is calculated using IOU loss [53].
+The coefﬁcient factor λ is used to adjust the proportion of Lreg, and it is set to 5.0 in our
+experiment. Lcls and Lobj are the classiﬁcation loss and conﬁdence loss, respectively, which
+are calculated using binary cross-entropy loss (BCELoss). Npos refers to the number of
+positive samples. Notably, only positive samples are used for calculation in Lcls and Lreg.
+
+---
+
+[ID: Object Detection in Autonomous Vehicles under Adverse
+Weather: A Review of Traditional and Deep
+Learning Approaches.pdf_page5]
+Algorithms 2024, 17, 103
+5 of 36
+knowledges that detecting smaller, obscured, or partially visible objects remains a challenge,
+indicating a need for further research in this area. The study in [18] serves as a tutorial
+on advanced techniques addressing the impact of rainy conditions on AV object detection.
+The study evaluates the performance of detection methods under clear and rainy scenarios,
+highlighting the efficacy of deraining methods, DL-based domain adaptation, and image
+translation frameworks. However, it does not comprehensively address the limitations of
+these methods in other adverse weather conditions. The study in [19] examines vehicle
+detection approaches in video-based traffic surveillance, highlighting the challenges posed
+by dim illumination, variable weather, occlusion, and shadows. The study’s exploration
+of traditional approaches is valuable, but it does not fully integrate the advancements
+in DL methods for improved detection. Other [20] research focuses on DL methods for
+detecting on-road vehicles, providing a valuable list of works. However, the study’s limited
+scope does not encompass the full range of challenges faced by AVs in adverse weather
+conditions. Another paper [21] exclusively examines 3D methods for vehicle detection,
+offering insights into a specific detection approach. Yet, the study’s narrow focus does
+not address the broader context of AVs and their performance under various weather
+conditions.
+In summary, while the surveyed literature provides a valuable foundation for un-
+derstanding AV sensor technologies and detection techniques, there is a critical gap in
+the holistic examination of both traditional and DL approaches under adverse weather
+conditions. This survey paper focuses on traditional approaches, deep learning approaches,
+and their applications in object detection in AVs under adverse weather conditions. Fur-
+thermore, we have detailed our literature review methodology, which involves a systematic
+search across reputable digital repositories such as Springer Link, Elsevier, IEEE, MDPI, and
+Wiley Online Library. We utilized targeted keywords to identify relevant research articles
+and focused on studies published in peer-reviewed journals and international conferences
+from 2001 to 2023. This approach ensured a comprehensive and high-quality selection of
+literature for our review.
+3. An overview of AVs
+The Society of Automotive Engineers (SAE) has established a classification system
+that divides Autonomous Driving Systems (ADS) into six levels of automation, ranging
+from Level 0 (No Automation) to Level 5 (Full Automation), as illustrated in Figure 4 [22].
+This system is pivotal in understanding the evolution of autonomous vehicles (AVs), which
+are equipped with advanced sensors and software to navigate independently, thereby en-
+hancing safety technologies and autonomy. Such a progression necessitates a collaborative
+effort among scientists and engineers across various disciplines to address the complex
+challenges associated with AV development [23]. The SAE automation levels provide a
+standardized framework that is critical for evaluating the capabilities and limitations of
+AVs at different stages of their development. By categorizing AVs into these distinct levels,
+it becomes possible to systematically assess the technological advancements and hurdles
+encountered at each level. This structured approach is instrumental in setting realistic
+expectations about AV performance, shaping regulatory frameworks, and educating the
+public on the operational capabilities of AVs under various scenarios. Thus, the classifi-
+cation of AVs according to SAE levels is essential for advancing the field of autonomous
+driving, guiding its regulatory landscape, and informing societal understanding of these
+emerging technologies.
+
+---
+
+[ID: CoDerainNet: Collaborative Deraining Network for
+Drone-view Object Detection in Rainy Weather Conditions.pdf_page5]
+Remote Sens. 2023, 15, 1487
+5 of 21
+these aerial images are generally small, resulting in poor DroneDet performance. There are
+three types of solutions for DroneDet. Super-resolution-based methods [1,4,21] reconstruct
+a low-resolution image into a high-resolution one, which contains more details of small
+objects beneﬁcial for recognizing them. Towards this end, generative adversarial networks,
+consisting of a generator and a discriminator, are utilized to super-resolve low-resolution
+images. These methods adopt a multi-stage paradigm, including region proposal, RoIs
+super-resolution, and object detection, which is inefﬁcient and difﬁcult to optimize in an
+end-to-end manner. Context-based methods [22,23] establish the relationship between RoIs
+and their surrounding regions, and integrate it into their original features. It is difﬁcult
+for drone-captured images to establish such a relationship due to background clutter in
+drone-captured images. Multi-scale-representation-based methods [24–26] combine spatial
+information in low-level layers and semantic information in high-level layers for feature
+enhancement. In recent years, the security aspects of drone communications have started to
+receive attention [27–29]. Tian et al. [27] proposed an adversarial attack model to conduct
+adversarial attacks against deep learning-based navigation systems of drones.
+Although methods for DroneDet have obtained impressive detection performance, their
+detection performance decreases significantly in rainy weather conditions. To deal with the
+issue of Rainy DroneDet, CoDerainNet introduces a subnetwork for image deraining.
+3. Problem Deﬁnition
+We follow Multi-Task Learning (MTL) [30] to deﬁne the problem in collaborative
+deraining learning for Rainy DroneDet.
+Deﬁnition (MTL). Given n related tasks {Ti}n
+i=1, the goal of MTL is to improve the
+performance of all or some of the tasks by simultaneously learning the n tasks.
+Based on this deﬁnition, we can formulate the task of Rainy DroneDet. Recall that
+T r = {Y, P(Y|R)} is the task of Rainy DroneDet. Let T dr = {C, P(C|R)} be the task of
+image deraining. T r is trained on the dataset {R, Y}, which consists of N training samples
+{ri, yi}N
+i=1, where ri ∈Rwh3 is the ith rainy image and yi is the image’s label for DroneDet.
+T dr is trained on the dataset {R, C}, which consists of M training samples {ri, ci}M
+i=1, where
+ci ∈Rwh3 is the corresponding rain-free image of ri for image deraining. Therefore, the
+problem of the collaborative deraining learning for Rainy DroneDet can be formulated
+as follows.
+Deﬁnition (collaborative deraining learning for Rainy DroneDet). Given two tasks,
+Rainy DroneDet T r and image deraining T dr, the goal of the collaborative deraining
+learning for Rainy DroneDet is to improve the T r performance with limited computational
+costs during inference by simultaneously optimizing these two tasks.
+4. Methodology
+4.1. Overview
+Figure 2 shows the architecture of the proposed CoDerainNet, which consists of two
+subnetworks and one training paradigm, i.e., Deraining Subnetwork, DroneDet Subnet-
+work, or ColTeaching. (1) The Deraining Subnetwork reduces rain streak noise in features
+by reconstructing rain-free images. (2) The DroneDet Subnetwork detects objects in drone-
+captured images effectively. (3) ColTeaching incorporates image deraining into the process
+of Rainy DroneDet by strengthening the interaction between the two subnetworks.
+CoDerainNet can signiﬁcantly improve Rainy DroneDet performance by interactively
+training the two subnetworks. Firstly, each of them is trained on the dataset {ri, ci}M
+i=1 or
+{ri, yi}N
+i=1 so that they obtain optimal image deraining and object detection performance,
+respectively. Secondly, ColTeaching incorporates image deraining into the process of Rainy
+DroneDet by allowing interaction between them. Moreover, our proposed CoDerainNet
+can improve Rainy DroneDet performance with limited additional computational cost, as
+only the DroneDet Subnetwork needs to be executed during inference. We provide the
+details of the above two subnetworks and the training paradigm below.
+
+---
+
+[ID: MASFNet_Multiscale_Adaptive_Sampling_Fusion_Network_for_Object_Detection_in_Adverse_Weather.pdf_page6]
+4702815
+IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING, VOL. 63, 2025
+E. DH and Loss Function
+and computational complexity by limiting the output to feature
+maps at two scales instead of three. Reducing the number
+of outputs may lead to performance degradation, we address
+this issue by proposing the MSFNet, which enables efficient
+fusion of feature maps across different scales to maintain high
+performance. The MAFNet employs content-aware reassembly
+of features (CARAFE) [59] in conjunction with traditional
+upsampling for multilevel fusion. This approach not only
+leverages the strengths of CARAFE but also establishes a
+complementary relationship between the two methods through
+the upsampling process.
+The structure of MSFNet is illustrated in Fig. 2, which takes
+input feature maps at two different scales and generates output
+feature maps at two different scales. The CBL combines 3 
+3 convolution, batch normalization, and LeakyReLU activa-
+tion function. The MSFNet consists of the CBL blocks and
+some operations dealing with feature maps, where CBLi(i =
+1, 2, 3) denotes CBL blocks used in the network. C1
+∈
+R(h/16)(w/16)256 enters the MSFNet as a main branch and
+performs the convolution operation with CBL1 to output the
+first feature map P1 ∈R(h/32)(w/32)256. Meanwhile, the
+output of CBL1 is also the same as CBL2 in performing single
+computation to obtain three feature maps, denoted as Fj ∈
+R(h/32)(w/32)128( j = 1, 2, 3). Then, F1 performs 2 upsam-
+pling and the output is denoted as ˜F1 ∈R(h/16)(w/16)128. F2 is
+more similar to F1, which also performs an upsampling oper-
+ation, and then the original feature map is spatially unfolded
+by k through the sliding extraction method that is denoted
+as φ ∈R[(h/16)(w/16)][128k2]. After reconstructing the tensor
+obtain φ ∈R(h/16)(w/16)128k2, where k denotes the size
+of the reassembly kernel. After passing through CBL3, the
+number of channels of F3 becomes λ 2 k2, where λ is
+the expected upsampling scale. The PixelShuffle function is
+used to recombine the feature elements of F3 to obtain ˜F3 ∈
+R(h/16)(w/16)k2. Finally, perform the normalization operation
+on ˜F3 and then apply the Softmax operation to ˜F3. Then, the
+feature maps derived from ˜F3 and ˜F2 after Einstein summation
+with ˜F1 to concatenate. The final result with C1 to produce the
+second output, which is expressed as P2 ∈R(h/16)(w/16)384.
+P2 is expressed as
+We utilize the CBL block to adjust the number of chan-
+nels and two 1 1 convolutions as the DHs to regress
+different parameters after feature extraction and feature fusion
+of MSFNet. The output channels are all (5 + Ncls) 3,
+where Ncls denotes the object categories. The five components
+include the confidence score (1 value) and position information
+(4 values: x, y, w, and h) for the predicted bounding box. The
+factor of three indicates that each cell predicts three bounding
+boxes of different sizes. Refer to Fig. 2 for an illustration of
+the DH architecture, and the total loss function is expressed
+as
+Ltotal = λ1Lcls + λ2Lobj + λ3Lloc
+(11)
+where Lcls, Lobj, and Lloc represent the classification loss,
+confidence loss, and positioning loss, respectively. Binary
+cross-entropy (BCE) loss serves as the loss function for both
+classification and confidence aspects. Meanwhile, complete-
+intersection over union (CIoU) loss is employed to measure
+the positioning loss. The loss functions used are the same as
+those in the baseline [36]. Among them, λ1, λ2, and λ3 are
+equal to Ncls/80, 5, 0.05, respectively.
+IV. EXPERIMENTAL AND RESULTS
+In this section, we first provide a detailed description of the
+datasets and evaluation metrics. Subsequently, we analyze the
+experimental results in detail, comparing them with other state-
+of-the-art (SOTA) detection algorithms in adverse weather
+scenarios. The experiments are conducted on an Intel1 Core2
+i9-10900X, NVIDIA GeForce RTX 3080, implemented in the
+deep learning framework of PyTorch-GPU. In both the training
+and testing process, all input images are resized to 416 
+416 pixels. During training, stochastic gradient descent (SGD)
+is used as the optimizer, with an image batch size of 8,
+a learning rate set to 0.0001, momentum at 0.9, epoch set
+to 300, and a weight decay factor of 0.0005.
+A. Dataset Description and Evaluation Metrics
+In the experiment, we use three adverse weather datasets
+to evaluate our model. The distribution of label information
+and example images of the above three datasets are shown
+in Table I and Fig. 5. The first dataset is RTTS [12], which
+is a considerably extensive real-world dataset captured in
+foggy scenarios. The second dataset is FDD [60], which is
+a real-world dataset captured in foggy scenarios. The third
+dataset is ExDark [61], which is a dataset for object detection
+research that primarily features images taken in low-light
+scenarios.
+1) RTTS Dataset: This dataset encompasses a total of
+4322 naturally foggy images, meticulously annotated to high-
+light five distinctive object classes: person, bicycle, car, bus,
+and motorbike. Before model training, the images and their
+label information are divided into a training and validation
+set and a test set with a ratio of 9:1. Their numbers are
+P2 = C1 ⊙˜F1 ⊙EinSum
+ ˜F2, σ
+ ˜F3
+h,w,c
+(10)
+where ⊙denotes the concatenation operation, σ is the Softmax
+function, and EinSum(x, y)h,w,c denotes Einstein summation,
+which multiply the x and y tensor elements in specific
+dimensions and sum over those dimensions to obtain the final
+output tensor h w c.
+The MSFNet compensates for the defects caused by ordi-
+nary upsampling and enhances the semantic information of
+the feature map through multistage sampling fusion. This
+network improves the ability of the model to detect images
+in adverse weather, and the detailed results are shown in
+the experimental section. The two outputs P1 and P2 pro-
+duced by MSFNet are used for object localization in the
+object DH and for calculating total loss to optimize the
+model.
+1Registered trademark.
+2Trademarked.
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:54 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: Chen_Tokenize_Image_Patches_Global_Context_Fusion_for_Effective_Haze_Removal_CVPR_2025_paper.pdf_page5]
+Integration Path
+Hazy image
+Baseline
+ing all tokens instead of concurrently. This strategy allows
+us to achieve signiﬁcantly lower memory usage at the cost
+of slightly increased processing time.
+3.2. Dehazing Attribution Map
+Inspired by the Integrated Gradients (IG) method [42]
+and the Local Attribution Map [13], we propose the De-
+hazing Attribution Map to enhance the interpretability of
+our model. Let F : Rhw →Rhw represent a dehaz-
+ing network. To quantify the dehazing effect, we utilize a
+pixel intensity detector, given the signiﬁcant differences in
+pixel intensities between hazy and clear images. Speciﬁ-
+cally, for an input hazy image I ∈Rhw, we deﬁne the
+detector as Dxy(I) = 
+i∈[x,x+l],j∈[y,y+l]Iij, where the
+subscripts i and j denote the spatial coordinates. For clar-
+ity, we will omit the subscripts in the subsequent discus-
+sion. To conduct attribution analysis for dehazing network,
+we require a baseline input image I′ which satisﬁes that
+F(I′) absent certain features present in F(I). The attri-
+bution map D(F(I)) is obtained by computing the path-
+integrated gradient along a continuous trajectory transition-
+ing from I′ to I. This smooth path function is denoted as
+γ(α) : [0, 1] →Rhw, with γ(0) : I′ and γ(1) : I. There-
+fore, the i-th dimension of the attribution map can be ex-
+pressed as follows:
+(a) Interpolated images
+ 
+J D
+(b) Gradients at interpolation
+Figure 4. Illustration of the baseline image and the path function.
+The region enclosed by the red box indicates the attribution area.
+4. Experiments and Analysis
+4.1. Dataset
+To train and evaluate the proposed network and the com-
+parative methods, we constructed an ultra-high-resolution
+haze removal dataset (8KDehaze), containing 10,000 im-
+ages at a resolution of 8192 8192 pixels. The clear images
+in 8KDehaze were sourced from publicly available aerial
+imagery provided by the United States Geological Survey,
+while the hazy counterparts were generated using the atmo-
+spheric scattering model [18] and the approach proposed by
+Czerkawski et al.[7]. To the best of our knowledge, 8KDe-
+haze is the ﬁrst ultra-high-resolution dataset in the ﬁeld
+of image dehazing. In addition, to further validate the ef-
+fectiveness of the proposed method, we conduct extensive
+training and testing on the synthesis dataset 4KID [62] and
+the real-world dataset O-HAZE [2]. Table 1 shows the de-
+tails of datasets used in the experiments.
+DAMF,D(γ)i =
+ 1
+∂D(F(γ(α)))
+∂γ(α)i
+ ∂γ(α)i
+∂α
+dα
+(1)
+0
+As highlighted in [41], the effectiveness of model attri-
+bution depends on the choice of an appropriate baseline.
+For instance, in image classiﬁcation tasks, a pure black im-
+age serves as a suitable baseline since the model is unable
+to classify it [42]. In this work, we meticulously design
+baseline inputs speciﬁcally tailored for the dehazing net-
+work. As stated above, a baseline input must lack certain
+key features, which are typically determined by the char-
+acteristics of the task.
+In the context of dehazing, clear
+regions of an image are easy to reconstruct. In contrast,
+reconstructing hazy regions, particularly those with thick
+haze, poses substantial challenges. Effectively reconstruct-
+ing these hazy areas is crucial for achieving superior dehaz-
+ing results. Therefore, as shown in Figure 4, we utilize the
+clear image as the baseline input and adopt a linear interpo-
+lation function as the path function. In practice, we compute
+the gradients at uniformly sampled points along the deﬁned
+path, then approximating the integral as described in Eq (2):
+Table 1. Overview of datasets used in the experiments.
+
+
+[TABLE_0_PLACEHOLDER]
+
+
+4.2. Implementation Details
+The proposed model was implemented in PyTorch and
+trained on a single NVIDIA A100 GPU. Input images were
+randomly cropped to a resolution of 2048 2048 pix-
+els, with a batch size of 2 during training. For compar-
+ative analysis, we selected a range of recently published
+state-of-the-art dehazing algorithms, including 4KDehaz-
+ing [62], Dehamer [14], C2PNet [61], Dehazeformer [40],
+MB-TaylorFormer [34], ConvIR [6], Mixdehazenet [30],
+and DEA-Net [4].
+Since these approaches could not be
+m
+∂D(F(γ( k
+m)i
+ (Δγk,m)i
+m
+(2)
+m)))
+˜
+DAM F,D(γ)i =
+∂γ( k
+k=1
+where m denotes the number of steps used for the integral
+approximation, and Δγk,m = γ( k
+m)−γ( k+1
+m ) .Empirically,
+we ﬁnd that a step count of 100 is sufﬁcient to approximate
+the integral effectively.
+2262
+
+---
+
+[ID: Object Detection in Adverse Weather for Autonomous Driving
+through Data Merging and YOLOv8.pdf_page22]
+Sensors 2023, 23, 8471
+22 of 29
+identity. Since YOLOv8 contains other base weights to detect various objects depending
+on their sizes (as discussed earlier), we tried to compare our results with those versions
+as well. Figure A3 shows the detection results (on a foggy image) of the ﬁve base weights
+(YOLOv8) and the weight (MERGEDv5.pt) trained on the MERGED dataset (V5). Our
+weight detected a ‘truck’ with a conﬁdent score of 0.86 (Figure A3f), while ‘yolov8m.pt’
+and ‘yolov8l.pt’ detected with a conﬁdent score of less than 0.4 (Figure A3c,d, respectively);
+‘yolov8n.pt’ and ‘yolov8x.pt’ failed to detect the object (Figure A3a,e, respectively), and
+‘yolov8s.pt’ detected the object as a ‘bus’ (Figure A3b). Therefore, the other versions of
+the base weights are also not as trustworthy as our trained weight. Similarly, as shown in
+Figure A4, ‘MERGEDv5.pt’ successfully detected all of the objects as two ‘trucks’, and ﬁve
+‘cars’ (Figure A4f). However, all of the base weights of the YOLOv8 failed to detect those
+objects perfectly. Finally, we have shown another example from a rainy image in Figure A5,
+where all of the base weights (YOLOv8) failed to detect the second car (the smallest between
+the two; both were detected, as shown in Figure A5f, by the trained weight). Moreover,
+three of the base weights failed to detect the bigger car as well (Figure A5a,c,e).
+(a)
+(b)
+(c)
+(d)
+Figure A3. Cont.
+
+---
+
+[ID: Object_Detection_With_Physical_Prior_and_AWConv_in_Foggy_Weather_for_Traffic_Scenes.pdf_page9]
+This article has been accepted for inclusion in a future issue of this journal. Content is final as presented, with the exception of pagination.
+HAN et al.: OBJECT DETECTION WITH PHYSICAL PRIOR AND AWConv IN FOGGY WEATHER
+9
+Fig. 9.
+Performance curves of detectors with diﬀerent strategies on the Foggy Cityscapes dataset. (a) YOLOv8 x. (b) YOLOv8 x(+defoggy).
+(c) YOLOv8 x(+AWConv). (d) Ours x(defoggy+AWConv).
+TABLE IX
+COMPARISONS WITH DIFFERENT OBJECT DETECTORS ON FOGGY CITYSCAPES VAL SET. OURS DENOTES DEFOGGING + AWCONV
+advantages under foggy conditions, verifying its robustness
+and practicality in complex traﬃc scenes.
+3) Comparative Statistics on RTTS: The real-world foggy
+traﬃc dataset is more challenging, therefore, we verify the
+generalization of the model through this dataset, as shown
+in Table X. Our work is able to improve the object detection
+performance even under extremely adverse weather conditions,
+especially the R of traﬃc objects, which is improved by
+Authorized licensed use limited to: University of Electronic Science and Tech of China. Downloaded on July 10,2025 at 02:27:23 UTC from IEEE Xplore. Restrictions apply.
+
+---
+
+[ID: CoDerainNet: Collaborative Deraining Network for
+Drone-view Object Detection in Rainy Weather Conditions.pdf_page18]
+Remote Sens. 2023, 15, 1487
+18 of 21
+(a) (b)
+(c) (d)
+Figure 16. Visualization of the detection results obtained with CoDerainNet on our RainDrone
+dataset. These subﬁgures (a), (b), (c), and (d) are captured by drones in real rainy weather conditions.
+5.4.4. Overall Complexity Comparison
+We compared the overall complexity of CoDerainNet with that of SOTA methods. The
+evaluation metrics included FLOPs (Floating Point Operations, the calculation amount of a
+model) and processing time (milliseconds) on the server. Table 6 shows that CoDerainNet
+recorded a processing time of 106.78 s and FLOPs of 241.59. Compared with the ImDerain-
+based methods, including PReNet-YOLOv5, MPRNet-YOLOv5, PReNet-YOLOv7, and
+MPRNet-YOLOv7, CoDerainNet signiﬁcantly reduces the inference time and calculation
+amount because our approach does not need image deraining as a pre-processing step,
+which involves a high computation cost. Compared with the general object detectors,
+including YOLOv5 and YOLOv7, our CoDerainNet slightly increased the inference time
+and calculation amount because the context collector and the ﬁne-grained target-focusing
+module are integrated into our DroneDet Subnetwork to boost the performance of small
+object detection.
+Table 6. Comparison of different methods in terms of inference time and calculation amount.
+Method
+Time (Milliseconds)
+FLOPs (G)
+YOLOv5
+55.10
+108.40
+YOLOv7
+27.89
+103.30
+PReNet-YOLOv5
+386.15
+1682.35
+MPRNet-YOLOv5
+270.10
+2408.40
+PReNet-YOLOv7
+358.94
+1677.25
+MPRNet-YOLOv7
+242.89
+2403.30
+AdaptiveTeacher
+119.17
+258.98
+CoDerainNet
+106.78
+241.59
+
+---
+
+[ID: CoDerainNet: Collaborative Deraining Network for
+Drone-view Object Detection in Rainy Weather Conditions.pdf_page16]
+Remote Sens. 2023, 15, 1487
+16 of 21
+demonstrate that our CoDerainNet is more efﬁcient in terms of inference speed and com-
+putational costs with comparable accuracy with the ImDerain-based detectors. In addition,
+Table 5 also shows the performance comparison of CoDerainNet with AdaptiveTeacher,
+and CoDerainNet outperforms AdaptiveTeacher.
+ImDerain-based detectors adopt complex deraining models to improve DroneDet
+accuracy effectively. These deraining models gradually learn restoration functions in
+multi-stage architecture to achieve notable performance. As a result, these methods sub-
+stantially increase the overall complexity of detectors. For example, the computational
+complexity of MPRNet-YOLOv5 is about 20 times higher than that of YOLOv5 (2408.40 G
+vs 108.40 G). However, our CoDerainNet can achieve a DroneDet performance comparable
+to the ImDerain-based detectors while only slightly increasing the computational costs ,
+since the Deraining Subnetwork is only executed during training but not inference.
+5.4.3. Visualization of Detection Results
+We compared the visual detection results of a rainy image from RainVisDrone. Ob-
+servations in Figure 13 indicate that CoDerainNet detects objects more accurately than
+the other models. In addition, Figures 14–16 visualize the detection results obtained by
+CoDerainNet on rainy images. We can observe that CoDerainNet obtains impressive
+detection results on both synthetic and real rainy datasets. It is worth mentioning that
+CoDerainNet can detect targets in low-light images. According to the conﬁdence score,
+there is still much room for improvement in low-light detection performance.
+（a）	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+（b）
+（c）	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+（d）
+Figure 13. Comparison of the detection results of a medium rainy image taken from the RainVisDrone
+dataset. (a) YOLOv7, (b) PReNet-YOLOv7, (c) AdaptiveTeacher, and (d) CoDerainNet.
+
+---
+
