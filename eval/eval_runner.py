@@ -164,13 +164,13 @@ class EvalRunner:
         EVAL_SYSTEM_PROMPT = (
             "You are an academic research assistant being evaluated on RAG quality.\n\n"
             "【CRITICAL - EVALUATION MODE RULES】:\n"
-            "1. You have ONE tool: `search_vision_knowledge`. Use it to query the local vector database.\n"
-            "2. DO NOT search the web, download papers, or attempt any other actions.\n"
-            "3. Answer questions based SOLELY on what `search_vision_knowledge` returns.\n"
-            "4. If the database lacks relevant information, honestly state: 'The current knowledge base "
-            "does not contain sufficient information to answer this question fully.'\n"
-            "5. Use elegant Markdown formatting. Cite your sources at the end.\n"
-            "6. DO NOT say '好的', '我将为您', '请稍等'. Answer directly in English or Chinese as the query uses.\n"
+            "1. You have ONE tool: `search_vision_knowledge`. You MUST call it FIRST before giving any answer.\n"
+            "2. NEVER skip tool calling — even if the query seems generic. Call the tool first, then answer.\n"
+            "3. When calling search_vision_knowledge, ALWAYS pass the paper_id if the user message specifies one.\n"
+            "4. Answer questions based SOLELY on what search_vision_knowledge returns.\n"
+            "5. If the database truly lacks relevant information, state so — but ONLY after calling the tool.\n"
+            "6. Use elegant Markdown formatting. Cite your sources at the end.\n"
+            "7. DO NOT say '好的', '我将为您', '请稍等'. Answer directly.\n"
         )
 
         def call_eval_model(state):
@@ -249,11 +249,27 @@ class EvalRunner:
 
             try:
                 app = self._get_eval_app()
-                inputs = {"messages": [HumanMessage(content=case.query)]}
+                # Pass paper_id in the query so the agent can filter search_vision_knowledge
+                query_with_context = case.query
+                if case.paper_id:
+                    query_with_context = (
+                        f"【CRITICAL: When calling search_vision_knowledge, you MUST pass "
+                        f"paper_id EXACTLY as: '{case.paper_id}'. "
+                        f"Do NOT modify, add .pdf, or change this string in any way.】\n\n"
+                        f"{case.query}"
+                    )
+                inputs = {"messages": [HumanMessage(content=query_with_context)]}
                 thread_cfg = {"configurable": {"thread_id": f"eval_{case.id}_{uuid.uuid4().hex[:8]}"}}
 
                 t_start = time.time()
                 for event in app.stream(inputs, config=thread_cfg, stream_mode="updates"):
+                    # Also capture raw tool outputs for retrieval metrics
+                    for node_name, node_state in event.items():
+                        if node_name == "tools":
+                            msgs = node_state.get("messages", [])
+                            for m in msgs:
+                                if hasattr(m, "content") and hasattr(m, "name"):
+                                    event_queue.put(("tool_output", {"name": m.name, "content": str(m.content)[:5000]}))
                     event_queue.put(("event", event))
                 event_queue.put(("done", t_start))
             except Exception as e:
@@ -275,6 +291,7 @@ class EvalRunner:
 
         # 收集 stream 事件中的最终回答
         final_answer = ""
+        tool_outputs: list[dict] = []  # Fallback: extract retrieval data from tool outputs
         while not event_queue.empty():
             try:
                 msg_type, data = event_queue.get_nowait()
@@ -288,6 +305,8 @@ class EvalRunner:
             elif msg_type == "error":
                 result.error = data
                 break
+            elif msg_type == "tool_output":
+                tool_outputs.append(data)
             elif msg_type == "event":
                 for node_name, node_state in data.items():
                     if node_name == "agent":
@@ -330,6 +349,26 @@ class EvalRunner:
         result.total_output_tokens = sum(t.output_tokens for t in telemetry_traces)
 
         # ---- 计算检索指标 ----
+        # 方案 A: EvalContext capture（正常路径）
+        # 方案 B: 从 vision_rag 全局缓存读取（绕过 threading.local 限制）
+        if not retrieval_traces and case.gt_relevant_pages:
+            try:
+                from tools.vision_rag import _last_retrieval_hits
+                hits = _last_retrieval_hits
+                if hits and hits.get("fused_hits"):
+                    from eval.eval_tracer import RetrievalTrace
+                    retrieval_traces.append(RetrievalTrace(
+                        query=case.query,
+                        paper_id=case.paper_id,
+                        vision_hits=hits.get("vision_hits", []),
+                        text_hits=hits.get("text_hits", []),
+                        fused_hits=hits.get("fused_hits", []),
+                        final_pages_info=[],
+                        final_answer="",
+                    ))
+            except Exception:
+                pass
+
         if retrieval_traces and case.gt_relevant_pages:
             t = retrieval_traces[-1]
             result.retrieval_metrics = compute_retrieval_metrics(
@@ -394,9 +433,35 @@ class EvalRunner:
     # -----------------------------------------------------------
     # 批量运行
     # -----------------------------------------------------------
+    def _prewarm_models(self):
+        """预加载 ColPali + BGE-M3，避免第一个用例因懒加载和 GPU 碎片化导致 OOM/超时。"""
+        import torch, gc
+        gc.collect()
+        try:
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        except Exception:
+            pass
+
+        from tools.vision_rag import _get_vision_model, _get_text_model
+        print("🔥 [预加载] 正在预热 ColPali + BGE-M3 ...")
+        try:
+            _get_vision_model()   # ColPali INT8 → GPU (~4GB, 一次性)
+            print("   ColPali ✓")
+        except Exception as e:
+            print(f"   ColPali ✗ ({e}) — 将继续,但首用例可能失败")
+        try:
+            _get_text_model()     # BGE-M3 → CPU
+            print("   BGE-M3 ✓")
+        except Exception as e:
+            print(f"   BGE-M3 ✗ ({e})")
+
     def run_all(self) -> list[CaseResult]:
         if self.dataset is None:
             self.load_dataset()
+
+        # 预加载 ColPali + BGE-M3，避免第一个用例因懒加载超时/OOM
+        self._prewarm_models()
 
         self.results = []
         for i, case in enumerate(self.dataset.cases):

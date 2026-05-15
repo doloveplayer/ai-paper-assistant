@@ -48,6 +48,36 @@ class JudgeResult:
 # ============================================================
 
 
+def _extract_json(content: str) -> dict | None:
+    """从 LLM 回复中鲁棒提取 JSON。按优先级尝试多种策略。"""
+    # 策略1: ```json ... ``` 代码块
+    m = re.search(r"```(?:json)?\s*(\{[\s\S]*?\})\s*```", content)
+    if m:
+        try: return json.loads(m.group(1))
+        except json.JSONDecodeError: pass
+
+    # 策略2: 找最外层平衡花括号
+    depth = 0; start = -1
+    for i, ch in enumerate(content):
+        if ch == '{':
+            if depth == 0: start = i
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+            if depth == 0 and start >= 0:
+                try: return json.loads(content[start:i+1])
+                except json.JSONDecodeError: pass
+                start = -1  # try next brace pair
+
+    # 策略3: 贪婪正则回退
+    m = re.search(r"\{[\s\S]*\}", content)
+    if m:
+        try: return json.loads(m.group())
+        except json.JSONDecodeError: pass
+
+    return None
+
+
 def _call_judge_llm(prompt: str) -> dict:
     """调用本地 vLLM 进行 Judge 推理，返回解析后的 JSON dict。"""
     try:
@@ -65,11 +95,9 @@ def _call_judge_llm(prompt: str) -> dict:
             return {"error": f"vLLM returned {resp.status_code}", "raw": resp.text[:200]}
 
         content = resp.json()["choices"][0]["message"]["content"]
-
-        # 尝试从回复中提取 JSON 块
-        json_match = re.search(r"\{[\s\S]*\}", content)
-        if json_match:
-            return json.loads(json_match.group())
+        parsed = _extract_json(content)
+        if parsed:
+            return parsed
         return {"error": "No JSON found in response", "raw": content[:500]}
     except json.JSONDecodeError as e:
         return {"error": f"JSON parse failed: {e}", "raw": content[:500] if 'content' in dir() else ""}

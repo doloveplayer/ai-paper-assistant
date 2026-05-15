@@ -16,7 +16,7 @@ from langchain_core.tools import tool
 from pdf2image import convert_from_path
 from pydantic import BaseModel, Field
 import qdrant_client 
-from qdrant_client.models import Distance, VectorParams, MultiVectorConfig, PointStruct, MultiVectorComparator, Filter, FieldCondition, MatchAny, MatchValue
+from qdrant_client.models import Distance, VectorParams, MultiVectorConfig, PointStruct, MultiVectorComparator, Filter, FieldCondition, MatchAny, MatchValue, MatchText
 
 from tools.mix_ingest import extract_text_and_tables_from_page 
 
@@ -591,6 +591,10 @@ def _crop_and_encode_rois(image_path: str, rois: list) -> list:
 class SearchVisionKnowledgeInput(BaseModel):
     query: str = Field(description="必须使用简练的英文学术关键词。用于检索论文的具体内容、细节、公式、架构图、数据集、实验结果等一切内部信息。")
     paper_id: Optional[str] = Field(default=None, description="【极度重要】如果用户是询问刚才提到的、某篇具体的论文，必须传入该论文的 ID（如 2403.02148）。如果是泛泛地提问，则留空。")
+# 评估系统接口：缓存最后一次双路检索的原始命中结果
+_last_retrieval_hits: dict = {}
+
+
 @tool("search_vision_knowledge", args_schema=SearchVisionKnowledgeInput)
 def search_vision_knowledge(query: str, paper_id: Optional[str] = None) -> str:
     """
@@ -619,13 +623,22 @@ def search_vision_knowledge(query: str, paper_id: Optional[str] = None) -> str:
     # 文本路
     text_query_vector = text_model.encode(query, normalize_embeddings=True).tolist()
 
-    # 过滤器
+    # 过滤器 — 鲁棒匹配：Agent (7B model) may mangle paper_id  (add .pdf / use full name)
     query_filter = None
     if paper_id:
+        pid_variants = [paper_id]
+        if paper_id.endswith('.pdf'):
+            pid_variants.append(paper_id[:-4])
+        else:
+            pid_variants.append(paper_id + '.pdf')
+        # Short prefix (≤50 chars) for Qdrant MatchText — avoids tokenizer issues
+        clean = paper_id.strip().removesuffix('.pdf').replace('\n', ' ')
+        prefix = clean[:40] if len(clean) > 40 else clean
         query_filter = Filter(
             should=[
-                FieldCondition(key="paper_id", match=MatchAny(any=[paper_id, paper_id + ".pdf"])),
-                FieldCondition(key="file_name", match=MatchAny(any=[paper_id, paper_id + ".pdf"])),
+                FieldCondition(key="paper_id", match=MatchAny(any=pid_variants)),
+                FieldCondition(key="file_name", match=MatchAny(any=pid_variants)),
+                FieldCondition(key="file_name", match=MatchText(text=prefix)),
             ]
         )
 
@@ -654,6 +667,14 @@ def search_vision_knowledge(query: str, paper_id: Optional[str] = None) -> str:
     # 3. RRF 融合与截断
     # --------------------------------------------------
     fused_results = rrf_fusion(vision_res, text_res)[:top_k]
+
+    # 缓存检索命中数据供评估系统读取（解决 EvalContext 线程隔离问题）
+    global _last_retrieval_hits
+    _last_retrieval_hits = {
+        "vision_hits": [{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in vision_res],
+        "text_hits": [{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in text_res],
+        "fused_hits": [{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in fused_results],
+    }
 
     # ---- 评估系统追踪点：捕获双路检索 + RRF 融合的完整中间数据 ----
     try:
