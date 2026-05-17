@@ -22,6 +22,7 @@ class Config:
     EMBEDDING_MODEL_PATH = "/home/c2216-3090/disB/hyh/AI/models/bge-m3/BAAI/bge-m3"
     LLM_API_BASE = "http://localhost:8000/v1"
     LLM_MODEL_NAME = "qwen2.5-7b-instruct"
+    SUMMARIZER_LORA_NAME = "summarizer"           # vLLM dynamic LoRA: text summarization adapter
     VLLM_MODEL_NAME = "qwen2-vl-7b-instruct"
     VLLM_API_BASE = "http://localhost:8001/v1"
     VISION_MODEL_PATH = "/home/c2216-3090/disB/hyh/AI/models/colpali-v1.2"
@@ -35,6 +36,24 @@ class Config:
     USER_MEMORY_COLLECTION = "user_memory"       # Qdrant 长期记忆集合
     WORKING_CONTEXT_MAX_ROUNDS = 5                # 工作记忆最大对话轮数
     MEMORY_RETRIEVAL_TOP_K = 3                    # 长期记忆检索返回条数
+
+    # 5. 文本主路 RAG 配置 (Text-Primary Pipeline)
+    TEXT_PRIMARY_COLLECTION = "vrag_text_primary"
+
+    # 父子分块
+    CHILD_CHUNK_SIZE = 400          # 子块 token 数（检索粒度）
+    CHILD_CHUNK_OVERLAP = 50        # 子块重叠 token 数
+    PARENT_CONTEXT_WINDOW = 1       # 父块 = child ± N 个兄弟块
+
+    # 检索超参
+    TEXT_SEARCH_POOL_SIZE = 15      # 文本路子块检索数
+    VISION_SEARCH_POOL_SIZE = 6     # 视觉路检索数
+    RRF_TEXT_WEIGHT = 0.7           # 文本路 RRF 权重
+    RRF_VISION_WEIGHT = 0.3         # 视觉路 RRF 权重
+
+    # 图表页判断
+    VISUAL_PAGE_MIN_IMAGES = 1      # page.get_images() >= N → 视觉页
+    VISUAL_PAGE_MIN_TABLES = 1      # page.find_tables() >= N → 视觉页
 
 
 # 确保下载目录存在
@@ -55,6 +74,16 @@ os.makedirs(Config.DATA_DIR, exist_ok=True)
 #     --enable-auto-tool-choice \
 #     --tool-call-parser hermes \
 #     --enable-prefix-caching
+
+# python -m vllm.entrypoints.openai.api_server \
+# --model ./models/llm/qwen/Qwen2.5-7B-Instruct-AWQ \
+# --served-model-name qwen2.5-7b-instruct \
+# --max-model-len 8192 --gpu-memory-utilization 0.35 \
+# --quantization awq --port 8000 \
+# --enable-auto-tool-choice --tool-call-parser hermes \
+# --enable-prefix-caching \
+# --enable-lora \
+# --lora-modules summarizer=/home/c2216-3090/disB/hyh/AI/outputs/summarizer-lora
 
 # VLM 视觉模型 (无状态 API，每次请求结束自动释放 KV Cache)
 # max-model-len = 文本 + 图片vision_tokens 总和上限，3图约需 6000-8000 tokens
