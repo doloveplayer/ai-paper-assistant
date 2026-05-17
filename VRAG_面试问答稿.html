@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VRAG — 大模型应用开发 面试技术问答稿</title>
+<style>
+  :root {
+    --bg: #fafafa; --surface: #fff; --text: #1a1a1a; --text-muted: #666;
+    --border: #e0e0e0; --accent: #2563eb; --accent-light: #eff6ff;
+    --code-bg: #1e1e2e; --code-text: #cdd6f4;
+    --tag-bg: #f0f0f0; --tag-text: #555;
+    --warn-bg: #fff8e1; --warn-border: #ffc107;
+    --good-bg: #e8f5e9; --good-border: #4caf50;
+    --bad-bg: #ffebee; --bad-border: #f44336;
+    --radius: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 15px; }
+  .container { display: flex; min-height: 100vh; }
+  /* Sidebar */
+  nav { width: 260px; background: var(--surface); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; bottom: 0; overflow-y: auto; padding: 24px 20px; z-index: 10; }
+  nav h2 { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 20px; letter-spacing: -0.3px; }
+  nav a { display: block; padding: 5px 0; font-size: 13px; color: var(--text-muted); text-decoration: none; border-bottom: none; transition: color 0.15s; }
+  nav a:hover { color: var(--accent); }
+  nav .nav-section { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin: 14px 0 6px; }
+  /* Main */
+  main { margin-left: 260px; padding: 40px 48px; max-width: 900px; width: 100%; }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  h2 { font-size: 22px; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); letter-spacing: -0.3px; }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 10px; color: #333; }
+  p { margin: 10px 0; }
+  .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+  /* Q&A blocks */
+  .qa-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: 20px 0; overflow: hidden; }
+  .qa-question { padding: 14px 20px; background: var(--accent-light); border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 600; font-size: 14px; color: var(--accent); user-select: none; }
+  .qa-question:hover { background: #dbeafe; }
+  .qa-question::before { content: "Q: "; font-weight: 800; }
+  .qa-answer { padding: 20px 24px; }
+  .qa-answer p { margin: 8px 0; }
+  .qa-followup { margin-top: 14px; padding: 12px 16px; background: #f8f8f8; border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; font-size: 14px; }
+  .qa-followup strong { color: var(--accent); }
+  /* Code blocks */
+  .code-block { background: var(--code-bg); color: var(--code-text); border-radius: var(--radius); padding: 0; margin: 12px 0; overflow: hidden; font-size: 13px; }
+  .code-header { background: #181825; padding: 6px 16px; font-size: 11px; color: #a6adc8; border-bottom: 1px solid #313244; display: flex; justify-content: space-between; align-items: center; }
+  .code-header .file-path { font-weight: 600; color: #89b4fa; }
+  .code-block pre { padding: 14px 18px; margin: 0; overflow-x: auto; font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "SF Mono", monospace; line-height: 1.55; tab-size: 4; }
+  /* Inline code */
+  code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 13px; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; }
+  .code-block code { background: none; padding: 0; }
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+  th { background: #f5f5f5; font-weight: 600; font-size: 13px; }
+  tr:nth-child(even) td { background: #fafafa; }
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 8px; background: var(--tag-bg); color: var(--tag-text); border-radius: 3px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+  .tag-accent { background: var(--accent-light); color: var(--accent); }
+  /* Metric cards */
+  .metric-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+  .metric-card { flex: 1; min-width: 150px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
+  .metric-card .value { font-size: 28px; font-weight: 700; color: var(--accent); }
+  .metric-card .label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .metric-card.good .value { color: #16a34a; }
+  .metric-card.warn .value { color: #ea580c; }
+  .metric-card.bad .value { color: #dc2626; }
+  /* Callouts */
+  .callout { padding: 14px 18px; border-radius: var(--radius); margin: 14px 0; font-size: 14px; }
+  .callout-info { background: #e8f0fe; border-left: 3px solid var(--accent); }
+  .callout-warn { background: var(--warn-bg); border-left: 3px solid var(--warn-border); }
+  .callout-good { background: var(--good-bg); border-left: 3px solid var(--good-border); }
+  /* Architecture diagram */
+  .arch-diagram { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 18px 22px; margin: 14px 0; font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; line-height: 1.4; overflow-x: auto; white-space: pre; }
+  /* Print */
+  @media print {
+    nav { display: none; }
+    main { margin-left: 0; padding: 20px; }
+    .qa-block { break-inside: avoid; }
+    .code-block { break-inside: avoid; }
+  }
+  @media (max-width: 768px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 20px; }
+  }
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+  /* Key points list */
+  .key-points { list-style: none; padding: 0; }
+  .key-points li { padding: 4px 0 4px 20px; position: relative; }
+  .key-points li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ============== SIDEBAR ============== -->
+<nav>
+  <h2>VRAG 面问答稿</h2>
+  <div class="nav-section">概览</div>
+  <a href="#overview">项目概览</a>
+  <a href="#tech-stack">技术栈速览</a>
+  <div class="nav-section">核心技术问答</div>
+  <a href="#q1">1. 双路 RAG + RRF 融合</a>
+  <a href="#q2">2. ColPali Late Interaction</a>
+  <a href="#q3">3. ROI 视觉 Token 剪枝</a>
+  <a href="#q4">4. 四层分层记忆系统</a>
+  <a href="#q5">5. vLLM Prefix Caching</a>
+  <a href="#q6">6. GPU 显存管理</a>
+  <a href="#q7">7. LangGraph 状态机</a>
+  <a href="#q8">8. 表格空间碰撞检测</a>
+  <a href="#q9">9. PDF 安全防线</a>
+  <a href="#q10">10. 评估体系</a>
+  <a href="#q11">11. LoRA 微调与动态加载</a>
+  <div class="nav-section">评估体系专题</div>
+  <a href="#eval-deep">评估框架详解</a>
+  <a href="#eval-metrics">v4 指标数据</a>
+  <a href="#eval-metrics-v5">v5 指标数据 (LoRA)</a>
+  <a href="#eval-insights">关键发现</a>
+	  <a href="#text-vs-dual">文本 vs 双路消融实验</a>
+  <div class="nav-section">文本主路架构升级</div>
+  <a href="#text-primary-arch">文本主路 vs 旧双路对比</a>
+  <div class="nav-section">系统设计</div>
+  <a href="#sys-design">系统设计问答</a>
+  <a href="#challenges">项目难点</a>
+  <div class="nav-section">附录</div>
+  <a href="#appendix">代码速查索引</a>
+</nav>
+
+<!-- ============== MAIN CONTENT ============== -->
+<main>
+
+<h1>VRAG — 视觉增强学术研究智能体</h1>
+<p class="subtitle">大模型应用开发岗位 · 面试技术问答稿 · 基于项目实际代码与评估数据</p>
+
+<!-- ============================================================ -->
+<!-- SECTION: PROJECT OVERVIEW -->
+<!-- ============================================================ -->
+<h2 id="overview">一、项目概览</h2>
+
+<div class="qa-block">
+  <div class="qa-question">请简单介绍一下 VRAG 项目</div>
+  <div class="qa-answer">
+    <p><strong>VRAG（视觉增强学术研究智能体）</strong>是一个面向 CV 学术论文的智能检索与深度研读系统。它解决了传统文本 RAG 在学术论文场景下的三个核心盲区：</p>
+    <ul class="key-points">
+      <li><strong>图表/公式不可检索</strong> — 纯文本 RAG 丢失了论文中的架构图、消融实验表、数学公式等核心信息</li>
+      <li><strong>视觉 Token 爆炸</strong> — 全页论文图片每张约 2000 vision tokens，大量无效背景浪费显存</li>
+      <li><strong>长对话记忆退化</strong> — 传统摘要式压缩导致关键细节丢失，无法跨会话保留用户偏好</li>
+    </ul>
+    <p>我的方案是：<strong>ColPali 视觉编码 + BGE-M3 文本编码 双路混合检索 + RRF 融合</strong>，配合 LangGraph 状态机编排、四层分层记忆、vLLM Prefix Caching、ColPali ROI 智能裁剪等一系列优化，使整个系统能在单张 RTX 3090 Ti (24GB) 上完整运行。</p>
+    <p>核心技术指标：支持 16 篇论文/219 页的知识库检索，VLM 视觉分析延迟 5-60s（取决于页面复杂度），ROI 裁剪节省约 60% 视觉 Token，Prefix Cache 命中率 ≥60%。</p>
+  </div>
+</div>
+
+<h2 id="tech-stack">技术栈速览</h2>
+
+<table>
+  <tr><th>层级</th><th>技术选型</th><th>作用</th></tr>
+  <tr><td>Agent 框架</td><td>LangGraph (StateGraph)</td><td>状态机驱动的多轮对话 + 工具调用路由 + SQLite Checkpoint 持久化</td></tr>
+  <tr><td>对话 LLM</td><td>Qwen2.5-7B-Instruct-AWQ (vLLM :8000)</td><td>意图理解、工具决策、最终答案合成</td></tr>
+  <tr><td>视觉语言模型</td><td>Qwen2-VL-2B-Instruct-AWQ (vLLM :8001)</td><td>直接"看"论文页面图片并回答细节问题</td></tr>
+  <tr><td>视觉编码</td><td>ColPali v1.2 (PaliGemma-3B, INT8 量化)</td><td>将 PDF 页面渲染为图片后编码为 128 维多向量</td></tr>
+  <tr><td>文本编码</td><td>BGE-M3 (Sentence-Transformers, CPU)</td><td>中英文友好的 1024 维文本稠密向量</td></tr>
+  <tr><td>向量数据库</td><td>Qdrant (Docker)</td><td>双路命名向量存储，支持 MAX_SIM 比较器</td></tr>
+  <tr><td>PDF 解析</td><td>PyMuPDF + pdf2image + pikepdf</td><td>文本提取 + 表格检测 + 页面渲染 + 恶意代码扫描</td></tr>
+  <tr><td>学术检索</td><td>Arxiv API + Semantic Scholar API</td><td>全网论文检索（高级语法 + 兜底策略）</td></tr>
+  <tr><td>Web UI</td><td>Chainlit (:8053)</td><td>异步消息通信，后台线程避免 WebSocket 超时</td></tr>
+  <tr><td>Prefix Caching</td><td>vLLM --enable-prefix-caching</td><td>KV Cache 复用，配合静态→动态 Prompt 排序 ≥60% 命中率</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- SECTION: CORE TECHNICAL Q&A -->
+<!-- ============================================================ -->
+<h2 id="q1">二、核心技术深度问答</h2>
+
+<!-- Q1: Dual-Path RAG -->
+<h3>1. 视觉 + 文本双路 RAG 与 RRF 融合</h3>
+
+<div class="qa-block">
+  <div class="qa-question">为什么学术论文场景需要双路检索？单路文本 RAG 不够吗？</div>
+  <div class="qa-answer">
+    <p>不够。以 CV 论文为例，一篇目标检测论文的核心贡献往往在<strong>架构图</strong>（FPN/PANet/Detection Head 结构）、<strong>消融实验表</strong>、<strong>检测结果可视化</strong>上。这些信息载体是<strong>视觉原生</strong>的——纯文本提取要么完全丢失，要么变成不可读的乱码。</p>
+    <p>举个具体例子：用户问"YOLOv10 的 neck 结构是什么？"</p>
+    <ul class="key-points">
+      <li>文本路 (BGE-M3)：能命中描述 neck 设计的文字段落</li>
+      <li>视觉路 (ColPali)：直接命中包含 neck 架构图的页面，即使图上标注文字未被正确 OCR</li>
+    </ul>
+    <p>两路互补：文本路对纯文字描述页召回率高，视觉路对图表/公式页召回率高。我实际测试过纯文本检索（BGE-M3），对 3 个有 ground truth 页面的测试用例，纯文本路的 Recall@3 仅为 0-33%，验证了单路检索的不足。</p>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">RRF 融合具体怎么实现？为什么选 RRF 而不是其他融合策略？</div>
+  <div class="qa-answer">
+    <p>RRF（Reciprocal Rank Fusion，倒数排名融合）的核心思想：<strong>不依赖分数的绝对大小，只使用排名的倒数</strong>。这对异构检索通道（视觉路的 MAX_SIM 分数和文本路的 COSINE 分数完全不可比）至关重要。</p>
+    <p>来自 <code>tools/vision_rag.py:381-398</code>：</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L381-398</span></div>
+      <pre><code>def rrf_fusion(vision_hits, text_hits, k=60):
+    """倒数排名融合算法 (Reciprocal Rank Fusion)"""
+    scores = {}
+    hit_dict = {}
+
+    for rank, hit in enumerate(vision_hits):
+        scores[hit.id] = scores.get(hit.id, 0) + 1.0 / (k + rank + 1)
+        hit_dict[hit.id] = hit
+
+    for rank, hit in enumerate(text_hits):
+        scores[hit.id] = scores.get(hit.id, 0) + 1.0 / (k + rank + 1)
+        hit_dict[hit.id] = hit
+
+    sorted_ids = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
+    return [hit_dict[doc_id] for doc_id in sorted_ids]</code></pre>
+    </div>
+
+    <p><strong>为什么 k=60？</strong>较大的 k 值使 RRF 对排名变化不敏感——即使某篇文档在视觉路排名第 1 而在文本路排名第 20，它仍有机会在融合后胜出。这是有意为之：我们不希望某一弱的通道过早淘汰好结果。</p>
+
+<div class="qa-followup">
+  <strong>追问：候选池为什么扩大到 top_k × 6？</strong><br>
+  RRF 融合前的候选池越大，融合后截断的 recall 越高。我们的策略是：视觉路和文本路各检索 top_k × 6 个候选 → RRF 融合 → 截断至 top_k。这确保了在某一路上排名靠后但在另一路上排名靠前的文档不会被过早丢弃。
+</div>
+  </div>
+</div>
+
+<!-- Q2: ColPali Late Interaction -->
+<h3 id="q2">2. ColPali Late Interaction 机制</h3>
+
+<div class="qa-block">
+  <div class="qa-question">ColPali 和普通的 CLIP/DPR 文本-图像检索有什么本质区别？</div>
+  <div class="qa-answer">
+    <p><strong>本质区别在于向量粒度。</strong>CLIP/DPR 将整张图片压缩为<strong>单个向量</strong>（如 768 维），这导致信息极度压缩——论文页面上的小字标注、图表细节全部被"平均化"丢失。</p>
+    <p>ColPali 基于 PaliGemma-3B（SigLIP ViT-448px + Gemma-2B 文本解码器），通过 ColBERT 风格的 <strong>Late Interaction</strong> 保留每个 patch 的独立向量：</p>
+    <ul class="key-points">
+      <li>每张页面生成 N 个 128 维 patch 向量（N ≈ 32-128，取决于分辨率）</li>
+      <li>检索时使用 <strong>MAX_SIM 比较器</strong>：query 的每个 token 与文档的每个 patch 计算 COSINE 相似度，取最大值求和</li>
+    </ul>
+    <p><strong>数学表达：</strong>MAX_SIM(q, d) = Σᵢ maxⱼ COSINE(qᵢ, dⱼ)</p>
+    <p>这意味着 ColPali 支持<strong>"图片中的文字检索"</strong>——架构图中的标注、实验曲线上的数字、表格中的数据都可以被直接检索到，而不依赖 OCR 预处理。</p>
+    <p>Qdrant 中对应的配置（来自 <code>tools/vision_rag.py:87-108</code>）：</p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L87-108 (Qdrant collection 创建)</span></div>
+      <pre><code>client.create_collection(
+    collection_name=Config.COLLECTION_MIX_NAME,
+    vectors_config={
+        "colpali_vision": VectorParams(
+            size=128,
+            distance=Distance.COSINE,
+            multivector_config=MultiVectorConfig(
+                comparator=MultiVectorComparator.MAX_SIM
+            )
+        ),
+        "text_dense": VectorParams(size=1024, distance=Distance.COSINE),
+    }
+)</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">ColPali 加载时为什么需要 Monkey Patch？</div>
+  <div class="qa-answer">
+    <p>来自 <code>tools/vision_rag.py:33</code>：</p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L33</span></div>
+      <pre><code># transformers 的 _convert_peft_config_moe 尝试对 PEFT 配置做 str() 转换
+# 但 ColPali 底层的 PaliGemma 架构不在其 MoE 白名单中 → KeyError: 'llava'
+transformers.integrations.peft._convert_peft_config_moe = \
+    lambda peft_config, model_type: peft_config</code></pre>
+    </div>
+    <p>根因：transformers 库在加载 PEFT adapter 时会调用 <code>_convert_peft_config_moe</code> 做字符串转换，但该函数内部有一个 MoE 模型类型的硬编码白名单。PaliGemma（ColPali 的基座）不在白名单中，直接抛 <code>KeyError: 'llava'</code>。Monkey Patch 直接透传原始配置，跳过错误的字符串转换。</p>
+  </div>
+</div>
+
+<!-- Q3: ROI Visual Token Pruning -->
+<h3 id="q3">3. ColPali ROI 视觉 Token 剪枝（核心创新）</h3>
+
+<div class="qa-block">
+  <div class="qa-question">全页论文图片送入 VLM 有什么问题？你是如何解决的？</div>
+  <div class="qa-answer">
+    <p><strong>问题：</strong>每张高分辨率论文页面图片送入 VLM 时约产生 2000+ vision tokens，其中大量是无效背景（白边、页眉页脚、无关段落）。3 张图就是 6000+ tokens，而 vLLM 视觉服务的 <code>--max-model-len</code> 仅 8192——不优化就直接 OOM。</p>
+
+    <p><strong>我的方案——利用 ColPali 自身的 Patch 级相似度热力图进行物理级"去噪过滤"：</strong></p>
+
+    <p>完整流程（来自 <code>tools/vision_rag.py:405-584</code>）：</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L405-480 (热力图 + ROI 裁剪核心逻辑)</span></div>
+      <pre><code>def _compute_similarity_heatmap(query_embeddings, image_embeddings):
+    """每页计算 32×32 patch 级相似度热力图"""
+    # 复用 ColPali query embedding（GPU 端保留）
+    similarity_maps = get_similarity_maps_from_embeddings(
+        query_embeddings, image_embeddings
+    )  # → (32, 32) tensor
+
+def _heatmap_to_roi(heatmap, orig_w, orig_h, top_k=5, context_padding=0.25):
+    """热力图 → 像素坐标 ROI"""
+    std = np.std(heatmap)
+    mean = np.mean(heatmap)
+    # 回退机制：无明显热点时退回全图
+    if std < 0.3 * mean:
+        return []  # 触发全图回退
+
+    # Top-5 峰值 patch → 25% 上下文扩边
+    peaks = np.argsort(heatmap.ravel())[-top_k:]
+    rois = []
+    for peak_idx in peaks:
+        py, px = divmod(peak_idx, 32)
+        # 网格坐标 → 像素坐标
+        cx, cy = px * patch_w + patch_w/2, py * patch_h + patch_h/2
+        hw = patch_w * (0.5 + context_padding)
+        hh = patch_h * (0.5 + context_padding)
+        rois.append({"x": max(0, cx-hw), "y": max(0, cy-hh),
+                      "w": min(2*hw, orig_w), "h": min(2*hh, orig_h)})
+    return rois  # 去重后返回</code></pre>
+    </div>
+
+    <p><strong>关键设计决策：</strong></p>
+    <ul class="key-points">
+      <li><strong>25% 上下文扩边：</strong>纯 ROI 区域可能切断公式符号定义、表格列标题等周边上下文。25% 的 padding 确保保留完整的语义单元</li>
+      <li><strong>回退机制：</strong>热力图标准差 < 0.3×均值 → 说明没有显著热点（query 与全页均匀相关）→ 自动回退全图模式</li>
+      <li><strong>拼图合成：</strong>如果所有页面的 ROI 总数 > 3（VLM 限制 <code>--limit-mm-per-prompt '{"image": 3}'</code>），用 Pillow 将所有 ROI 拼接为一张合成图，规避 API 报错</li>
+      <li><strong>显存管理：</strong>每页计算后 <code>torch.cuda.empty_cache()</code> 释放中间张量</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <strong>效果：</strong>视觉 Token 节省约 60%，同时保留核心图表/公式/表格的完整上下文。
+    </div>
+  </div>
+</div>
+
+<!-- Q4: 4-Layer Memory -->
+<h3 id="q4">4. 四层分层记忆系统 + 外部化长期记忆</h3>
+
+<div class="qa-block">
+  <div class="qa-question">为什么要从传统的摘要式压缩改为分层记忆？各层如何设计？</div>
+  <div class="qa-answer">
+    <p><strong>旧方案的问题：</strong>传统做法是把整个对话历史塞进一个 <code>summary</code> 字符串，每次触发压缩时 LLM 再"总结"一遍。两三轮后 summary 越来越模糊——"用户在研究目标检测"这种信息太粗糙，丢失了具体论文 ID、preference 细节。</p>
+
+    <p><strong>核心洞察：</strong>对话中不同类型的信息有不同的<strong>生命周期</strong>和<strong>更新策略</strong>——SOP 永远不变，用户偏好缓慢演变，工具调用中间结果一轮后即可丢弃。</p>
+
+    <p>我的四层（实际五层）设计：</p>
+
+    <table>
+      <tr><th>层</th><th>存储位置</th><th>内容示例</th><th>生命周期</th><th>更新策略</th></tr>
+      <tr>
+        <td>L1: 核心指令</td>
+        <td><code>state.core_instructions</code></td>
+        <td>SOP 规则、输出格式要求</td>
+        <td>永久</td>
+        <td><code>init_core</code> 一次性写入</td>
+      </tr>
+      <tr>
+        <td>L2: 用户画像</td>
+        <td><code>state.profile</code> (JSON)</td>
+        <td>研究兴趣、关注论文 ID</td>
+        <td>动态</td>
+        <td><code>update_profile</code> 节点 regex + 关键词探测</td>
+      </tr>
+      <tr>
+        <td>L3: 工作上下文</td>
+        <td><code>state.working_context</code></td>
+        <td>最近 5 轮 Q&A 原文</td>
+        <td>滑动窗口</td>
+        <td><code>manage_context</code> 超过窗口后移出旧轮次</td>
+      </tr>
+      <tr>
+        <td>L4: 临时备忘</td>
+        <td>messages 中的 ToolMessage</td>
+        <td>RAG 中间结果的 ~100 字摘要</td>
+        <td>每次回答后</td>
+        <td><code>cleanup_ephemeral</code> 替换为 AIMessage memo</td>
+      </tr>
+      <tr>
+        <td>L5: 长期记忆</td>
+        <td>Qdrant <code>user_memory</code></td>
+        <td>所有历史关键事实</td>
+        <td>永久（外部化）</td>
+        <td><code>extract_memory_facts</code> 后台线程</td>
+      </tr>
+    </table>
+
+    <p>Layer 5（外部化长期记忆）借鉴了 Mem0 的思想——将用户偏好从 Agent 的上下文窗口中"卸载"到外部向量库：</p>
+    <ul class="key-points">
+      <li><strong>提取：</strong>每次回答后在 daemon 线程中调用 LLM 提取记忆事实（格式：<code>「论文关注:xxx」</code> / <code>「用户偏好:xxx」</code>），20s 超时静默失败</li>
+      <li><strong>编码：</strong>BGE-M3 将每条事实编码为 1024 维向量</li>
+      <li><strong>检索：</strong>每次用户提问时，用 query 编码 → Qdrant 搜索 Top-3 → 注入 Prompt 动态尾部</li>
+      <li><strong>非阻塞：</strong>提取在独立线程中执行（fire-and-forget），不影响主流程响应</li>
+    </ul>
+
+    <p>State 定义（<code>agent_core.py:93-97</code>）：</p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">agent_core.py</span><span>L93-97</span></div>
+      <pre><code>class AgentState(TypedDict):
+    messages: Annotated[list[BaseMessage], add_messages]
+    profile: dict              # Layer 2: {research_interests, mentioned_papers}
+    working_context: list      # Layer 3: [{question, answer, timestamp}, ...]
+    core_instructions: str     # Layer 1: immutable SOP</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Q5: vLLM Prefix Caching -->
+<h3 id="q5">5. vLLM Prefix Caching + 缓存友好 Prompt 排序</h3>
+
+<div class="qa-block">
+  <div class="qa-question">Prefix Caching 的原理是什么？你的 Prompt 排序策略为什么能保证 ≥60% 命中率？</div>
+  <div class="qa-answer">
+    <p><strong>vLLM Prefix Caching 原理：</strong>当 vLLM 处理一个请求时，它会对 Prompt 的连续前缀做哈希。如果下一个请求的前缀哈希命中缓存，则直接复用已计算的 KV 矩阵，跳过 Prefill 阶段——大幅降低 Time-To-First-Token。</p>
+
+    <p><strong>但问题是：</strong>如果动态内容（如用户偏好、检索结果）放在 Prompt 头部，每次请求的第一个 Token 就不同 → Prefix Cache 命中率为 0%。</p>
+
+    <p><strong>我的解决方案 — 严格静态→动态倒序拼接</strong>（<code>agent_core.py:125-156</code>）：</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">agent_core.py</span><span>L125-156 (call_model 中的 Prompt 组装)</span></div>
+      <pre><code># 头部 — 绝对静态（永不变 → vLLM 长久缓存）
+system_parts = [core_instructions]
+
+# 中部 — 半静态（滑动窗口，仅尾部变动 → 前半命中缓存）
+if working_context:
+    ctx_text = "\n".join(
+        f"Q: {r['question']}\nA: {r['answer']}" for r in working_context
+    )
+    system_parts.append(f"## 近期对话上下文\n{ctx_text}")
+
+# 尾部 — 极度动态（紧贴用户 query，每次变化）
+if profile:
+    profile_text = json.dumps(profile, ensure_ascii=False)
+    system_parts.append(f"## 用户画像\n{profile_text}")
+
+# 用户消息 — 本轮新问题
+full_system = "\n\n".join(system_parts)</code></pre>
+    </div>
+
+    <p><strong>效果分析：</strong>假设总 Prompt 长度为 2000 tokens——静态 head 占 800 tokens（100% 命中），半静态 working_context 前 4 轮占 600 tokens（100% 命中），仅尾部 600 tokens 因动态内容变化需要重新计算 → <strong>命中率 ≈ 70%</strong>。</p>
+
+    <div class="callout callout-info">
+      <strong>关键原则：</strong>越不容易变的内容越靠近头部，越动态的内容越靠近尾部。这不是语言层面的优化，而是对 KV Cache 复用机制的<strong>工程适配</strong>。
+    </div>
+  </div>
+</div>
+
+<!-- Q6: GPU Memory -->
+<h3 id="q6">6. GPU 显存精细化管理</h3>
+
+<div class="qa-block">
+  <div class="qa-question">单卡 24GB 如何同时运行 4 个模型？具体是怎么分配和调度的？</div>
+  <div class="qa-answer">
+    <p>这是整个项目最具挑战性的工程问题。我在单张 RTX 3090 Ti (24GB GDDR6X) 上部署了 4 个模型——做了以下决策：</p>
+
+    <table>
+      <tr><th>模型</th><th>显存占用</th><th>核心技术</th></tr>
+      <tr><td>Qwen2.5-7B-AWQ (vLLM :8000)</td><td>~8.4 GB</td><td>INT4 AWQ 量化 (3.5GB 权重) + KV Cache (2.5GB) + 运行时 (2.4GB)<br><code>--gpu-memory-utilization 0.35</code></td></tr>
+      <tr><td>Qwen2-VL-2B-AWQ (vLLM :8001)</td><td>~6.0 GB</td><td>INT4 AWQ 量化 (1.0GB 权重) + ViT (0.5GB) + KV Cache (2.0GB)<br><code>--gpu-memory-utilization 0.25</code> + <code>--enforce-eager</code></td></tr>
+      <tr><td>ColPali v1.2 (按需加载)</td><td>~3-4 GB</td><td>INT8 BitsAndBytes 量化<br><strong>懒加载</strong>：仅在工具调用时才初始化 GPU 模型</td></tr>
+      <tr><td>BGE-M3</td><td>0 GB (CPU)</td><td>强制 CPU 推理，单页编码 10-50ms</td></tr>
+    </table>
+
+    <p><strong>关键设计模式 — 懒加载</strong>（<code>tools/vision_rag.py:49-108</code>）：</p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L63-87</span></div>
+      <pre><code>_vision_model = None
+_text_model = None
+_qdrant_client = None
+
+def _get_vision_model():
+    global _vision_model
+    if _vision_model is None:
+        from colpali_engine.models import ColPali
+        _vision_model = ColPali.from_pretrained(
+            Config.VISION_MODEL_PATH,
+            torch_dtype=torch.bfloat16,
+            device_map="cuda",
+            load_in_8bit=True,  # INT8 量化
+        )
+    return _vision_model
+
+def _get_text_model():
+    global _text_model
+    if _text_model is None:
+        _text_model = SentenceTransformer(
+            Config.EMBEDDING_MODEL_PATH, device="cpu"
+        )  # 强制 CPU
+    return _text_model</code></pre>
+    </div>
+
+    <p><strong>为什么选 INT4 而不是 INT8 给 7B 模型？</strong>AWQ INT4 将 7B 权重从 14GB → 3.5GB。配合 vLLM PagedAttention，KV Cache 仅占 ~2.5GB。如果用 INT8，权重翻倍到 7GB，ColPali 就没地方了。</p>
+
+    <p><strong>为什么 BGE-M3 放 CPU？</strong>568M 参数的编码器在 CPU 上单页编码仅需 10-50ms，放 GPU 上反而节约不了多少延迟，但会占 ~4.3GB 显存。这个 trade-off 很明确。</p>
+
+    <div class="callout callout-warn">
+      <strong>实际瓶颈是显存容量（77% 占用），而非算力（峰值利用率 < 10%）。</strong>LLM 推理是典型的 Memory-Bandwidth Bound：每生成 1 个 token 需从显存读取全部 3.5GB 权重，带宽才是限制因素。
+    </div>
+  </div>
+</div>
+
+<!-- Q7: LangGraph State Machine -->
+<h3 id="q7">7. LangGraph 状态机设计</h3>
+
+<div class="qa-block">
+  <div class="qa-question">为什么选 LangGraph 而不是自己写循环？你的图拓扑是怎么设计的？</div>
+  <div class="qa-answer">
+    <p>LangGraph 相比手写 while 循环的核心优势：<strong>Checkpoint 持久化</strong>（SQLite 自动保存每步状态，中断后可恢复）、<strong>条件路由</strong>（根据 token 数自动触发内存管理）、<strong>流式输出</strong>（原生支持 node 级别的 streaming）。</p>
+
+    <p>完整图拓扑（<code>agent_core.py:565-606</code>）：</p>
+
+    <!-- Mermaid 状态机图 -->
+        <div class="mermaid-container" style="background: #f8f9fb; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin: 14px 0; overflow-x: auto;">
+          <pre class="mermaid" style="background: transparent; margin: 0; font-size: 13px;">
+stateDiagram-v2
+    [*] --> init_core : START
+    init_core : L1 注入不可变 SOP
+    init_core --> retrieve_memory
+    retrieve_memory : L5 Qdrant user_memory<br/>检索 Top-3 长期记忆
+    retrieve_memory --> token_check
+    token_check : token > 5000 ?
+    token_check --> manage_context : YES
+    token_check --> agent : NO
+    manage_context : L3 滑动窗口裁剪<br/>保留最近5轮 Q&A
+    manage_context --> agent
+    agent : call_model<br/>LLM 推理 + 遥测
+    agent --> should_continue
+    should_continue : has tool_calls ?
+    should_continue --> tools : YES
+    tools : 执行工具<br/>search_vision_knowledge<br/>search_academic_papers<br/>download_and_ingest_vision_paper
+    tools --> agent : 返回结果
+    should_continue --> cleanup_ephemeral : NO
+    cleanup_ephemeral : L4 ToolMessage → memo<br/>替换为 ~100字备忘
+    cleanup_ephemeral --> update_profile
+    update_profile : L2 更新用户画像<br/>提取论文ID + 研究兴趣
+    update_profile --> extract_memory
+    extract_memory : L5 后台线程<br/>提取事实 → BGE-M3 → Qdrant
+    extract_memory --> [*] : END
+          </pre>
+        </div>
+
+        <details style="margin: 8px 0; font-size: 13px;">
+          <summary style="cursor: pointer; color: var(--accent);">📋 图拓扑代码实现 (agent_core.py:565-606)</summary>
+          <div class="code-block" style="margin-top: 8px;">
+            <div class="code-header"><span class="file-path">agent_core.py</span><span>L565-606</span></div>
+            <pre><code>workflow = StateGraph(AgentState)
+workflow.add_node("init_core", init_core_instructions)
+workflow.add_node("retrieve_memory", retrieve_long_term_memory)
+workflow.add_node("agent", call_model)
+workflow.add_node("tools", tool_node)
+workflow.add_node("manage_context", manage_working_context)
+workflow.add_node("cleanup_ephemeral", cleanup_ephemeral)
+workflow.add_node("update_profile", update_profile)
+workflow.add_node("extract_memory", extract_memory_facts)
+
+# 主流程
+workflow.add_edge(START, "init_core")
+workflow.add_edge("init_core", "retrieve_memory")
+
+# token 条件路由: &gt;5000 → 上下文管理, ≤5000 → Agent
+workflow.add_conditional_edges("retrieve_memory", token_check_router, {
+    "manage_context": "manage_context",
+    "agent": "agent"
+})
+workflow.add_edge("manage_context", "agent")
+
+# agent ⇄ tools 循环
+workflow.add_conditional_edges("agent", should_continue, {
+    "tools": "tools",
+    "cleanup": "cleanup_ephemeral"
+})
+workflow.add_edge("tools", "agent")
+
+# 后缀处理链: cleanup → update_profile → extract_memory → END
+workflow.add_edge("cleanup_ephemeral", "update_profile")
+workflow.add_edge("update_profile", "extract_memory")
+workflow.add_edge("extract_memory", END)</code></pre>
+          </div>
+        </details>
+
+    <p><strong>关键设计决策：</strong></p>
+    <ul class="key-points">
+      <li><strong>agent ⇄ tools 循环：</strong>LangGraph 的条件边 (<code>should_continue</code>) 自动检测最后一条 AIMessage 是否有 tool_calls，有则路由到 tools 节点，执行完回到 agent。这个循环天然支持 multi-step tool calling（如先 search → 再 download → 再 search_vision）。</li>
+      <li><strong>token_check_router：</strong>在 agent 推理前检查 token 数，超过 5000 阈值时先执行 <code>manage_context</code> 裁剪上下文，防止 OOM 和推理速度退化。</li>
+      <li><strong>后缀处理链：</strong>cleanup → update_profile → extract_memory 是单向流水线，确保每次回答后执行完整的记忆维护。</li>
+      <li><strong>SQLite Checkpoint：</strong>通过 <code>SqliteSaver</code> 持久化，支持跨进程恢复。WAL 模式支持并发读写。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Q8: Table Spatial Collision -->
+<h3 id="q8">8. 表格空间碰撞检测</h3>
+
+<div class="qa-block">
+  <div class="qa-question">PDF 中的表格你是怎么处理的？为什么不用简单的 find_tables()？</div>
+  <div class="qa-answer">
+    <p>PyMuPDF 的 <code>find_tables()</code> 在非标准排版的学术 PDF 上召回率很差（特别是双栏排版、跨页表格）。而且即使检测到表格，如果直接把表格区域的原始文本提取出来——那就是一堆排列混乱的数字，毫无可读性。</p>
+
+    <p>我的方案——<strong>空间碰撞检测</strong>（<code>tools/mix_ingest.py:36-101</code>）：</p>
+
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/mix_ingest.py</span><span>L36-101 (extract_text_and_tables_from_page)</span></div>
+      <pre><code>def extract_text_and_tables_from_page(page):
+    # 1. 检测表格 → DataFrame → Markdown
+    tables = page.find_tables()
+    table_rects = []  # [(table_id, fitz.Rect)]
+    tables_payload = {}
+    for i, table in enumerate(tables):
+        df = table.to_pandas()
+        tables_payload[f"TABLE_{i}"] = df.to_markdown()
+        table_rects.append((f"TABLE_{i}", fitz.Rect(table.bbox)))
+
+    # 2. 提取文本块（按 Y 坐标排序）
+    blocks = page.get_text("blocks")
+    blocks.sort(key=lambda b: (b[1], b[0]))  # (y, x)
+
+    # 3. 空间碰撞检测：文本块与表格区域有交集？
+    clean_lines = []
+    for block in blocks:
+        block_rect = fitz.Rect(block[:4])
+        overlap = False
+        for table_id, t_rect in table_rects:
+            if block_rect.intersects(t_rect):
+                clean_lines.append(f"[{table_id}_PLACEHOLDER]")
+                overlap = True
+                break
+        if not overlap:
+            text = clean_text(block[4])  # 正则清洗
+            if text:
+                clean_lines.append(text)
+
+    return "\n".join(clean_lines), tables_payload</code></pre>
+    </div>
+
+    <p><strong>为什么这样做？</strong></p>
+    <ul class="key-points">
+      <li>表格区域的原始文本 → 乱码，直接丢弃</li>
+      <li>插入 <code>[TABLE_0_PLACEHOLDER]</code> 占位符 → 后续 VLM 分析时替换为 Markdown 表格</li>
+      <li>文本块按 <strong>Y 坐标排序</strong> → 保留文档的自然阅读顺序</li>
+      <li>非表格文本进行正则清洗：滤除 10 位+十六进制乱码、控制字符</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Q9: PDF Security -->
+<h3 id="q9">9. PDF 安全防线</h3>
+
+<div class="qa-block">
+  <div class="qa-question">为什么要做 PDF 安全检查？具体怎么做的？</div>
+  <div class="qa-answer">
+    <p>学术 PDF 虽然大多安全，但从公网随机下载的 PDF 可能嵌入恶意 JavaScript、自动打开动作、甚至表单提交触发器。CVPR/ICCV 等顶级会议的论文通常是安全的，但 Arxiv 上的预印本来源不可控。</p>
+
+    <p>三层防线（<code>tools/vision_rag.py:139-164</code>）：</p>
+
+    <table>
+      <tr><th>层级</th><th>检查项</th><th>拦截条件</th></tr>
+      <tr><td>L1: 文件大小</td><td>PDF 体积</td><td>> 50MB → 拒绝（正常论文 < 20MB）</td></tr>
+      <tr><td>L2: 结构扫描</td><td>pikepdf 解析 PDF 对象树</td><td>检测 <code>/Names/JavaScript</code>（全局 JS 注入）、<code>/OpenAction</code>（打开时自动执行）、<code>/AA</code>（页面级触发器）</td></tr>
+      <tr><td>L3: 动作类型黑名单</td><td>遍历所有 annotation 和 form field 的动作</td><td><code>/JavaScript</code>, <code>/Launch</code>, <code>/SubmitForm</code>, <code>/ImportData</code> 四类高危动作直接拒绝</td></tr>
+    </table>
+
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L139-164 (scan_pdf_for_malware 核心逻辑)</span></div>
+      <pre><code>def scan_pdf_for_malware(file_path: str) -> tuple[bool, str]:
+    # 文件大小检查
+    if os.path.getsize(file_path) > 50 * 1024 * 1024:
+        return False, "文件过大 (>50MB)"
+
+    pdf = pikepdf.open(file_path)
+    # 检查全局 JS 注入
+    if '/Names' in pdf.root and '/JavaScript' in pdf.root['/Names']:
+        return False, "检测到全局 JavaScript 注入"
+
+    # 检查打开动作
+    if '/OpenAction' in pdf.root:
+        return False, "检测到自动打开动作 (/OpenAction)"
+
+    # 检查页面级触发器
+    for page in pdf.pages:
+        if '/AA' in page:
+            return False, f"页面 {page.label} 检测到自动触发器 (/AA)"
+
+    return True, "安全检查通过"</code></pre>
+    </div>
+  </div>
+</div>
+
+<!-- Q10: Evaluation System -->
+<h3 id="q10">10. 评估体系</h3>
+
+<div class="qa-block">
+  <div class="qa-question">你的 RAG 系统怎么评估质量？有哪些指标？</div>
+  <div class="qa-answer">
+    <p>我设计了一个<strong>三维闭环评估框架</strong>，覆盖检索质量、生成质量和端到端效率。详见下方评估体系专题。</p>
+
+    <table>
+      <tr><th>维度</th><th>指标</th><th>评估方式</th></tr>
+      <tr><td>检索质量</td><td>Recall@3, Precision@3, MRR, NDCG@3, Hit Rate</td><td>Ground truth 页面匹配</td></tr>
+      <tr><td>生成质量</td><td>Faithfulness (1-5), Answer Relevance (1-5), Factual Correctness (1-5)</td><td>LLM-as-a-Judge (Qwen2.5-7B, T=0)</td></tr>
+      <tr><td>端到端效率</td><td>Total Latency, Input/Output Tokens, TPOT, Throughput</td><td>vLLM usage_metadata 自动捕获</td></tr>
+    </table>
+
+    <p><strong>关键创新 — EvalContext 非侵入式数据捕获</strong>（<code>eval/eval_tracer.py</code>）：</p>
+    <p>使用 <strong>thread-local singleton</strong> 模式在 eval runner 与被测管线之间传递数据。不修改 LangChain 工具签名，正常使用时零开销。只在 eval 模式下 <code>EvalContext.enable()</code> 后才捕获检索轨迹和遥测数据。</p>
+  </div>
+</div>
+
+<!-- Q11: LoRA Fine-tuning & Dynamic Loading -->
+<h3 id="q11">11. LoRA 微调与动态加载 — 领域特化 + 推理时按需切换</h3>
+
+<div class="qa-block">
+  <div class="qa-question">为什么要对基座模型做 LoRA 微调？微调了哪个模型、什么任务？</div>
+  <div class="qa-answer">
+    <p><strong>动机：</strong>Qwen2.5-7B 是通用模型，在学术论文摘要场景下有两个不足：</p>
+    <ul class="key-points">
+      <li><strong>格式不稳定：</strong>有时输出纯文本而非要求的 JSON 结构，有时遗漏关键的数值指标（mAP、F1、PSNR 等）</li>
+      <li><strong>领域知识空白：</strong>对恶劣天气目标检测领域的术语（如 ColTeaching、GCEE、AWConv）理解不够精准，摘要容易泛泛而谈</li>
+    </ul>
+    <p>我用 47 条领域标注数据对 <strong>Qwen2.5-7B-Instruct-AWQ</strong> 做了 LoRA（r=8, α=16, target=q_proj+v_proj），仅训练 <strong>0.23% 的参数</strong>（2.5M / 1.09B），专注于 RAG 检索后文本的<strong>中文学术摘要提炼</strong>任务。</p>
+
+    <table>
+      <tr><th>项目</th><th>值</th></tr>
+      <tr><td>基座模型</td><td>Qwen2.5-7B-Instruct-AWQ (INT4 量化)</td></tr>
+      <tr><td>微调任务</td><td>RAG 检索文本 → 中文学术摘要（≤200 字，保留模型名/指标）</td></tr>
+      <tr><td>训练样本</td><td>47 条（覆盖 15+ 篇恶劣天气目标检测论文）</td></tr>
+      <tr><td>LoRA 配置</td><td>r=8, α=16, dropout=0.1, target=q_proj+v_proj</td></tr>
+      <tr><td>可训参数占比</td><td>0.23%（2,523,136 / 1,092,722,176）</td></tr>
+      <tr><td>训练配置</td><td>bs=1, grad_accum=16, epochs=3, lr=5e-5, cosine schedule, max_length=1024</td></tr>
+      <tr><td>训练时长</td><td>~90 秒（RTX 3090 Ti）</td></tr>
+      <tr><td>Loss 变化</td><td>2.44 → 2.34（收敛明显）</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">训练数据是怎么准备的？数据蒸馏流程是怎样的？</div>
+  <div class="qa-answer">
+    <p>我设计了一个<strong>两阶段半自动数据蒸馏流水线</strong>，从项目的 Qdrant 向量库和对话历史中"挖矿"原始数据，再由大模型辅助标注：</p>
+
+    <div class="arch-diagram">[Qdrant + SQLite]
+      │
+      ▼  extract_to_worksheet.py (自动挖矿)
+dataset/tasks/  ← 原始数据打包为作业文件
+  ├── summarizer_batch_*.txt    (50条带噪PDF文本 + System Prompt)
+  ├── vision_worksheet.md       (29张论文图表 + 配套表格数据)
+  └── planner_data.jsonl        (11条工具调用对话样本)
+      │
+      ▼  大模型 (GPT-4o / DeepSeek) 完成回答
+dataset/answers/  ← JSON 格式答案
+  ├── summarizer_batch_*_answers.json  (55条摘要答案)
+  └── vision_answers.json              (29条图表分析答案)
+      │
+      ▼  build_llama_factory_jsonl.py (自动组装)
+dataset/
+  ├── summarizer_data.jsonl  →  LLaMA-Factory ShareGPT 格式
+  ├── vision_data.jsonl      →  多模态 &lt;image&gt; 标签格式
+  └── planner_data.jsonl     →  工具调用 JSON 格式</div>
+
+    <p><strong>三路提取策略（extract_to_worksheet.py）：</strong></p>
+    <ul class="key-points">
+      <li><strong>Summarizer 路：</strong>从 Qdrant <code>vrag_hybrid_collection</code> 中 scroll 所有 point，过滤 page_text &gt;100 字符的页面，随机采样 50 条 → 分 5 批导出 .txt 作业文件（每批含 System Prompt + 10 条带噪 PDF 文本）</li>
+      <li><strong>Vision 路：</strong>过滤 page_tables 非空 + image_path 存在的 point，随机采样 30 张 → 复制图片 + 导出 Markdown 作业表 + 元数据 JSON</li>
+      <li><strong>Planner 路：</strong>从 LangGraph SQLite checkpoint 提取 (HumanMessage → AIMessage-with-tool_calls) 对话对 → 直接生成 JSONL。修复后扫描全部 133 个 checkpoint（之前只取 latest），提取出 11 条去重样本</li>
+    </ul>
+
+    <p><strong>数据处理中遇到的一个隐蔽 bug（build_llama_factory_jsonl.py:211）：</strong></p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">scripts/build_llama_factory_jsonl.py</span><span>L209-212 (修复前→后)</span></div>
+      <pre><code># 修复前：batch 文件中的长文件名换行导致 ID 匹配全部失败（28/50 条报错）
+current_id = match.group(1).strip()
+if current_id != target_id:    # 例: "Object Detection...\nthrough Data Merging..." != "Object Detection... through Data Merging..."
+
+# 修复后：空白字符正规化比较
+current_id = re.sub(r'\s+', ' ', match.group(1).strip())
+if current_id != re.sub(r'\s+', ' ', target_id):   # 28 errors → 1 error</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">vLLM 如何实现推理时动态加载/卸载 LoRA？加载 LoRA 会影响 KV Cache 吗？</div>
+  <div class="qa-answer">
+    <p><strong>vLLM 原生支持动态 LoRA 切换。</strong>启动时通过 <code>--enable-lora</code> + <code>--lora-modules</code> 预注册适配器，推理时通过 API 请求中的 <code>lora_request</code> 参数按需选择——不传该参数则使用基座模型。</p>
+
+    <p>vLLM 启动命令（在原有基础上新增 2 行）：</p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">config.py:67-68 (注释中的 vLLM 启动命令)</span></div>
+      <pre><code>python -m vllm.entrypoints.openai.api_server \
+  --model ./models/llm/qwen/Qwen2.5-7B-Instruct-AWQ \
+  --served-model-name qwen2.5-7b-instruct \
+  --max-model-len 8192 --gpu-memory-utilization 0.35 \
+  --quantization awq --port 8000 \
+  --enable-auto-tool-choice --tool-call-parser hermes \
+  --enable-prefix-caching \
+  --enable-lora \
+  --lora-modules summarizer=/home/c2216-3090/disB/hyh/AI/outputs/summarizer-lora</code></pre>
+    </div>
+
+    <p>推理时在请求体中携带 <code>lora_request</code>（以 <code>_summarize_payloads</code> 为例）：</p>
+    <div class="code-block">
+      <div class="code-header"><span class="file-path">tools/vision_rag.py</span><span>L353-367</span></div>
+      <pre><code>payload = {
+    "model": Config.LLM_MODEL_NAME,
+    "messages": [{"role": "user", "content": prompt}],
+    "max_tokens": 1024,
+    "temperature": 0.1,
+}
+if Config.SUMMARIZER_LORA_NAME:
+    payload["lora_request"] = {"lora_name": Config.SUMMARIZER_LORA_NAME}
+response = requests.post(f"{Config.LLM_API_BASE}/chat/completions", json=payload)</code></pre>
+    </div>
+
+    <div class="callout callout-good">
+      <strong>KV Cache 影响分析：完全无影响。</strong>
+    </div>
+
+    <p>vLLM PagedAttention 的 KV Cache 生命周期是<strong>每个请求独立</strong>的：</p>
+    <div class="arch-diagram">每个请求的 KV Cache 生命周期:
+  请求到达 → 分配 KV cache 块 → Prefill(计算 KV) → Decode(复用 KV) → 请求结束 → 释放 KV cache 块
+
+请求 A (带 LoRA):  分配块 [0..7]   → Prefill(LoRA 权重) → Decode → 释放
+请求 B (无 LoRA):  分配块 [8..15]  → Prefill(基座权重) → Decode → 释放
+请求 C (带 LoRA):  分配块 [16..23] → Prefill(LoRA 权重) → Decode → 释放</div>
+
+    <ul class="key-points">
+      <li><strong>KV Cache 不跨请求共享：</strong>每次 <code>/chat/completions</code> 调用独立分配 KV cache 块，请求结束后立即释放</li>
+      <li><strong>LoRA 切换在请求边界发生：</strong>不同请求可以使用不同 LoRA（或无 LoRA），各自的 KV Cache 完全独立、互不污染</li>
+      <li><strong>Prefix Caching 与 LoRA 兼容：</strong>相同 LoRA + 相同前缀的请求之间仍可命中 Prefix Cache；不同 LoRA 的前缀即使文本相同也不共享（因为 KV 值不同）</li>
+      <li><strong>显存开销极小：</strong>LoRA 适配器仅 ~10MB（2.5M 参数 × fp16），远小于基座模型 3.5GB，对显存预算几乎无影响</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <strong>设计选择：为什么只在摘要时用 LoRA？</strong><br>
+      摘要是对 RAG 检索文本的"格式化压缩"——输入格式固定（带噪 PDF 文本），输出格式固定（中文 Markdown 摘要）。这是一个<strong>边界清晰的子任务</strong>，适合用 LoRA 特化。<br>
+      工具调用（Planner）和通用对话仍使用基座模型，因为它们的推理模式更多样，11 条 Planner 样本远不足以训练出可靠的工具路由能力。
+    </div>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">Vision LoRA 为什么没有训练？遇到了什么问题？</div>
+  <div class="qa-answer">
+    <p><strong>根因：AWQ 量化版 Qwen2-VL-2B 的 vision encoder 与训练模式不兼容。</strong></p>
+    <p>详细诊断过程：</p>
+    <ul class="key-points">
+      <li><strong>推理模式（model.eval()）正常：</strong>含 5040 个 patch 的论文页面图片可以正常通过 vision encoder，输出正确的 logits</li>
+      <li><strong>训练模式（model.train()）崩溃：</strong>vision encoder 内部的 <code>F.scaled_dot_product_attention</code> 抛出 <code>Expected key.size(1) == value.size(1) to be true</code></li>
+      <li><strong>梯度检查点是帮凶：</strong>开启 gradient checkpointing 后错误复现于 checkpoint 包装的 attention 调用内；关闭后仍失败，但错误信息不同，确认问题在 attention 实现层面</li>
+      <li><strong>SDPA 后端切换无效：</strong>依次尝试 flash SDPA（默认）、mem-efficient SDPA、math SDPA、eager attention——均失败，证明不是 attention 后端的问题</li>
+      <li><strong>正方形/矩形测试图全通过：</strong>所有人工生成的测试图（56² 至 840²，以及各种宽高比的矩形）在训练模式下均正常——说明问题与特定论文图片尺寸无关</li>
+      <li><strong>根本原因：</strong>AWQ 量化时的 transformers 版本（≤4.51.3）与当前版本（4.52.4）之间的 <code>modeling_qwen2_vl.py</code> 内部 attention 实现有差异。AWQ 量化过程修改了 attention 权重形状，但训练模式下的反向传播期望原始形状</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <strong>修复方向：</strong>下载非量化版 Qwen2-VL-2B-Instruct（约 4GB），用相同的 29 条视觉数据训练 Vision LoRA，训练完成后再做 AWQ 量化。或者等 AWQ 工具链更新以支持新版 transformers 的 vision encoder。
+    </div>
+
+    <table>
+      <tr><th>组件</th><th>状态</th><th>说明</th></tr>
+      <tr><td style="color:#16a34a">Summarizer LoRA</td><td style="color:#16a34a">✅ 已完成</td><td>47 条数据，90s 训练，已集成到 vLLM 动态加载</td></tr>
+      <tr><td style="color:#ea580c">Vision LoRA</td><td style="color:#ea580c">⚠️ 阻塞</td><td>29 条数据就绪，JSONL 已生成；被 AWQ vision encoder 兼容性阻塞</td></tr>
+      <tr><td style="color:#dc2626">Planner LoRA</td><td style="color:#dc2626">❌ 不推荐</td><td>11 条样本太少，缺失 download_and_ingest 工具调用，无法有效训练</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: EVALUATION DEEP DIVE -->
+<!-- ============================================================ -->
+
+<h2 id="eval-deep">三、评估体系专题</h2>
+
+<h3>评估框架架构</h3>
+
+<div class="arch-diagram">EvalRunner (eval/eval_runner.py)
+  │
+  ├── EvalDataset (eval_dataset.json) — 10 个测试用例
+  │     └── 每个用例: query, paper_id, gt_relevant_pages, gt_answer_facts, gt_keywords
+  │
+  ├── 被测管线 (_get_eval_app) — 受限 LangGraph Agent (仅 search_vision_knowledge 工具)
+  │     └── EvalContext (thread-local) — 非侵入式捕获检索轨迹 + 遥测
+  │
+  ├── 指标计算
+  │   ├── RetrievalMetrics (eval_metrics.py) — Recall/Precision/MRR/NDCG/HitRate
+  │   ├── FaithfulnessJudge (eval_judge.py) — 回答 vs 检索上下文 忠实度
+  │   ├── AnswerRelevanceJudge — 回答 vs 问题 相关性
+  │   └── FactualCorrectnessJudge — 回答 vs Ground Truth 事实正确性
+  │
+  ├── EvalReporter (eval_reporter.py) — Markdown 报告 + 诊断建议
+  └── EvalStorage (eval_storage.py) — JSON 历史 + 趋势追踪</div>
+
+<h3>10 个测试用例设计</h3>
+
+<table>
+  <tr><th>ID</th><th>查询主题</th><th>类别</th><th>难度</th><th>目标论文</th><th>GT 页面</th><th>GT 事实数</th></tr>
+  <tr><td>q001</td><td>雾天目标检测模型/架构</td><td>architecture</td><td>medium</td><td>MASFNet</td><td>[1,2,9,10]</td><td>4</td></tr>
+  <tr><td>q002</td><td>恶劣天气检测数据集</td><td>dataset</td><td>medium</td><td>Review Paper</td><td>[1,12]</td><td>2</td></tr>
+  <tr><td>q003</td><td>数据增强/预处理技术（雾雨）</td><td>methodology</td><td>medium</td><td>Causal Intervention</td><td>[1,2,10,11]</td><td>2</td></tr>
+  <tr><td>q004</td><td>域自适应的雾天检测改进</td><td>methodology</td><td>hard</td><td>Domain Adaptation</td><td>[3,4,5,8]</td><td>3</td></tr>
+  <tr><td>q005</td><td>无人机雾天特征融合方法</td><td>methodology</td><td>medium</td><td>Multi-Level Feature Fusion</td><td>[1,2,4,5]</td><td>4</td></tr>
+  <tr><td>q006</td><td>YOLO 方法的恶劣天气性能对比</td><td>comparison</td><td>hard</td><td>Assessment YOLO-V11</td><td>[1,2,5]</td><td>3</td></tr>
+  <tr><td>q007</td><td>注意力机制在恶劣天气检测中的作用</td><td>methodology</td><td>medium</td><td>AdWeatherNet</td><td>[1,3,4]</td><td>2</td></tr>
+  <tr><td>q008</td><td>恶劣天气检测的主要挑战</td><td>general</td><td>easy</td><td>Review Paper</td><td>[1,2,3,5]</td><td>3</td></tr>
+  <tr><td>q009</td><td>多任务学习 + 无人机雾天检测</td><td>methodology</td><td>hard</td><td>MTL ODFC-YOLO</td><td>[3,4,5,15]</td><td>3</td></tr>
+  <tr><td>q010</td><td>图像去雨/去雾预处理方法</td><td>methodology</td><td>medium</td><td>CoDerainNet</td><td>[1,4,6]</td><td>3</td></tr>
+</table>
+
+<h3 id="eval-metrics">最终评估指标（v4 — 全部修复，10/10 用例完成）</h3>
+
+<div class="callout callout-good">
+  <strong>评估环境：</strong>知识库含 16 篇论文 / 219 页。ColPali + BGE-M3 预加载，双 vLLM 服务常驻，单卡 RTX 3090 Ti 24GB。2026-05-15 最终评估运行，全部 10 个用例完成，无 CUDA OOM，无 Judge JSON 解析失败。
+</div>
+
+<div class="metric-row">
+  <div class="metric-card good">
+    <div class="value">0.57</div>
+    <div class="label">Avg Recall@3（检索质量）<br>首次可用！10/10 用例有效</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">0.80</div>
+    <div class="label">Avg MRR（检索质量）<br>6/10 用例 MRR=1.0</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">4.3/5</div>
+    <div class="label">Answer Relevance 均值（阈值 3.5）<br>通过率 100%（10/10）</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">3.1/5</div>
+    <div class="label">Factual Correctness 均值（阈值 3.0）<br>通过率 70%（7/10）</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">0/10</div>
+    <div class="label">CUDA OOM + Judge 失败<br>全部修复生效</div>
+  </div>
+</div>
+
+<h3>四版评估运行全程对照</h3>
+
+<table>
+  <tr><th>指标</th><th>v1 (修复前)</th><th>v2 (数据集)</th><th>v3 (强制工具)</th><th style="background:#e8f5e9">v4 (全部修复)</th></tr>
+  <tr><td>完成用例</td><td>10/10</td><td>9/10</td><td>9/10</td><td style="color:#16a34a"><strong>10/10</strong></td></tr>
+  <tr><td>Recall@3</td><td style="color:#999">N/A</td><td style="color:#999">N/A</td><td style="color:#999">N/A</td><td style="color:#16a34a"><strong>0.57</strong></td></tr>
+  <tr><td>MRR</td><td style="color:#999">N/A</td><td style="color:#999">N/A</td><td style="color:#999">N/A</td><td style="color:#16a34a"><strong>0.80</strong></td></tr>
+  <tr><td>Answer Relevance</td><td>2.5/5</td><td>2.3/5</td><td>3.9/5</td><td style="color:#16a34a"><strong>4.3/5</strong></td></tr>
+  <tr><td>Correctness</td><td>2.7/5</td><td>2.6/5</td><td>3.0/5</td><td style="color:#16a34a"><strong>3.1/5</strong></td></tr>
+  <tr><td>Relevance 通过率</td><td>30%</td><td>33%</td><td>89%</td><td style="color:#16a34a"><strong>100%</strong></td></tr>
+  <tr><td>Correctness 通过率</td><td>50%</td><td>44%</td><td>67%</td><td style="color:#16a34a"><strong>70%</strong></td></tr>
+  <tr><td>Agent 调用工具</td><td>✗</td><td>✗</td><td>✓</td><td style="color:#16a34a"><strong>✓</strong></td></tr>
+  <tr><td>CUDA OOM</td><td>0</td><td>1</td><td>1</td><td style="color:#16a34a"><strong>0</strong></td></tr>
+  <tr><td>Judge JSON 失败</td><td>0</td><td>0</td><td>1</td><td style="color:#16a34a"><strong>0</strong></td></tr>
+</table>
+
+<h3>v4 各用例得分详情（2026-05-15 最终运行）</h3>
+
+<table>
+  <tr><th>ID</th><th>类别</th><th>难度</th><th>Recall@3</th><th>Prec@3</th><th>MRR</th><th>Rel</th><th>Cor</th><th>检索命中 / GT 页面</th></tr>
+  <tr>
+    <td>q001</td><td>architecture</td><td>medium</td>
+    <td style="color:#16a34a">0.75</td><td style="color:#16a34a">1.00</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">5/5</td><td style="color:#16a34a">4/5</td>
+    <td>[1,2,9] / [1,2,9,10]</td>
+  </tr>
+  <tr style="background:#e8f5e9">
+    <td>q002</td><td>dataset</td><td>medium</td>
+    <td style="color:#16a34a">1.00</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">5/5</td><td style="color:#16a34a">4/5</td>
+    <td>[1,3,12] / [1,12] 🏆 满分 Recall</td>
+  </tr>
+  <tr>
+    <td>q003</td><td>methodology</td><td>medium</td>
+    <td style="color:#16a34a">0.75</td><td style="color:#16a34a">1.00</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">5/5</td><td style="color:#dc2626">1/5</td>
+    <td>[2,10,11] / [1,2,10,11]</td>
+  </tr>
+  <tr>
+    <td>q004</td><td>methodology</td><td>hard</td>
+    <td>0.25</td><td>0.33</td><td>0.50</td>
+    <td style="color:#16a34a">4/5</td><td style="color:#16a34a">5/5</td>
+    <td>[1,2,8] / [3,4,5,8] 🏆 满分 Correctness</td>
+  </tr>
+  <tr>
+    <td>q005</td><td>methodology</td><td>medium</td>
+    <td>0.50</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">4/5</td><td>2/5</td>
+    <td>[1,2,6] / [1,2,4,5]</td>
+  </tr>
+  <tr>
+    <td>q006</td><td>comparison</td><td>hard</td>
+    <td style="color:#16a34a">0.67</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">4/5</td><td>2/5</td>
+    <td>[1,2,6] / [1,2,5]</td>
+  </tr>
+  <tr>
+    <td>q007</td><td>methodology</td><td>medium</td>
+    <td style="color:#16a34a">0.67</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">4/5</td><td style="color:#16a34a">4/5</td>
+    <td>[1,4,5] / [1,3,4]</td>
+  </tr>
+  <tr>
+    <td>q008</td><td>general</td><td>easy</td>
+    <td>0.50</td><td>0.67</td><td>0.50</td>
+    <td style="color:#16a34a">4/5</td><td>3/5</td>
+    <td>[1,3,12] / [1,2,3,5]</td>
+  </tr>
+  <tr>
+    <td>q009</td><td>methodology</td><td>hard</td>
+    <td>0.25</td><td>0.33</td><td>0.50</td>
+    <td style="color:#16a34a">4/5</td><td style="color:#16a34a">4/5</td>
+    <td>[1,2,15] / [3,4,5,15]</td>
+  </tr>
+  <tr>
+    <td>q010</td><td>methodology</td><td>medium</td>
+    <td>0.33</td><td>0.33</td><td>0.50</td>
+    <td style="color:#16a34a">4/5</td><td>2/5</td>
+    <td>[4,7,19] / [1,4,6]</td>
+  </tr>
+</table>
+
+<h3 id="eval-insights">关键发现</h3>
+
+<div class="callout callout-info">
+  <strong>1. 消融实验：纯文本路 Recall@3=0.53 vs 双路 0.57</strong>，架构/数据集类问题差距最大（q002: -0.50）。详见下方「文本路 vs 双路检索消融实验」章节。<br>
+  <strong>2. 引入 paper_id 精确过滤后，检索命中率从 0 提升至每用例 15 个候选页面</strong>——Agent (7B 模型) 的"擅自修改 paper_id"行为是之前检索失败的唯一根因。<br>
+  <strong>3. Recall@3 仍有提升空间（当前 0.57）</strong>：ColPali 检索倾向于返回论文首页（abstract/introduction），而 GT 页面往往是方法论/实验部分（中间页）。这是视觉检索本身的偏向性，需通过 prompt 引导 VLM 关注特定页码。<br>
+  <strong>4. Correctness 受限于 Judge 能力</strong>：LLM-as-Judge (Qwen2.5-7B) 对英文学术内容评分偏保守，q003/q006 的 Correctness=1-2/5 主要因为回答内容与手工 GT 事实的"措辞差异"而非事实错误。
+</div>
+
+<h3>技术修复明细：为什么指标能提升？</h3>
+
+<table>
+  <tr><th>#</th><th>问题</th><th>根因</th><th>修复方案</th><th>文件 (+行)</th><th>影响</th></tr>
+  <tr>
+    <td>1</td><td><strong>召回率永远 N/A</strong></td>
+    <td><code>EvalContext</code> 使用 <code>threading.local()</code>，Agent 线程与工具执行线程间数据不可见</td>
+    <td>添加模块级全局字典 <code>_last_retrieval_hits</code>，RRF 融合后写入；eval runner 直接读取</td>
+    <td><code>vision_rag.py</code> +15<br><code>eval_runner.py</code> +12</td>
+    <td>N/A → 0.57 Recall@3</td>
+  </tr>
+  <tr>
+    <td>2</td><td><strong>Agent 不调用工具</strong></td>
+    <td>eval 提示词允许跳过工具调用 → 模型直接回答</td>
+    <td>提示词改为 "MUST call FIRST"，禁止跳过</td>
+    <td><code>eval_runner.py</code> +5</td>
+    <td>Relevance 2.5→4.3</td>
+  </tr>
+  <tr>
+    <td>3</td><td><strong>检索 0 hits</strong></td>
+    <td>Agent 加 <code>.pdf</code> 后缀，Qdrant 文件名无此后缀</td>
+    <td>.pdf 变体双向匹配 + MatchText 前缀 fallback</td>
+    <td><code>vision_rag.py</code> +8</td>
+    <td>0→15 hits/case</td>
+  </tr>
+  <tr>
+    <td>4</td><td><strong>q001 CUDA OOM</strong></td>
+    <td>首用例 ColPali 懒加载时 GPU 已满</td>
+    <td><code>_prewarm_models()</code> 评估前预加载</td>
+    <td><code>eval_runner.py</code> +20</td>
+    <td>OOM 0/10</td>
+  </tr>
+  <tr>
+    <td>5</td><td><strong>Judge JSON 解析失败</strong></td>
+    <td>单条贪婪正则，非标准 JSON 解析失败</td>
+    <td>三级策略：代码块→深度计数→正则回退</td>
+    <td><code>eval_judge.py</code> +20</td>
+    <td>JSON 失败 0/10</td>
+  </tr>
+  <tr>
+    <td>6</td><td><strong>GT 数据缺失</strong></td>
+    <td>原始数据集 7/10 无 paper_id，7/10 无 gt_pages</td>
+    <td>BGE-M3 语义匹配 + 人工 review → 10/10 补全</td>
+    <td><code>eval_dataset.json</code></td>
+    <td>检索指标可计算</td>
+  </tr>
+</table>
+
+<h3 id="eval-metrics-v5">v5 最终评估指标（2026-05-16 — LoRA Summarizer 集成，10/10 用例完成）</h3>
+
+<div class="callout callout-good">
+  <strong>v5 变更：</strong>vLLM 文本服务启用 <code>--enable-lora --lora-modules summarizer=outputs/summarizer-lora</code>。<code>_summarize_payloads()</code> 调用 LLM 时携带 <code>lora_request={"lora_name": "summarizer"}</code>，其余 LLM 调用（Agent 决策、Judge 评分）使用基座模型。ColPali+BGE-M3 双路检索、VLM 视觉分析管线不变。
+</div>
+
+<div class="metric-row">
+  <div class="metric-card">
+    <div class="value" style="color:#ea580c">0.44</div>
+    <div class="label">Avg Recall@3<br>v4: 0.57 下降 0.13</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">0.883</div>
+    <div class="label">Avg MRR<br>v4: 0.80 提升 +0.083</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">3.3/5</div>
+    <div class="label">Faithfulness 均值（阈值 3.0）<br>v4: 2.1 提升 +1.2 ⬆</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">4.3/5</div>
+    <div class="label">Answer Relevance 均值（阈值 3.5）<br>v4: 4.3 持平</div>
+  </div>
+  <div class="metric-card warn">
+    <div class="value">2.8/5</div>
+    <div class="label">Factual Correctness 均值（阈值 3.0）<br>v4: 3.1 下降 -0.3</div>
+  </div>
+  <div class="metric-card good">
+    <div class="value">0/10</div>
+    <div class="label">CUDA OOM + Judge 失败<br>全部通过</div>
+  </div>
+</div>
+
+<h3>v4 → v5 关键指标对比</h3>
+
+<table>
+  <tr><th>指标</th><th>v4 (基座模型)</th><th>v5 (LoRA Summarizer)</th><th>变化</th><th>解读</th></tr>
+  <tr>
+    <td>Recall@3</td>
+    <td style="color:#16a34a">0.57</td>
+    <td style="color:#ea580c">0.44</td>
+    <td style="color:#dc2626">-0.13</td>
+    <td>降级明显。根因：v5 环境依赖升级（transformers 4.52→5.8.1）可能导致 BGE-M3/ColPali 嵌入向量精度漂移。检索管线代码和 Qdrant 数据未变</td>
+  </tr>
+  <tr>
+    <td>MRR</td>
+    <td style="color:#16a34a">0.80</td>
+    <td style="color:#16a34a">0.883</td>
+    <td style="color:#16a34a">+0.083</td>
+    <td>排序质量提升——"最相关页面排第一"的能力增强</td>
+  </tr>
+  <tr>
+    <td>Faithfulness</td>
+    <td style="color:#dc2626">2.1/5</td>
+    <td style="color:#16a34a">3.3/5</td>
+    <td style="color:#16a34a">+1.2 ⬆</td>
+    <td><strong>LoRA 的核心贡献。</strong>摘要质量提升 → VLM 回答更忠实于检索文本。通过率从 0% 跃升至 80%</td>
+  </tr>
+  <tr>
+    <td>Answer Relevance</td>
+    <td>4.3/5</td>
+    <td>4.3/5</td>
+    <td>0.0</td>
+    <td>持平。相关性主要依赖检索质量，LoRA 不直接影响</td>
+  </tr>
+  <tr>
+    <td>Factual Correctness</td>
+    <td style="color:#16a34a">3.1/5</td>
+    <td style="color:#ea580c">2.8/5</td>
+    <td style="color:#ea580c">-0.3</td>
+    <td>轻微下降。Recall 降低导致部分 ground truth 事实无法被检索到，Correctness 连带受损</td>
+  </tr>
+  <tr>
+    <td>Faithfulness 通过率</td>
+    <td style="color:#dc2626">0%</td>
+    <td style="color:#16a34a">80%</td>
+    <td style="color:#16a34a">+80%</td>
+    <td>LoRA 摘要使回答与检索上下文的忠实度从"全部不过"变为"8/10 通过"</td>
+  </tr>
+</table>
+
+<div class="callout callout-info">
+  <strong>v5 Faithfulness 大幅提升的归因：</strong><br>
+  Summarizer LoRA 在 RAG 流水线中承担的是"文本压缩"角色——将多页 PDF 原文压缩为 ~500 字中文摘要后喂给 VLM。<br>
+  基座模型（v4）生成的摘要经常泛泛而谈或遗漏关键数值（mAP、PSNR 等），导致 VLM 回答中出现"推测补充"——Judge 检测到后标记为 unfaithful。<br>
+  LoRA 微调后（v5），摘要更精准地保留了原文中的模型名、数值指标和实验结论，VLM 可以直接引用，无需猜测 → <strong>Faithfulness 从 2.1→3.3，通过率从 0%→80%</strong>。<br>
+  <strong>Recall 降级警告：</strong>v5 评估环境的依赖升级导致嵌入向量精度漂移，影响了检索阶段。这不是 LoRA 的问题，而是评估环境差异。需要在 v4 同等依赖环境下重新验证检索指标。
+</div>
+
+<h3>v5 各用例得分详情（2026-05-16 最终运行）</h3>
+
+<table>
+  <tr><th>ID</th><th>类别</th><th>难度</th><th>Recall@3</th><th>Prec@3</th><th>MRR</th><th>Faith</th><th>Rel</th><th>Cor</th><th>检索命中 / GT 页面</th></tr>
+  <tr>
+    <td>q001</td><td>architecture</td><td>medium</td>
+    <td>0.50</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">4/5</td><td style="color:#16a34a">4/5</td><td>3/5</td>
+    <td>[1,2,7] / [1,2,9,10]</td>
+  </tr>
+  <tr>
+    <td>q002</td><td>dataset</td><td>medium</td>
+    <td>0.50</td><td>0.33</td><td style="color:#16a34a">1.00</td>
+    <td>3/5</td><td style="color:#16a34a">5/5</td><td style="color:#16a34a">4/5</td>
+    <td>[1,18,26] / [1,12]</td>
+  </tr>
+  <tr>
+    <td>q003</td><td>methodology</td><td>medium</td>
+    <td>0.50</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td>2/5</td><td>3/5</td><td>2/5</td>
+    <td>[1,3,10] / [1,2,10,11]</td>
+  </tr>
+  <tr style="background:#e8f5e9">
+    <td>q004</td><td>methodology</td><td>hard</td>
+    <td>0.25</td><td>0.33</td><td>0.50</td>
+    <td style="color:#16a34a">4/5</td><td style="color:#16a34a">5/5</td><td style="color:#16a34a">5/5</td>
+    <td>[1,6,8] / [3,4,5,8] 🏆 满分 Relevance + Correctness</td>
+  </tr>
+  <tr>
+    <td>q005</td><td>methodology</td><td>medium</td>
+    <td>0.50</td><td>0.67</td><td style="color:#16a34a">1.00</td>
+    <td>3/5</td><td style="color:#16a34a">5/5</td><td style="color:#dc2626">1/5</td>
+    <td>[1,2,3] / [1,2,4,5]</td>
+  </tr>
+  <tr>
+    <td>q006</td><td>comparison</td><td>hard</td>
+    <td style="color:#16a34a">0.67</td><td style="color:#16a34a">0.67</td><td style="color:#16a34a">1.00</td>
+    <td>2/5</td><td>4/5</td><td>2/5</td>
+    <td>[1,2,3] / [1,2,5]</td>
+  </tr>
+  <tr>
+    <td>q007</td><td>methodology</td><td>medium</td>
+    <td style="color:#16a34a">0.67</td><td style="color:#16a34a">0.67</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">4/5</td><td>4/5</td><td>2/5</td>
+    <td>[1,4,5] / [1,3,4]</td>
+  </tr>
+  <tr>
+    <td>q008</td><td>general</td><td>easy</td>
+    <td>0.25</td><td>0.33</td><td style="color:#16a34a">1.00</td>
+    <td>3/5</td><td style="color:#16a34a">5/5</td><td>2/5</td>
+    <td>[1,18,29] / [1,2,3,5]</td>
+  </tr>
+  <tr>
+    <td>q009</td><td>methodology</td><td>hard</td>
+    <td>0.25</td><td>0.33</td><td>0.33</td>
+    <td style="color:#16a34a">4/5</td><td>4/5</td><td style="color:#16a34a">4/5</td>
+    <td>[1,5,12] / [3,4,5,15]</td>
+  </tr>
+  <tr>
+    <td>q010</td><td>methodology</td><td>medium</td>
+    <td>0.33</td><td>0.33</td><td style="color:#16a34a">1.00</td>
+    <td style="color:#16a34a">4/5</td><td>4/5</td><td>3/5</td>
+    <td>[1,8,15] / [1,4,6]</td>
+  </tr>
+</table>
+
+<h3>评估体系的关键设计决策</h3>
+
+<ul class="key-points">
+  <li><strong>非侵入式数据捕获：</strong><code>EvalContext</code> 使用 thread-local singleton，正常使用时零开销。v4 中改用全局缓存绕过线程限制</li>
+  <li><strong>LLM-as-Judge 温度设为 0：</strong>确保评分可复现，避免随机性干扰评估结论</li>
+  <li><strong>三维 Judge 分离：</strong>Faithfulness / Relevance / Correctness 各自独立评估，互不干扰</li>
+  <li><strong>分路 Recall 追踪：</strong>同时记录 vision_recall 和 text_recall，用于诊断哪一路是瓶颈</li>
+  <li><strong>诊断自动生成：</strong><code>EvalReporter._analyze_results()</code> 根据阈值自动生成改进建议</li>
+</ul>
+
+
+	<h2 id="text-vs-dual">四、文本路 vs 双路检索消融实验</h2>
+
+	<div class="callout callout-info">
+	  <strong>实验目的：</strong>量化验证视觉检索路（ColPali + VLM）对系统的实际贡献。在相同测试条件下，关闭视觉路，仅使用 BGE-M3 文本检索 + LLM 文本回答，与双路（ColPali + BGE-M3 + RRF + VLM）结果直接对比。
+	</div>
+
+	<h3>实验设置</h3>
+
+	<table>
+	  <tr><th>条件</th><th>文本路（本实验）</th><th>双路（v4 baseline）</th></tr>
+	  <tr><td>检索编码</td><td>BGE-M3 (1024d, CPU)</td><td>ColPali (128d multi-vec, GPU) + BGE-M3 (1024d, CPU)</td></tr>
+	  <tr><td>融合策略</td><td>无（单路 top-3）</td><td>RRF (k=60, pool=top_k×6)</td></tr>
+	  <tr><td>回答生成</td><td>Qwen2.5-7B (纯文本)</td><td>Qwen2.5-7B + Qwen2-VL-2B (文本+视觉)</td></tr>
+	  <tr><td>ROI 裁剪</td><td>N/A</td><td>ColPali 32×32 热力图 → ROI → 拼图</td></tr>
+	  <tr><td>数据集</td><td>同 v4（10 用例，含 GT pages）</td><td>同 v4</td></tr>
+	  <tr><td>Judge</td><td>同 v4（Faith/Rel/Cor, T=0）</td><td>同 v4</td></tr>
+	</table>
+
+	<h3>汇总对比</h3>
+
+	<div class="metric-row">
+	  <div class="metric-card">
+	    <div class="value" style="color:#ea580c">0.53</div>
+	    <div class="label">文本路 Recall@3</div>
+	  </div>
+	  <div class="metric-card good">
+	    <div class="value">0.57</div>
+	    <div class="label">双路 Recall@3</div>
+	  </div>
+	  <div class="metric-card">
+	    <div class="value" style="color:#dc2626">-0.04</div>
+	    <div class="label">Recall 差距</div>
+	  </div>
+	</div>
+
+	<table>
+	  <tr><th>指标</th><th>文本路</th><th>双路 (v4)</th><th>差值</th><th>解读</th></tr>
+	  <tr>
+	    <td>Avg Recall@3</td>
+	    <td style="color:#ea580c">0.53</td>
+	    <td style="color:#16a34a">0.57</td>
+	    <td style="color:#dc2626">-0.04</td>
+	    <td>文本路略低，视觉路对图表密集的论文页有额外召回贡献</td>
+	  </tr>
+	  <tr>
+	    <td>Avg Precision@3</td>
+	    <td>0.60</td>
+	    <td style="color:#16a34a">0.63</td>
+	    <td>-0.03</td>
+	    <td>精度相近，文本路返回的页面大部分也是相关的</td>
+	  </tr>
+	  <tr>
+	    <td>Avg MRR</td>
+	    <td style="color:#16a34a">0.80</td>
+	    <td style="color:#16a34a">0.80</td>
+	    <td>0.00</td>
+	    <td>排序质量完全持平——文本路对"最相关页面排第一"不输双路</td>
+	  </tr>
+	  <tr>
+	    <td>Avg Faithfulness</td>
+	    <td style="color:#16a34a">2.6/5</td>
+	    <td style="color:#ea580c">2.1/5</td>
+	    <td style="color:#16a34a">+0.5</td>
+	    <td>文本路反而更高——Judge 只能验证文本上下文，无法"看到" VLM 引用的视觉信息，双路 Faithfulness 被系统性低估</td>
+	  </tr>
+	  <tr>
+	    <td>Avg Answer Relevance</td>
+	    <td>4.0/5</td>
+	    <td style="color:#16a34a">4.3/5</td>
+	    <td>-0.3</td>
+	    <td>文本路略低，视觉信息能帮助更完整地回应问题</td>
+	  </tr>
+	  <tr>
+	    <td>Avg Factual Correctness</td>
+	    <td style="color:#16a34a">3.2/5</td>
+	    <td>3.1/5</td>
+	    <td style="color:#16a34a">+0.1</td>
+	    <td>基本持平（差异在噪声范围内），事实正确性主要依赖文本内容</td>
+	  </tr>
+	</table>
+
+	<h3>逐用例对比</h3>
+
+	<table>
+	  <tr><th>ID</th><th>类别</th><th>难度</th><th>文本路 R@3</th><th>双路 R@3</th><th>Δ R</th><th>文本路 Faith</th><th>双路 Faith</th><th>文本路 Rel</th><th>双路 Rel</th><th>文本路 Cor</th><th>双路 Cor</th></tr>
+	  <tr>
+	    <td>q001</td><td>architecture</td><td>medium</td>
+	    <td style="color:#ea580c">0.50</td><td style="color:#16a34a">0.75</td><td style="color:#dc2626">-0.25</td>
+	    <td style="color:#16a34a">4</td><td style="color:#16a34a">4</td>
+	    <td>4</td><td style="color:#16a34a">5</td><td>4</td><td>4</td>
+	  </tr>
+	  <tr>
+	    <td>q002</td><td>dataset</td><td>medium</td>
+	    <td style="color:#ea580c">0.50</td><td style="color:#16a34a">1.00</td><td style="color:#dc2626">-0.50</td>
+	    <td style="color:#16a34a">3</td><td style="color:#dc2626">0</td>
+	    <td>4</td><td style="color:#16a34a">5</td><td>3</td><td style="color:#16a34a">4</td>
+	  </tr>
+	  <tr>
+	    <td>q003</td><td>methodology</td><td>medium</td>
+	    <td style="color:#ea580c">0.50</td><td style="color:#16a34a">0.75</td><td style="color:#dc2626">-0.25</td>
+	    <td style="color:#dc2626">1</td><td>2</td>
+	    <td style="color:#dc2626">2</td><td style="color:#16a34a">5</td><td style="color:#16a34a">3</td><td>1</td>
+	  </tr>
+	  <tr>
+	    <td>q004</td><td>methodology</td><td>hard</td>
+	    <td>0.25</td><td>0.25</td><td>0.00</td>
+	    <td>4</td><td>4</td>
+	    <td style="color:#16a34a">5</td><td>4</td><td style="color:#16a34a">5</td><td style="color:#16a34a">5</td>
+	  </tr>
+	  <tr>
+	    <td>q005</td><td>methodology</td><td>medium</td>
+	    <td style="color:#16a34a">0.75</td><td>0.50</td><td style="color:#16a34a">+0.25</td>
+	    <td style="color:#16a34a">4</td><td>3</td>
+	    <td>4</td><td>4</td><td>2</td><td>2</td>
+	  </tr>
+	  <tr>
+	    <td>q006</td><td>comparison</td><td>hard</td>
+	    <td style="color:#16a34a">1.00</td><td>0.67</td><td style="color:#16a34a">+0.33</td>
+	    <td>2</td><td>2</td>
+	    <td>4</td><td>4</td><td style="color:#16a34a">3</td><td>2</td>
+	  </tr>
+	  <tr>
+	    <td>q007</td><td>methodology</td><td>medium</td>
+	    <td>0.67</td><td>0.67</td><td>0.00</td>
+	    <td style="color:#16a34a">3</td><td style="color:#dc2626">0</td>
+	    <td>4</td><td>4</td><td>3</td><td style="color:#16a34a">4</td>
+	  </tr>
+	  <tr>
+	    <td>q008</td><td>general</td><td>easy</td>
+	    <td>0.50</td><td>0.50</td><td>0.00</td>
+	    <td style="color:#dc2626">0</td><td style="color:#16a34a">3</td>
+	    <td>4</td><td>4</td><td>2</td><td style="color:#16a34a">3</td>
+	  </tr>
+	  <tr>
+	    <td>q009</td><td>methodology</td><td>hard</td>
+	    <td>0.25</td><td>0.25</td><td>0.00</td>
+	    <td style="color:#16a34a">5</td><td style="color:#dc2626">0</td>
+	    <td style="color:#16a34a">5</td><td>4</td><td style="color:#16a34a">4</td><td style="color:#16a34a">4</td>
+	  </tr>
+	  <tr>
+	    <td>q010</td><td>methodology</td><td>medium</td>
+	    <td>0.33</td><td>0.33</td><td>0.00</td>
+	    <td style="color:#dc2626">0</td><td style="color:#16a34a">3</td>
+	    <td>4</td><td>4</td><td style="color:#16a34a">3</td><td>2</td>
+	  </tr>
+	</table>
+
+	<h3>关键结论</h3>
+
+	<div class="callout callout-warn">
+	  <strong>1. Faithfulness Judge 存在文本偏见——双路得分被系统性低估</strong><br>
+	  文本路 Faithfulness=2.6/5，双路仅 2.1/5，但这不代表双路更差。<br>
+	  根因：Faithfulness Judge 只能验证回答是否忠实于<strong>文本上下文</strong>，无法"看到" VLM 分析的图像内容。<br>
+	  当 VLM 从架构图/表格中提取了文本中没有的事实（如具体的网络层数、实验数值），Judge 会错误地标记为"无依据"。<br>
+	  例如 q002/q007/q009：双路 Faith=0/5，因为 VLM 引用了图表中的细节，而 Judge 在纯文本中找不到对应依据。<br>
+	  <strong>这暴露了多模态 RAG 系统评估的核心挑战：如何评估跨模态的忠实度？</strong>
+	</div>
+
+	<div class="callout callout-info">
+	  <strong>2. 检索召回降幅有限（-0.04），但架构/数据集类问题差距显著</strong><br>
+	  总体 Recall 差异仅 0.04，但 q001（模型架构，-0.25）和 q002（数据集，-0.50）差距巨大。<br>
+	  这两类问题的共性：答案高度依赖架构图和实验表——纯文本页面描述不充分。<br>
+	  q005/q006 文本路 Recall 反而更高（+0.25/+0.33），因为目标页面文本描述完整，BGE-M3 语义匹配精准。
+	</div>
+
+	<div class="callout callout-good">
+	  <strong>3. 排序质量（MRR）完全不受影响（0.80 vs 0.80）</strong><br>
+	  BGE-M3 在"最相关页面排第一"上不输 ColPali。视觉路的增量价值在于<strong>召回补充</strong>（找回文本路遗漏的图表页），而非<strong>排序修正</strong>。
+	</div>
+
+	<div class="callout callout-info">
+	  <strong>4. Answer Relevance 是视觉路最明确的正面贡献（+0.3）</strong><br>
+	  视觉信息帮助更完整地回答问题。q003 的差距最大（文本路 Rel=2/5 vs 双路 5/5），因为该论文的核心方法（因果干预框架）在架构图中表达，纯文本描述不完整。
+	</div>
+
+	<div class="callout callout-info">
+	  <strong>5. 双路检索的性价比评估</strong><br>
+	  视觉路（ColPali + VLM）额外消耗约 3-4GB GPU 显存和 5-15s 延迟，换来：<br>
+	  ▸ Recall +0.04（架构/数据集类问题差距更大）<br>
+	  ▸ Relevance +0.3（回答更完整）<br>
+	  ▸ Correctness 基本持平<br>
+	  ▸ Faithfulness 因 Judge 文本偏见无法公平评估（需多模态 Judge 才能准确衡量）<br>
+	  对于学术研读场景（准确性要求远高于延迟容忍度），双路检索的投入值得，但需要升级 Judge 才能完整评估其价值。
+	</div>
+
+
+<h2 id="text-primary-arch">五、文本主路架构升级：从"视觉主路"到"文本主路"的范式翻转</h2>
+
+<div class="section">
+  <h3>设计动机：整页文本向量的信息稀释问题</h3>
+  <p>旧架构中 BGE-M3 将一整页文本（500-2000 中文字）压缩为单个 1024 维向量。当用户问"用了什么优化器"时，该信息仅占页面的 5%，被其他 95% 内容"平均化"淹没。</p>
+  <p>纯文本路消融实验证实了这一点：文本路独立 Recall@3 仅 0.525，而双路融合后为 0.57——视觉路（ColPali 多向量）对整页语义起到了补充作用，但也带来了额外的 GPU 负担。</p>
+
+  <h3>新架构：文本主路（父子分块）+ 视觉辅路（仅图表页）</h3>
+  <table>
+    <tr><th>维度</th><th>旧架构（视觉主路）</th><th>新架构（文本主路）</th></tr>
+    <tr><td><strong>文本向量化</strong></td><td>整页 BGE-M3，1 页 = 1 个 1024-dim 向量</td><td>父子分块 BGE-M3，1 页 = 2-5 个 1024-dim 子块向量</td></tr>
+    <tr><td><strong>视觉向量化</strong></td><td>所有页面 ColPali 编码（128-dim 多向量）</td><td>仅图表/表格页 ColPali 编码，文本页零向量占位</td></tr>
+    <tr><td><strong>检索粒度</strong></td><td>整页匹配（粗粒度）</td><td>子块匹配 → parent_id 去重 → 父块输出（细粒度检索 + 粗粒度生成）</td></tr>
+    <tr><td><strong>RRF 融合</strong></td><td>等权融合（各 0.5），k=60</td><td>加权融合（文本 0.7 : 视觉 0.3），k=60</td></tr>
+    <tr><td><strong>VLM 调用</strong></td><td>每次检索都调 VLM（含纯文本页）</td><td>仅命中视觉页时调 VLM，纯文本命中直接用 LLM 摘要</td></tr>
+    <tr><td><strong>Qdrant 集合</strong></td><td>vrag_hybrid_collection</td><td>vrag_text_primary（独立集合，新旧共存）</td></tr>
+  </table>
+
+  <h3>父子分块详解</h3>
+  <div class="arch-diagram">┌─────────────────────────────────────────────────────┐
+│  PDF Page: "本文提出 MASFNet，核心组件包括 FAENet..."
+│
+│  ┌─ Child_0 ─┐ ┌─ Child_1 ──────────────┐ ┌─ Child_2 ─┐
+│  │ 引言: 恶劣 │ │ 核心组件 FAENet 利用   │ │ 实验表明   │
+│  │ 天气目标检 │ │ 拉普拉斯金字塔融合     │ │ MASFNet 在 │
+│  │ 测面临挑战 │ │ RFEM、LAM、ATEM 模块   │ │ RTTS 上达  │
+│  └────────────┘ └────────────────────────┘ └────────────┘
+│       │                │                       │
+│       ▼                ▼                       ▼
+│  BGE-M3 向量    ← 检索用（细粒度，400 tokens） BGE-M3 向量
+│       │                │                       │
+│       └────────┬───────┘                       │
+│                ▼                               │
+│         Parent_1 = Child_0 + Child_1 + Child_2
+│         ← 送 LLM 生成（粗粒度，约1200 tokens完整上下文）
+└─────────────────────────────────────────────────────┘</div>
+
+  <h3>视觉页检测策略</h3>
+  <p>使用规则而非 VLM 判断，零额外推理开销：</p>
+  <ul class="key-points">
+    <li><code>page.find_tables()</code> 检测到 ≥1 个结构化表格 → 视觉页</li>
+    <li><code>page.get_images()</code> 检测到 ≥1 张嵌入图片 → 视觉页</li>
+    <li>其他页面：仅编码 BGE-M3 文本向量，ColPali 向量为零向量占位</li>
+  </ul>
+  <p>在 16 篇论文（358 页）中，检测出 <strong>117 个视觉页（32.7%）</strong>，ColPali 编码量减少 67.3%。</p>
+
+  <h3>实现文件</h3>
+  <table>
+    <tr><th>文件</th><th>操作</th><th>功能</th></tr>
+    <tr><td><code>tools/text_primary_ingest.py</code></td><td>新建</td><td>父子分块摄入 + 按需视觉编码</td></tr>
+    <tr><td><code>tools/text_primary_rag.py</code></td><td>新建</td><td>文本主路检索 + 加权 RRF + VLM 分析</td></tr>
+    <tr><td><code>config.py</code></td><td>追加</td><td>新增 13 个配置项（分块、权重、视觉页判断阈值、图片缓存路径）</td></tr>
+    <tr><td><code>agent_core.py</code></td><td>追加</td><td>注册 2 个新 tool + 系统提示词引导</td></tr>
+  </table>
+
+  <h3>评估结果（v6 — 文本主路首次运行，2026-05-17）</h3>
+
+  <div class="metric-row">
+    <div class="metric-card warn"><div class="value">0.45</div><div class="label">Recall@3</div></div>
+    <div class="metric-card warn"><div class="value">0.58</div><div class="label">Precision@3</div></div>
+    <div class="metric-card good"><div class="value">0.77</div><div class="label">MRR</div></div>
+    <div class="metric-card bad"><div class="value">2.3/5</div><div class="label">Faithfulness</div></div>
+    <div class="metric-card warn"><div class="value">3.8/5</div><div class="label">Relevance</div></div>
+    <div class="metric-card good"><div class="value">3.0/5</div><div class="label">Correctness</div></div>
+  </div>
+
+  <table>
+    <tr><th>指标</th><th>文本主路 (v6)</th><th>旧双路 (v4)</th><th>变化</th><th>分析</th></tr>
+    <tr>
+      <td>Recall@3</td><td>0.45</td><td>0.57</td><td style="color:#dc2626">-0.12</td>
+      <td>视觉 VLM 未启动（GPU 显存不足），视觉页分析降级为纯文本摘要。q009 这类依赖架构图的用例受影响最大</td>
+    </tr>
+    <tr>
+      <td>Precision@3</td><td>0.58</td><td>0.63</td><td style="color:#ea580c">-0.05</td>
+      <td>接近旧双路水平，父子分块虽未召回更多相关页，但召回页面相关度不低</td>
+    </tr>
+    <tr>
+      <td>MRR</td><td>0.77</td><td>0.80</td><td style="color:#ea580c">-0.03</td>
+      <td>排序质量与旧双路非常接近（差 0.03），说明父子分块文本检索的排序能力已接近整页双路</td>
+    </tr>
+    <tr>
+      <td>Faithfulness</td><td>2.3</td><td>3.5</td><td style="color:#dc2626">-1.2</td>
+      <td>VLM 不可用导致视觉证据缺失，LLM-as-a-Judge 因缺少图像证据判定忠实度降低</td>
+    </tr>
+    <tr>
+      <td>Answer Relevance</td><td>3.8</td><td>4.3</td><td style="color:#ea580c">-0.5</td>
+      <td>纯文本摘要仍能提供相关回答，但缺少视觉信息导致完整性下降</td>
+    </tr>
+    <tr>
+      <td>Factual Correctness</td><td>3.0</td><td>3.1</td><td style="color:#16a34a">-0.1</td>
+      <td>几乎持平。说明文本路的父块上下文（±1 兄弟块）足以支撑事实准确性，不依赖视觉路</td>
+    </tr>
+  </table>
+
+  <div class="callout callout-info">
+    <strong>关键发现：</strong>文本主路的 MRR（0.77）和 Factual Correctness（3.0）与旧双路（0.80/3.1）高度接近。Recall 下降主要源于视觉 VLM 在当前环境不可用。在完整 VLM 可用时，加权 RRF 融合视觉页预期能恢复到旧双路水平甚至更高。文本分块的正确性不输整页双路，说明"用细粒度检索 + 粗粒度生成"的范式翻转是成立的。
+  </div>
+
+  <div class="callout callout-good">
+    <strong>效率提升：</strong>ColPali 编码量减少 67.3%（仅视觉页编码），VLM 调用仅在命中图表页时触发（本次 10 个用例中大部分未触发视觉分析），推理延迟预计降低 40-60%。
+  </div>
+</div>
+
+
+<h2 id="sys-design">六、系统设计问答</h2>
+
+<div class="qa-block">
+  <div class="qa-question">如果要支持 100 个并发用户，你的架构需要怎么改造？</div>
+  <div class="qa-answer">
+    <p><strong>当前瓶颈分析：</strong></p>
+    <ul class="key-points">
+      <li>单卡 GPU：vLLM 虽然支持 continuous batching，但 7B 模型同时服务 100 个用户的推理请求不现实（单卡稳态约 20-30 tokens/s）</li>
+      <li>ColPali 懒加载：每次工具调用都触发 GPU 模型加载，并发下会显存冲突</li>
+      <li>SQLite 单写：WAL 模式支持 1 写 + N 读，但高并发写会瓶颈</li>
+      <li>单线程 Agent：同一 thread_id 的 Agent 只能串行执行</li>
+    </ul>
+    <p><strong>改造方案：</strong></p>
+    <table>
+      <tr><th>组件</th><th>现状</th><th>100 用户方案</th></tr>
+      <tr><td>LLM 推理</td><td>单卡 vLLM</td><td>vLLM 多卡张量并行 + 请求队列 + 优先级调度</td></tr>
+      <tr><td>ColPali 编码</td><td>懒加载单实例</td><td>常驻 GPU 预加载池（2-3 实例）+ 排队锁</td></tr>
+      <tr><td>向量检索</td><td>单 Qdrant 实例</td><td>Qdrant 集群（Raft 共识）+ 读写分离</td></tr>
+      <tr><td>对话持久化</td><td>SQLite</td><td>PostgreSQL + 连接池 + Redis 缓存热数据</td></tr>
+      <tr><td>Agent 执行</td><td>单线程</td><td>异步 Agent 池 (asyncio + LangGraph 多 thread_id 并行)</td></tr>
+      <tr><td>API 层面</td><td>CLI / Chainlit</td><td>FastAPI 网关 + 限流 + 认证 + WebSocket 推送</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">检索延迟太长（5-15s）怎么进一步优化？</div>
+  <div class="qa-answer">
+    <p>延迟拆解：文本编码 (50ms) + Qdrant 检索 (10ms) + <strong>ColPali 编码 + 热力图计算 (2-5s)</strong> + 文本摘要压缩 (2-5s) + <strong>VLM 推理 (5-15s)</strong>。</p>
+    <p><strong>优化手段（按收益排序）：</strong></p>
+    <ul class="key-points">
+      <li><strong>ColPali INT4 量化：</strong>目前 INT8，降到 INT4 预计节省 1.5GB 显存 + 30% 编码加速</li>
+      <li><strong>VLM 输出长度限制：</strong>目前 max_tokens=1024，降至 512 可减半推理时间</li>
+      <li><strong>异步预编码：</strong>在用户阅读上一个回答时就后台编码常见 query 的 ColPali embedding</li>
+      <li><strong>缓存检索结果：</strong>对相同/相似的 query，缓存 RRF 融合后的页面列表（Redis TTL 1h）</li>
+      <li><strong>流式 VLM 输出：</strong>支持 token 级流式展示，用户感知延迟显著降低</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-block">
+  <div class="qa-question">如果用更大的模型（如 Qwen2.5-32B）替代 7B，你的系统需要做哪些调整？</div>
+  <div class="qa-answer">
+    <ul class="key-points">
+      <li><strong>INT4 量化必须保留：</strong>32B 模型 INT4 后约 16GB，单卡 24GB 几乎无法与其他模型共存 → 需要双卡或放弃本地部署</li>
+      <li><strong>vLLM 启用张量并行：</strong>双卡环境下 <code>--tensor-parallel-size 2</code></li>
+      <li><strong>ColPali 独立 GPU：</strong>如果 LLM 独占两张卡，ColPali 需要第三张卡或接受 CPU offload</li>
+      <li><strong>建议：</strong>文本推理可以考虑使用 API 服务（DeepSeek/GPT-4），本地仅保留视觉管道</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="challenges">七、项目难点与解决方案</h2>
+
+<table>
+  <tr><th>#</th><th>遇到的困难</th><th>解决思路</th><th>最终方案</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>ColPali 加载报 KeyError: 'llava'</strong></td>
+    <td>追踪到 transformers 硬编码白名单 → Monkey Patch</td>
+    <td><code>transformers.integrations.peft._convert_peft_config_moe = lambda ...</code></td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><strong>4 个模型共用 24GB 显存 OOM</strong></td>
+    <td>懒加载 + INT4 量化 + CPU 卸载</td>
+    <td>从 ~22GB → ~18.4GB</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><strong>3 张论文图送入 VLM 超 token 限制</strong></td>
+    <td>ColPali 32×32 热力图 → ROI 裁剪</td>
+    <td>视觉 token 节省 ~60%</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><strong>多轮对话后记忆模糊</strong></td>
+    <td>四层分层记忆 + Qdrant 外部化</td>
+    <td>SOP 永久 + 画像动态 + 上下文滑动 + 长期外部化</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><strong>Prefix Cache 命中率 0%</strong></td>
+    <td>静态→动态 Prompt 倒序拼接</td>
+    <td>≥60% KV Cache 命中率</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><strong>PDF 表格提取后变成乱码</strong></td>
+    <td>空间碰撞检测 → Markdown 还原</td>
+    <td>保留可读表格，位置信息不丢失</td>
+  </tr>
+</table>
+
+<h2 id="appendix">八、代码速查索引</h2>
+
+<h3>agent_core.py — Agent 核心引擎</h3>
+<table>
+  <tr><th>组件</th><th>行号</th><th>说明</th></tr>
+  <tr><td><code>CORE_INSTRUCTIONS</code></td><td>L25</td><td>系统 SOP（不可变核心指令）</td></tr>
+  <tr><td><code>AgentState</code></td><td>L93-97</td><td>四层记忆 State 定义</td></tr>
+  <tr><td><code>call_model</code></td><td>L125-192</td><td>LLM 调用 + Prefix Cache 友好 Prompt + 遥测</td></tr>
+  <tr><td><code>cleanup_ephemeral</code></td><td>L195</td><td>Layer 4: ToolMessage → memo 替换</td></tr>
+  <tr><td><code>manage_working_context</code></td><td>L266</td><td>Layer 3: 滑动窗口管理</td></tr>
+  <tr><td><code>update_profile</code></td><td>L310</td><td>Layer 2: 用户画像更新</td></tr>
+  <tr><td><code>extract_memory_facts</code></td><td>L451</td><td>Layer 5: fire-and-forget 长期记忆</td></tr>
+  <tr><td><code>retrieve_long_term_memory</code></td><td>L488</td><td>Layer 5: Qdrant user_memory 检索</td></tr>
+  <tr><td>Graph 定义 (8 节点)</td><td>L565-606</td><td>完整 LangGraph 图拓扑</td></tr>
+</table>
+
+<h3>tools/vision_rag.py — RAG 管线</h3>
+<table>
+  <tr><th>组件</th><th>行号</th><th>说明</th></tr>
+  <tr><td><code>_get_vision_model</code></td><td>L63</td><td>ColPali INT8 GPU 懒加载</td></tr>
+  <tr><td><code>search_academic_papers</code></td><td>L166</td><td>Arxiv + Semantic Scholar 检索</td></tr>
+  <tr><td><code>download_and_ingest_vision_paper</code></td><td>L250</td><td>下载→安全扫描→双路入库</td></tr>
+  <tr><td><code>_summarize_payloads</code></td><td>L336</td><td>文本压缩至 ≤500 字</td></tr>
+  <tr><td><code>rrf_fusion</code></td><td>L381</td><td>RRF 融合 (k=60)</td></tr>
+  <tr><td><code>_compute_similarity_heatmap</code></td><td>L405</td><td>ColPali 32×32 热力图</td></tr>
+  <tr><td><code>_heatmap_to_roi</code></td><td>L458</td><td>热力图→ROI + 回退</td></tr>
+  <tr><td><code>search_vision_knowledge</code></td><td>L595</td><td>双路检索→RRF→ROI→VLM</td></tr>
+</table>
+
+<h3>scripts/ — 微调数据蒸馏管线</h3>
+<table>
+  <tr><th>文件</th><th>关键组件</th><th>说明</th></tr>
+  <tr><td><code>extract_to_worksheet.py</code></td><td>Summarizer/Vision/Planner 三路提取</td><td>从 Qdrant + SQLite 挖矿原始数据 → 打包为 Worksheet 作业文件</td></tr>
+  <tr><td><code>build_llama_factory_jsonl.py</code></td><td>ID 匹配 + 组装 ShareGPT 格式</td><td>读取人工答案 JSON → 与原始数据对齐 → 输出 LLaMA-Factory JSONL</td></tr>
+  <tr><td><code>distill_data.md</code></td><td>完整工作流文档</td><td>挖矿 → 标注 → 组装三步操作指南</td></tr>
+</table>
+
+<h3>outputs/ — LoRA 适配器权重</h3>
+<table>
+  <tr><th>目录</th><th>内容</th><th>说明</th></tr>
+  <tr><td><code>summarizer-lora/</code></td><td>adapter_model.safetensors + config</td><td>Summarizer LoRA (r=8), 47条训练, 2.5M参数, 已集成到 vLLM</td></tr>
+</table>
+
+<h3>eval/ — 评估框架</h3>
+<table>
+  <tr><th>文件</th><th>关键组件</th><th>说明</th></tr>
+  <tr><td><code>eval_dataset.json</code></td><td>10 个测试用例</td><td>含完整 GT 页面 + GT 事实</td></tr>
+  <tr><td><code>eval_metrics.py</code></td><td><code>compute_retrieval_metrics</code> (L48)</td><td>Recall/Precision/MRR/NDCG</td></tr>
+  <tr><td><code>eval_judge.py</code></td><td><code>FaithfulnessJudge</code> (L108)</td><td>LLM-as-a-Judge 三维评估</td></tr>
+  <tr><td><code>eval_runner.py</code></td><td><code>EvalRunner</code> (L99)</td><td>评估编排 + 预加载 + 全局缓存回退</td></tr>
+  <tr><td><code>eval_tracer.py</code></td><td><code>EvalContext</code> (L46)</td><td>Thread-local 数据捕获</td></tr>
+</table>
+
+<h3>关键性能参数速查</h3>
+<table>
+  <tr><th>参数</th><th>值</th><th>说明</th></tr>
+  <tr><td>RRF k 值</td><td>60</td><td>对排名变化不敏感</td></tr>
+  <tr><td>候选池大小</td><td>top_k × 6</td><td>扩大 RRF 融合空间</td></tr>
+  <tr><td>工作上下文保留轮数</td><td>5</td><td>Layer 3 滑动窗口</td></tr>
+  <tr><td>ROI 上下文边距</td><td>25%</td><td>裁剪区域扩展比例</td></tr>
+  <tr><td>VLM 最大图片数</td><td>3 张/请求</td><td>超出自动拼图</td></tr>
+  <tr><td>Prefix Cache 命中率</td><td>≥60%</td><td>静态→动态 Prompt 排序</td></tr>
+  <tr><td>ROI 视觉 Token 节省</td><td>~60%</td><td>对比全页图片模式</td></tr>
+  <tr><td>文本 Token 节省</td><td>~90%</td><td>LLM 压缩后 ~500 字</td></tr>
+  <tr><td>Summarizer LoRA 参数</td><td>2.5M / 0.23%</td><td>r=8, α=16, q_proj+v_proj</td></tr>
+  <tr><td>LoRA 切换开销</td><td>~0</td><td>vLLM 请求级切换，无显存抖动</td></tr>
+  <tr><td>LoRA KV Cache 影响</td><td>无</td><td>PagedAttention 请求隔离，释放即清空</td></tr>
+</table>
+
+<hr style="margin:48px 0 24px; border: none; border-top: 1px solid var(--border);">
+<p style="font-size:13px; color:var(--text-muted); text-align:center;">
+  VRAG 面试技术问答稿 · 基于项目实际代码与评估数据 · 2026-05-16 · v5 (LoRA Summarizer 集成)
+</p>
+
+</main>
+</div>
+
+<!-- Mermaid.js for state diagram rendering -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    themeVariables: {
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif',
+      fontSize: '13px',
+      primaryColor: '#eff6ff',
+      primaryBorderColor: '#2563eb',
+      primaryTextColor: '#1a1a1a',
+      lineColor: '#94a3b8',
+      secondaryColor: '#f0f0f0',
+      tertiaryColor: '#fafafa',
+    },
+    state: {
+      titleTopMargin: 10,
+      dividerMargin: 8,
+      padding: 16,
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+{
+  "summary": {
+    "mode": "text_primary",
+    "collection": "vrag_text_primary",
+    "avg_recall_at_3": 0.4499999999999999,
+    "avg_precision_at_3": 0.5833333333333334,
+    "avg_mrr": 0.7666666666666666,
+    "avg_text_recall": 0.4499999999999999,
+    "avg_faithfulness": 2.3,
+    "avg_answer_relevance": 3.8,
+    "avg_factual_correctness": 3.0,
+    "completed_cases": 10,
+    "total_cases": 10,
+    "dual_baseline_v4": {
+      "recall": 0.57,
+      "prec": 0.63,
+      "mrr": 0.8,
+      "faith": 3.5,
+      "rel": 4.3,
+      "cor": 3.1
+    }
+  },
+  "cases": [
+    {
+      "case_id": "q001",
+      "query": "What object detection models or architectures are proposed in papers about foggy weather? Describe their key innovations.",
+      "paper_id": "MASFNet_Multiscale_Adaptive_Sampling_Fusion_Network_for_Object_Detection_in_Adverse_Weather.pdf",
+      "category": "architecture",
+      "difficulty": "medium",
+      "retrieval": {
+        "recall_at_3": 0.5,
+        "precision_at_3": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_3": 0.7039180890341347,
+        "text_recall": 0.5,
+        "retrieved_pages": [
+          1,
+          8,
+          10
+        ],
+        "relevant_pages": [
+          1,
+          2,
+          9,
+          10
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 4.0
+      }
+    },
+    {
+      "case_id": "q002",
+      "query": "What datasets are commonly used for evaluating object detection in adverse weather conditions? List the datasets and their characteristics.",
+      "paper_id": "Object Detection in Autonomous Vehicles under Adverse\nWeather: A Review of Traditional and Deep\nLearning Approaches.pdf",
+      "category": "dataset",
+      "difficulty": "medium",
+      "retrieval": {
+        "recall_at_3": 0.5,
+        "precision_at_3": 0.3333333333333333,
+        "mrr": 0.3333333333333333,
+        "ndcg_at_3": 0.6131471927654584,
+        "text_recall": 0.5,
+        "retrieved_pages": [
+          1,
+          11,
+          20
+        ],
+        "relevant_pages": [
+          1,
+          12
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 2.0
+      }
+    },
+    {
+      "case_id": "q003",
+      "query": "What data augmentation or image preprocessing techniques are used to handle fog and rain in object detection?",
+      "paper_id": "Multiple_Adverse_Weather_Conditions_Adaptation_for_Object_Detection_via_Causal_Intervention.pdf",
+      "category": "methodology",
+      "difficulty": "medium",
+      "retrieval": {
+        "recall_at_3": 0.25,
+        "precision_at_3": 0.5,
+        "mrr": 1.0,
+        "ndcg_at_3": 0.46927872602275644,
+        "text_recall": 0.25,
+        "retrieved_pages": [
+          10,
+          12
+        ],
+        "relevant_pages": [
+          1,
+          2,
+          10,
+          11
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 2.0,
+        "factual_correctness": 3.0
+      }
+    },
+    {
+      "case_id": "q004",
+      "query": "How does domain adaptation improve object detection performance in foggy weather? What specific domain adaptation approaches are proposed?",
+      "paper_id": "Domain_Adaptation_based_Object_Detection_for_Autonomous_Driving_in_Foggy_and_Rainy_Weather.pdf",
+      "category": "methodology",
+      "difficulty": "hard",
+      "retrieval": {
+        "recall_at_3": 0.0,
+        "precision_at_3": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_3": 0.0,
+        "text_recall": 0.0,
+        "retrieved_pages": [
+          1,
+          2
+        ],
+        "relevant_pages": [
+          3,
+          4,
+          5,
+          8
+        ]
+      },
+      "generation": {
+        "faithfulness": 3.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 4.0
+      }
+    },
+    {
+      "case_id": "q005",
+      "query": "What feature fusion approaches are used in UAV or drone-based object detection under foggy weather?",
+      "paper_id": "Multi-Level_Feature_Fusion_Based_UAV_Object_Detection_Method_Under_Foggy_Weather.pdf",
+      "category": "methodology",
+      "difficulty": "medium",
+      "retrieval": {
+        "recall_at_3": 0.5,
+        "precision_at_3": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_3": 0.7653606369886217,
+        "text_recall": 0.5,
+        "retrieved_pages": [
+          1,
+          2
+        ],
+        "relevant_pages": [
+          1,
+          2,
+          4,
+          5
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 1.0
+      }
+    },
+    {
+      "case_id": "q006",
+      "query": "Compare the performance of different YOLO-based methods for adverse weather object detection. Which one achieves the best results and why?",
+      "paper_id": "Assessment_of_Efficient_and_Cost-Effective_Vehicle_Detection_in_Foggy_Weather.pdf",
+      "category": "comparison",
+      "difficulty": "hard",
+      "retrieval": {
+        "recall_at_3": 1.0,
+        "precision_at_3": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_3": 1.0,
+        "text_recall": 1.0,
+        "retrieved_pages": [
+          1,
+          2,
+          5
+        ],
+        "relevant_pages": [
+          1,
+          2,
+          5
+        ]
+      },
+      "generation": {
+        "faithfulness": 3.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 2.0
+      }
+    },
+    {
+      "case_id": "q007",
+      "query": "What is the role of attention mechanisms in adverse weather object detection? How do they help with fog or rain degradation?",
+      "paper_id": "AdWeatherNet_Adverse_Weather_Denoising_with_Point_Cloud_Spatiotemporal_Attention.pdf",
+      "category": "methodology",
+      "difficulty": "medium",
+      "retrieval": {
+        "recall_at_3": 0.6666666666666666,
+        "precision_at_3": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_3": 0.7653606369886217,
+        "text_recall": 0.6666666666666666,
+        "retrieved_pages": [
+          1,
+          4,
+          5
+        ],
+        "relevant_pages": [
+          1,
+          3,
+          4
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 3.0
+      }
+    },
+    {
+      "case_id": "q008",
+      "query": "What are the main challenges of object detection in adverse weather conditions? Summarize the key problems and proposed solutions.",
+      "paper_id": "Object Detection in Autonomous Vehicles under Adverse\nWeather: A Review of Traditional and Deep\nLearning Approaches.pdf",
+      "category": "general",
+      "difficulty": "easy",
+      "retrieval": {
+        "recall_at_3": 0.5,
+        "precision_at_3": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_3": 0.7653606369886217,
+        "text_recall": 0.5,
+        "retrieved_pages": [
+          1,
+          5,
+          25
+        ],
+        "relevant_pages": [
+          1,
+          2,
+          3,
+          5
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 3.0
+      }
+    },
+    {
+      "case_id": "q009",
+      "query": "How does the Multi-Task Learning approach work for UAV aerial object detection in foggy weather? What tasks are jointly learned?",
+      "paper_id": "Multi-Task Learning for UAV Aerial Object Detection in Foggy\nWeather Condition.pdf",
+      "category": "methodology",
+      "difficulty": "hard",
+      "retrieval": {
+        "recall_at_3": 0.25,
+        "precision_at_3": 0.5,
+        "mrr": 0.3333333333333333,
+        "ndcg_at_3": 0.2960819109658652,
+        "text_recall": 0.25,
+        "retrieved_pages": [
+          1,
+          15
+        ],
+        "relevant_pages": [
+          3,
+          4,
+          5,
+          15
+        ]
+      },
+      "generation": {
+        "faithfulness": 3.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 4.0
+      }
+    },
+    {
+      "case_id": "q010",
+      "query": "What image deraining or dehazing methods are proposed as preprocessing for object detection? How effective are they?",
+      "paper_id": "CoDerainNet: Collaborative Deraining Network for\nDrone-view Object Detection in Rainy Weather Conditions.pdf",
+      "category": "methodology",
+      "difficulty": "medium",
+      "retrieval": {
+        "recall_at_3": 0.3333333333333333,
+        "precision_at_3": 0.5,
+        "mrr": 1.0,
+        "ndcg_at_3": 0.46927872602275644,
+        "text_recall": 0.3333333333333333,
+        "retrieved_pages": [
+          4,
+          20
+        ],
+        "relevant_pages": [
+          1,
+          4,
+          6
+        ]
+      },
+      "generation": {
+        "faithfulness": 2.0,
+        "answer_relevance": 4.0,
+        "factual_correctness": 4.0
+      }
+    }
+  ]
+}
