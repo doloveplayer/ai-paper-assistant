@@ -55,6 +55,9 @@ class Config:
     VISUAL_PAGE_MIN_IMAGES = 1      # page.get_images() >= N → 视觉页
     VISUAL_PAGE_MIN_TABLES = 1      # page.find_tables() >= N → 视觉页
 
+    # 文本主路图片缓存 (独立于旧管线 image_cache/)
+    IMAGE_CACHE_TEXT_PRIMARY = "/home/c2216-3090/disB/hyh/AI/image_cache_text_primary"
+
 
 # 确保下载目录存在
 os.makedirs(Config.DOWNLOAD_DIR, exist_ok=True)

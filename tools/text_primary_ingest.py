@@ -46,7 +46,7 @@ QDRANT_URL = Config.QDRANT_STORAGE_URL
 COLLECTION_NAME = Config.TEXT_PRIMARY_COLLECTION
 
 os.makedirs(CACHE_DIR, exist_ok=True)
-os.makedirs("image_cache", exist_ok=True)
+os.makedirs(Config.IMAGE_CACHE_TEXT_PRIMARY, exist_ok=True)
 
 
 def _is_visual_page(page) -> bool:
@@ -182,8 +182,8 @@ def ingest_papers_text_primary(batch_size: int = 2):
             if is_visual:
                 total_visual += 1
                 img = page_images[page_idx]
-                image_path = os.path.abspath(
-                    f"image_cache/{file_name}_page_{page_num}.jpg"
+                image_path = os.path.join(
+                    Config.IMAGE_CACHE_TEXT_PRIMARY, f"{file_name}_page_{page_num}.jpg"
                 )
                 img.save(image_path, "JPEG")
 
@@ -323,7 +323,7 @@ def ingest_paper_text_primary(paper_id: str, pdf_url: str) -> str:
             if is_visual:
                 img = page_images[page_num - 1]
                 image_path = os.path.join(
-                    CACHE_DIR, f"{paper_id}_page_{page_num}.jpg"
+                    Config.IMAGE_CACHE_TEXT_PRIMARY, f"{paper_id}_page_{page_num}.jpg"
                 )
                 img.save(image_path, "JPEG", quality=95)
                 inputs = processor.process_images([img]).to("cuda")
