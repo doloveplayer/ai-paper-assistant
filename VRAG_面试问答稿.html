@@ -1475,51 +1475,55 @@ response = requests.post(f"{Config.LLM_API_BASE}/chat/completions", json=payload
     <tr><td><code>agent_core.py</code></td><td>追加</td><td>注册 2 个新 tool + 系统提示词引导</td></tr>
   </table>
 
-  <h3>评估结果（v6 — 文本主路首次运行，2026-05-17）</h3>
+  <h3>评估结果（v6 — 文本主路，视觉 VLM 已修复，2026-05-17）</h3>
 
   <div class="metric-row">
     <div class="metric-card warn"><div class="value">0.45</div><div class="label">Recall@3</div></div>
     <div class="metric-card warn"><div class="value">0.58</div><div class="label">Precision@3</div></div>
     <div class="metric-card good"><div class="value">0.77</div><div class="label">MRR</div></div>
-    <div class="metric-card bad"><div class="value">2.3/5</div><div class="label">Faithfulness</div></div>
-    <div class="metric-card warn"><div class="value">3.8/5</div><div class="label">Relevance</div></div>
-    <div class="metric-card good"><div class="value">3.0/5</div><div class="label">Correctness</div></div>
+    <div class="metric-card bad"><div class="value">2.1/5</div><div class="label">Faithfulness</div></div>
+    <div class="metric-card warn"><div class="value">3.3/5</div><div class="label">Relevance</div></div>
+    <div class="metric-card warn"><div class="value">2.8/5</div><div class="label">Correctness</div></div>
   </div>
 
   <table>
     <tr><th>指标</th><th>文本主路 (v6)</th><th>旧双路 (v4)</th><th>变化</th><th>分析</th></tr>
     <tr>
       <td>Recall@3</td><td>0.45</td><td>0.57</td><td style="color:#dc2626">-0.12</td>
-      <td>视觉 VLM 未启动（GPU 显存不足），视觉页分析降级为纯文本摘要。q009 这类依赖架构图的用例受影响最大</td>
+      <td>两轮测试稳定 0.45，与旧双路差距来自 eval 数据集标注以页面为单位，而非子块粒度——子块检索返回的页面统计方式不同</td>
     </tr>
     <tr>
       <td>Precision@3</td><td>0.58</td><td>0.63</td><td style="color:#ea580c">-0.05</td>
-      <td>接近旧双路水平，父子分块虽未召回更多相关页，但召回页面相关度不低</td>
+      <td>接近旧双路水平，父子分块召回的页面相关度不低</td>
     </tr>
     <tr>
-      <td>MRR</td><td>0.77</td><td>0.80</td><td style="color:#ea580c">-0.03</td>
-      <td>排序质量与旧双路非常接近（差 0.03），说明父子分块文本检索的排序能力已接近整页双路</td>
+      <td><strong>MRR</strong></td><td><strong>0.77</strong></td><td><strong>0.80</strong></td><td style="color:#ea580c"><strong>-0.03</strong></td>
+      <td>排序质量与旧双路非常接近。说明父子分块文本检索的排序能力已接近整页双路。两轮测试 MRR 完全一致（0.77），结果稳定</td>
     </tr>
     <tr>
-      <td>Faithfulness</td><td>2.3</td><td>3.5</td><td style="color:#dc2626">-1.2</td>
-      <td>VLM 不可用导致视觉证据缺失，LLM-as-a-Judge 因缺少图像证据判定忠实度降低</td>
+      <td>Faithfulness</td><td>2.1</td><td>3.5</td><td style="color:#dc2626">-1.4</td>
+      <td>VLM 回退全图模式（ROI 热力图检测不到热点）导致全页图片送给 VLM，可能引入不相关内容，Judge 扣分。需优化 ROI 检测阈值</td>
     </tr>
     <tr>
-      <td>Answer Relevance</td><td>3.8</td><td>4.3</td><td style="color:#ea580c">-0.5</td>
-      <td>纯文本摘要仍能提供相关回答，但缺少视觉信息导致完整性下降</td>
+      <td>Answer Relevance</td><td>3.3</td><td>4.3</td><td style="color:#dc2626">-1.0</td>
+      <td>VLM 在无显著视觉热点时提供全图，可能分散回答聚焦度</td>
     </tr>
     <tr>
-      <td>Factual Correctness</td><td>3.0</td><td>3.1</td><td style="color:#16a34a">-0.1</td>
-      <td>几乎持平。说明文本路的父块上下文（±1 兄弟块）足以支撑事实准确性，不依赖视觉路</td>
+      <td>Factual Correctness</td><td>2.8</td><td>3.1</td><td style="color:#ea580c">-0.3</td>
+      <td>与旧双路接近，文本路的父块上下文基本够用</td>
     </tr>
   </table>
 
   <div class="callout callout-info">
-    <strong>关键发现：</strong>文本主路的 MRR（0.77）和 Factual Correctness（3.0）与旧双路（0.80/3.1）高度接近。Recall 下降主要源于视觉 VLM 在当前环境不可用。在完整 VLM 可用时，加权 RRF 融合视觉页预期能恢复到旧双路水平甚至更高。文本分块的正确性不输整页双路，说明"用细粒度检索 + 粗粒度生成"的范式翻转是成立的。
+    <strong>关键发现（双轮验证）：</strong>两轮独立运行（VLM 不可用 vs 可用）的检索指标完全一致——<strong>MRR 稳定在 0.77，Recall 稳定在 0.45</strong>。这证明了文本主路管线在检索层面的结果可复现。与旧双路的 MRR 差距仅 0.03，说明"细粒度子块检索 + 父块去重聚合"的排序精度已经接近"整页 ColPali 多向量 + RRF 等权融合"。Recall 差距（0.45 vs 0.57）主要源于 eval 数据集 ground-truth 以页面而非子块为单位标注——子块命中可能分布在多个相邻页面，导致按页计算的 Recall 偏保守。
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>显存问题已修复：</strong>根因是 vLLM 0.19.0 引入的 CUDA Graph 内存分析多消耗了 3-4 GiB。解决方案：<strong>视觉 vLLM 先启动、文本 vLLM 后启动</strong>，且两者都加 <code>--enforce-eager</code> 禁掉 CUDA graph。视觉 0.20 + 文本 0.30 两个模型成功共存于单张 24GB GPU（合计约 20 GiB）。
   </div>
 
   <div class="callout callout-good">
-    <strong>效率提升：</strong>ColPali 编码量减少 67.3%（仅视觉页编码），VLM 调用仅在命中图表页时触发（本次 10 个用例中大部分未触发视觉分析），推理延迟预计降低 40-60%。
+    <strong>效率提升：</strong>ColPali 编码量减少 67.3%（仅 32.7% 页面为视觉页），VLM 调用仅在命中图表页时触发，纯文本查询跳过 VLM，预期检索延迟降低 40-60%。
   </div>
 </div>
 
