@@ -18,6 +18,8 @@ from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 from tools.vision_rag import download_and_ingest_vision_paper, search_vision_knowledge, search_academic_papers
+from tools.text_primary_rag import search_text_primary_knowledge
+from tools.text_primary_ingest import ingest_paper_text_primary
 
 # =========================================================
 # 核心指令层 (Layer 1): 不可变 SOP — 供 vLLM Prefix Cache 长久缓存
@@ -25,7 +27,8 @@ from tools.vision_rag import download_and_ingest_vision_paper, search_vision_kno
 CORE_INSTRUCTIONS = (
     "You are an automated analytical API. Your ONLY mechanism for answering is executing tools.\n"
     "【执行 SOP】：\n"
-    "1. 首先使用工具`search_vision_knowledge`索引本地知识向量库只是内容，针对检索到的论文知识（图表/公式/架构）着重分析\n"
+    "0. 【新增】对于文本密集型查询（方法论细节、实验参数、公式讨论、数据集描述），优先使用 `search_text_primary_knowledge`。对架构图、图表数据提取等视觉密集型查询，使用 `search_vision_knowledge`。\n"
+    "1. 首先使用工具`search_text_primary_knowledge`或`search_vision_knowledge`索引本地知识向量库内容，针对检索到的论文知识（图表/公式/架构）着重分析\n"
     "2. 且只要用户询问某篇**已有、刚才提到过、或已入库的论文细节**（包括任何图表、公式、实验数据、文字结论），**必须优先且直接调用 `search_vision_knowledge`**。\n"
     "3. 当本地知识库检索不到相关数据时候调用文献检索工具：`search_academic_papers`，一定使用英文关键词！！！！\n"
     "4. 【智能入库与连贯阅读闭环】（极其重要）：\n"
@@ -103,6 +106,8 @@ tools = [
     search_vision_knowledge,
     search_academic_papers,
     download_and_ingest_vision_paper,
+    search_text_primary_knowledge,
+    ingest_paper_text_primary,
 ]
 
 llm = ChatOpenAI(
@@ -242,6 +247,25 @@ def cleanup_ephemeral(state: AgentState) -> dict:
                 memo = (
                     f"[内部备忘] 上一轮已将文献 {paper_list} 下载并入库到本地向量数据库。"
                     f"现在可以通过 search_vision_knowledge 查询其详细内容。"
+                )
+
+            elif tool_name == 'search_text_primary_knowledge':
+                paper_ids = re.findall(r'(?:paper[_\s]?id[:\s]*|[（(])(\d{4}\.\d{4,5})', content, re.I)
+                pages = re.findall(r'第\s*(\d+)\s*页|page\s*(\d+)', content, re.I)
+                paper_list = ', '.join(paper_ids[:3]) if paper_ids else '未知'
+                page_list = ', '.join(set(p for t in pages for p in t if p)) if pages else '未知'
+                memo = (
+                    f"[内部备忘] 上一轮通过 search_text_primary_knowledge 检索到了文献 {paper_list}，"
+                    f"涉及第 {page_list} 页。"
+                    f"如需回溯详细数据，请再次调用 search_text_primary_knowledge。"
+                )
+
+            elif tool_name == 'ingest_paper_text_primary':
+                paper_ids = re.findall(r'\b(\d{4}\.\d{4,5})\b', content)
+                paper_list = ', '.join(paper_ids[:3]) if paper_ids else '未知'
+                memo = (
+                    f"[内部备忘] 上一轮已将文献 {paper_list} 下载并入库到文本主路向量数据库。"
+                    f"现在可以通过 search_text_primary_knowledge 查询其详细内容。"
                 )
 
             else:
