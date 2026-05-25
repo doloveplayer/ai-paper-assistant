@@ -351,14 +351,17 @@ def _summarize_payloads(query: str, pages_info: list[dict]) -> str:
     )
 
     try:
+        payload = {
+            "model": Config.LLM_MODEL_NAME,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 1024,
+            "temperature": 0.1,
+        }
+        if Config.SUMMARIZER_LORA_NAME:
+            payload["lora_request"] = {"lora_name": Config.SUMMARIZER_LORA_NAME}
         response = requests.post(
             f"{Config.LLM_API_BASE}/chat/completions",
-            json={
-                "model": Config.LLM_MODEL_NAME,
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 1024,
-                "temperature": 0.1
-            },
+            json=payload,
             timeout=30
         )
         if response.status_code == 200:

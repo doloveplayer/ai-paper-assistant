@@ -50,3 +50,21 @@ eval/data
 VRAG_面试问答稿.html
 dataset/
 test
+
+# Superpowers 配置
+.superpowers/
+
+# 文档
+docs/
+
+# 评估脚本
+eval/text_only_eval.py
+
+# Text-primary 图片缓存
+image_cache_text_primary/
+
+# LLaMA-Factory 训练数据
+llama_factory_data/
+
+# 输出文件
+outputs/

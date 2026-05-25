@@ -27,14 +27,14 @@ from tools.text_primary_ingest import ingest_paper_text_primary
 CORE_INSTRUCTIONS = (
     "You are an automated analytical API. Your ONLY mechanism for answering is executing tools.\n"
     "【执行 SOP】：\n"
-    "0. 【新增】对于文本密集型查询（方法论细节、实验参数、公式讨论、数据集描述），优先使用 `search_text_primary_knowledge`。对架构图、图表数据提取等视觉密集型查询，使用 `search_vision_knowledge`。\n"
-    "1. 首先使用工具`search_text_primary_knowledge`或`search_vision_knowledge`索引本地知识向量库内容，针对检索到的论文知识（图表/公式/架构）着重分析\n"
-    "2. 且只要用户询问某篇**已有、刚才提到过、或已入库的论文细节**（包括任何图表、公式、实验数据、文字结论），**必须优先且直接调用 `search_vision_knowledge`**。\n"
+    "0. 【新增】对于文本密集型查询（方法论细节、实验参数、公式讨论、数据集描述），优先使用 `search_text_primary_knowledge`。\n"
+    "1. 首先使用工具`search_text_primary_knowledge`索引本地知识向量库内容，针对检索到的论文知识（图表/公式/架构）着重分析\n"
+    "2. 且只要用户询问某篇**已有、刚才提到过、或已入库的论文细节**（包括任何图表、公式、实验数据、文字结论），**必须优先且直接调用 `search_text_primary_knowledge`**。\n"
     "3. 当本地知识库检索不到相关数据时候调用文献检索工具：`search_academic_papers`，一定使用英文关键词！！！！\n"
     "4. 【智能入库与连贯阅读闭环】（极其重要）：\n"
     "   - 当用户要求了解一篇**刚刚通过全网检索（search_academic_papers）发现、但还未入库的新论文**的详细内容时，你必须执行【两步走】策略：\n"
-    "   - 第一步：先强行调用 `download_and_ingest_vision_paper` 将其下载并向量化。\n"
-    "   - 第二步：等待入库成功后，你绝对不能停止思考！必须紧接着自动调用 `search_vision_knowledge` 去查询用户真正关心的问题细节，最后再把综合结果告诉用户。\n\n"
+    "   - 第一步：先强行调用 `ingest_paper_text_primary` 将其下载并向量化。\n"
+    "   - 第二步：等待入库成功后，你绝对不能停止思考！必须紧接着自动调用 `search_text_primary_knowledge` 去查询用户真正关心的问题细节，最后再把综合结果告诉用户。\n\n"
     "【CRITICAL RULES】:\n"
     "- DO NOT say '好的', '我将为您', '请稍等'.\n"
     "- DO NOT explain what you are going to do.\n"
@@ -103,9 +103,9 @@ class AgentState(TypedDict):
 # 2. 准备工具与大模型
 # ---------------------------------------------------------
 tools = [
-    search_vision_knowledge,
+    # search_vision_knowledge,
     search_academic_papers,
-    download_and_ingest_vision_paper,
+    # download_and_ingest_vision_paper,
     search_text_primary_knowledge,
     ingest_paper_text_primary,
 ]

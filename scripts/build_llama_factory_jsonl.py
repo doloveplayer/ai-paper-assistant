@@ -207,8 +207,8 @@ def _parse_batch_file(filepath: Path, target_id: str) -> Optional[str]:
     matches = list(pattern.finditer(content))
 
     for i, match in enumerate(matches):
-        current_id = match.group(1).strip()
-        if current_id != target_id:
+        current_id = re.sub(r'\s+', ' ', match.group(1).strip())
+        if current_id != re.sub(r'\s+', ' ', target_id):
             continue
 
         # 提取这个 ID 到下一个 ID (或文件结束) 之间的文本
