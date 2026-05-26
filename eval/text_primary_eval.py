@@ -17,9 +17,45 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from eval.eval_dataset import EvalDataset
 from eval.eval_metrics import compute_retrieval_metrics
 from eval.eval_judge import FaithfulnessJudge, AnswerRelevanceJudge, FactualCorrectnessJudge
+from eval.eval_tracer import EvalContext
 from config import Config
 
 TOP_K = 3
+
+
+def _build_judge_context(fused_hits: list[dict]) -> str:
+    """从检索命中构建 Faithfulness judge 可用的文本上下文。
+
+    包含：父块文本 + 子块文本 + 表格数据 + 视觉页面标记。
+    Judge 虽然是纯文本模型，但表格 JSON 和图片描述可提供间接证据。
+    """
+    parts = []
+    for h in fused_hits:
+        p = h.get("payload", {})
+        page = p.get("page_number", 0)
+        is_visual = p.get("is_visual_page", False)
+
+        header = f"[Page {page}]"
+        if is_visual:
+            header += " [含图表/表格]"
+
+        lines = [header]
+
+        parent_text = p.get("parent_text", "")
+        if parent_text:
+            lines.append(f"  父块文本: {parent_text[:1500]}")
+
+        child_text = p.get("child_text", "")
+        if child_text and child_text != parent_text:
+            lines.append(f"  子块文本: {child_text[:800]}")
+
+        tables = p.get("page_tables", {})
+        if tables:
+            lines.append(f"  表格数据: {json.dumps(tables, ensure_ascii=False)[:500]}")
+
+        parts.append("\n".join(lines))
+
+    return "\n\n---\n".join(parts)
 
 
 def run_text_primary_eval():
@@ -45,7 +81,9 @@ def run_text_primary_eval():
 
         t0 = time.time()
 
-        # ---- 调用文本主路检索工具 ----
+        # ---- 开启 Tracer 捕获实际检索命中 ----
+        ctx = EvalContext.enable()
+
         try:
             from tools.text_primary_rag import search_text_primary_knowledge
             raw_result = search_text_primary_knowledge.invoke({
@@ -55,85 +93,47 @@ def run_text_primary_eval():
             elapsed = time.time() - t0
             print(f"   🔍 检索完成 ({elapsed:.1f}s)")
             print(f"   结果前200字: {raw_result[:200]}...")
+
+            # ---- 从 Tracer 提取实际检索命中 ----
+            if ctx.has_retrieval_data:
+                trace = ctx.last_retrieval
+                vision_hits_raw = trace.vision_hits
+                text_hits_raw = trace.text_hits
+                fused_hits_raw = trace.fused_hits
+                print(f"   📡 Tracer: vision={len(vision_hits_raw)} text={len(text_hits_raw)} fused={len(fused_hits_raw)}")
+            else:
+                print(f"   ⚠️ Tracer 未捕获到检索数据，回退到空列表")
+                vision_hits_raw = []
+                text_hits_raw = []
+                fused_hits_raw = []
         except Exception as e:
             print(f"   ❌ 检索异常: {e}")
-            # Try to get last retrieval hits
-            raw_result = f"[ERROR: {e}]"
             results.append({
                 "case_id": case_id, "query": case.query,
                 "paper_id": case.paper_id, "error": str(e),
             })
+            EvalContext.disable()
             continue
+        finally:
+            EvalContext.disable()
 
-        # ---- 提取检索命中 ----
-        try:
-            from tools.text_primary_rag import _client, COLLECTION_NAME
-            if _client is None:
-                raise RuntimeError("检索未初始化 Qdrant client")
-
-            # 重建检索命中的数据
-            import qdrant_client as qc
-            from qdrant_client.models import Filter, FieldCondition, MatchAny, MatchText
-            from sentence_transformers import SentenceTransformer
-
-            text_model = SentenceTransformer(Config.EMBEDDING_MODEL_PATH, device="cpu")
-            text_query = text_model.encode(case.query, normalize_embeddings=True).tolist()
-
-            pid = case.paper_id
-            pid_variants = [pid]
-            if pid.endswith(".pdf"):
-                pid_variants.append(pid[:-4])
-            else:
-                pid_variants.append(pid + ".pdf")
-            clean = pid.strip().removesuffix(".pdf").replace("\n", " ")
-            prefix = clean[:40] if len(clean) > 40 else clean
-            qf = Filter(should=[
-                FieldCondition(key="paper_id", match=MatchAny(any=pid_variants)),
-                FieldCondition(key="file_name", match=MatchAny(any=pid_variants)),
-                FieldCondition(key="file_name", match=MatchText(text=prefix)),
-            ])
-
-            # 文本路
-            text_res = _client.query_points(
-                collection_name=COLLECTION_NAME,
-                query=text_query,
-                using="text_dense",
-                query_filter=qf,
-                limit=Config.TEXT_SEARCH_POOL_SIZE,
-            ).points
-
-            # 去重
-            parent_best = {}
-            for h in text_res:
-                pid_val = h.payload.get("parent_id", h.id)
-                if pid_val not in parent_best or h.score > parent_best[pid_val].score:
-                    parent_best[pid_val] = h
-            deduped = sorted(parent_best.values(), key=lambda h: h.score, reverse=True)[:TOP_K]
-
-            text_hits_raw = [{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in list(parent_best.values())]
-            fused_hits_raw = [{"id": h.id, "score": h.score, "payload": dict(h.payload)} for h in deduped]
-
-        except Exception as e:
-            print(f"   ⚠️ 检索指标提取失败: {e}")
-            text_hits_raw = []
-            fused_hits_raw = []
-
-        # ---- 检索指标 ----
+        # ---- 检索指标 (使用 tool 实际命中的数据) ----
         metrics = compute_retrieval_metrics(
             fused_hits=fused_hits_raw,
             gt_relevant_pages=case.gt_relevant_pages,
-            vision_hits=None,
+            vision_hits=vision_hits_raw,
             text_hits=text_hits_raw,
             top_k=TOP_K,
         )
 
         # ---- 生成质量 (Judge) ----
-        # 从 raw_result 提取 body 和 context
         body = raw_result.split("📚")[0] if "📚" in raw_result else raw_result[:1500]
-        context = "\n\n".join(
-            f"[Page {h['payload'].get('page_number',0)}] {h['payload'].get('parent_text','')[:1000]}"
-            for h in fused_hits_raw
-        ) if fused_hits_raw else raw_result[:2000]
+
+        # 从 tracer 捕获的实际上下文构建 judge context
+        if fused_hits_raw:
+            context = _build_judge_context(fused_hits_raw)
+        else:
+            context = raw_result[:2000]
 
         try:
             faith = faith_judge.evaluate(case.query, body, context)
@@ -146,9 +146,13 @@ def run_text_primary_eval():
             rel = type('obj', (object,), {'score': 0.0})()
 
         try:
-            cor = cor_judge.evaluate(body, case.gt_answer_facts)
+            cor = cor_judge.evaluate(
+                body,
+                gt_facts=case.gt_answer_facts,
+                gt_facts_v2=case.gt_answer_facts_v2 if case.gt_answer_facts_v2 else None,
+            )
         except Exception:
-            cor = type('obj', (object,), {'score': 0.0})()
+            cor = type('obj', (object,), {'score': 0.0, 'details': {}})()
 
         print(f"   📊 Recall@3={metrics.recall_at_k:.2f} "
               f"Prec@3={metrics.precision_at_k:.2f} "
@@ -166,6 +170,7 @@ def run_text_primary_eval():
                 "precision_at_3": metrics.precision_at_k,
                 "mrr": metrics.mrr,
                 "ndcg_at_3": metrics.ndcg_at_k,
+                "vision_recall": metrics.vision_recall,
                 "text_recall": metrics.text_recall,
                 "retrieved_pages": metrics.retrieved_pages,
                 "relevant_pages": metrics.relevant_pages,
@@ -174,6 +179,7 @@ def run_text_primary_eval():
                 "faithfulness": faith.score,
                 "answer_relevance": rel.score,
                 "factual_correctness": cor.score,
+                "source_scores": getattr(cor, 'details', {}).get("source_scores", {}),
             },
         })
 
@@ -186,7 +192,12 @@ def run_text_primary_eval():
     avg_recall = sum(r["retrieval"]["recall_at_3"] for r in results if "error" not in r) / n
     avg_prec = sum(r["retrieval"]["precision_at_3"] for r in results if "error" not in r) / n
     avg_mrr = sum(r["retrieval"]["mrr"] for r in results if "error" not in r) / n
-    avg_text_recall = sum(r["retrieval"].get("text_recall", 0) or 0 for r in results if "error" not in r) / n
+    avg_vision_recall = sum(
+        (r["retrieval"].get("vision_recall") or 0) for r in results if "error" not in r
+    ) / n
+    avg_text_recall = sum(
+        (r["retrieval"].get("text_recall") or 0) for r in results if "error" not in r
+    ) / n
     avg_faith = sum(r["generation"]["faithfulness"] for r in results if "error" not in r) / n
     avg_rel = sum(r["generation"]["answer_relevance"] for r in results if "error" not in r) / n
     avg_cor = sum(r["generation"]["factual_correctness"] for r in results if "error" not in r) / n
@@ -198,16 +209,41 @@ def run_text_primary_eval():
     print(f"Avg Recall@3:  {avg_recall:.2f}")
     print(f"Avg Precision@3: {avg_prec:.2f}")
     print(f"Avg MRR:       {avg_mrr:.2f}")
-    print(f"Avg Text Recall: {avg_text_recall:.2f}")
+    print(f"Avg Vision Recall: {avg_vision_recall:.2f}")
+    print(f"Avg Text Recall:   {avg_text_recall:.2f}")
     print(f"Avg Faithfulness:  {avg_faith:.1f}/5")
     print(f"Avg Relevance:     {avg_rel:.1f}/5")
     print(f"Avg Correctness:   {avg_cor:.1f}/5")
+
+    # ---- 分来源 Correctness 统计 ----
+    text_scores = []
+    visual_scores = []
+    for r in results:
+        if "error" in r:
+            continue
+        ss = r["generation"].get("source_scores", {})
+        if "text" in ss:
+            text_scores.append(ss["text"]["match_rate"])
+        # figure + table 合并为 visual
+        fig = ss.get("figure", {}).get("match_rate", 0)
+        tbl = ss.get("table", {}).get("match_rate", 0)
+        fig_total = ss.get("figure", {}).get("total_facts", 0)
+        tbl_total = ss.get("table", {}).get("total_facts", 0)
+        if fig_total + tbl_total > 0:
+            visual_scores.append((fig * fig_total + tbl * tbl_total) / (fig_total + tbl_total))
+
+    if text_scores or visual_scores:
+        print(f"\n{'─' * 40}")
+        print("分来源 Correctness (match rate):")
+        if text_scores:
+            print(f"  文本类事实: {sum(text_scores)/len(text_scores):.2f}")
+        if visual_scores:
+            print(f"  图表类事实: {sum(visual_scores)/len(visual_scores):.2f}  ← text-only Judge 天然劣势")
 
     # ---- 与旧双路对比 ----
     print("\n" + "=" * 70)
     print("文本主路 vs 旧双路 对比")
     print("=" * 70)
-    # v4 最终双路结果 (硬编码基准)
     dual = {"recall": 0.57, "prec": 0.63, "mrr": 0.80, "faith": 3.5, "rel": 4.3, "cor": 3.1}
     print(f"{'指标':<20} {'文本主路':>8} {'旧双路':>8} {'变化':>8}")
     print("-" * 48)
@@ -227,6 +263,7 @@ def run_text_primary_eval():
         "avg_recall_at_3": avg_recall,
         "avg_precision_at_3": avg_prec,
         "avg_mrr": avg_mrr,
+        "avg_vision_recall": avg_vision_recall,
         "avg_text_recall": avg_text_recall,
         "avg_faithfulness": avg_faith,
         "avg_answer_relevance": avg_rel,

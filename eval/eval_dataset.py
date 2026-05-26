@@ -10,6 +10,30 @@ ALLOWED_CATEGORIES = {"methodology", "dataset", "results", "architecture", "comp
 ALLOWED_DIFFICULTIES = {"easy", "medium", "hard"}
 
 
+ALLOWED_FACT_SOURCES = {"text", "figure", "table"}
+
+
+@dataclass
+class Fact:
+    """单个 ground-truth 事实，标注来源类型。"""
+    text: str
+    source: str = "text"  # text | figure | table
+    page: int | None = None
+
+    @classmethod
+    def from_dict(cls, d: dict | str) -> "Fact":
+        if isinstance(d, str):
+            return cls(text=d, source="text")
+        source = d.get("source", "text")
+        if source not in ALLOWED_FACT_SOURCES:
+            raise ValueError(f"fact source must be one of {ALLOWED_FACT_SOURCES}, got '{source}'")
+        return cls(
+            text=d["text"],
+            source=source,
+            page=d.get("page"),
+        )
+
+
 @dataclass
 class EvalCase:
     """单个评估测试用例。"""
@@ -20,6 +44,7 @@ class EvalCase:
     paper_name: str | None = None
     gt_relevant_pages: list[int] = field(default_factory=list)
     gt_answer_facts: list[str] = field(default_factory=list)
+    gt_answer_facts_v2: list[Fact] = field(default_factory=list)
     gt_keywords: list[str] = field(default_factory=list)
     category: str = "general"
     difficulty: str = "medium"
@@ -32,6 +57,20 @@ class EvalCase:
         diff = d.get("difficulty", "medium")
         if diff not in ALLOWED_DIFFICULTIES:
             raise ValueError(f"difficulty must be one of {ALLOWED_DIFFICULTIES}, got '{diff}'")
+
+        # 优先使用 v2 结构化事实，回退到 v1 纯文本
+        facts_v2_raw = d.get("gt_answer_facts_v2")
+        if facts_v2_raw:
+            facts_v2 = [Fact.from_dict(f) for f in facts_v2_raw]
+        else:
+            # 从 v1 纯文本自动推断: 以 "图表Page" 开头的标记为 figure
+            facts_v2 = []
+            for f_text in d.get("gt_answer_facts", []):
+                if f_text.startswith("图表Page") or f_text.startswith("表格Page"):
+                    facts_v2.append(Fact(text=f_text, source="figure"))
+                else:
+                    facts_v2.append(Fact(text=f_text, source="text"))
+
         return cls(
             id=d["id"],
             query=d["query"],
@@ -39,6 +78,7 @@ class EvalCase:
             paper_name=d.get("paper_name"),
             gt_relevant_pages=d.get("gt_relevant_pages", []),
             gt_answer_facts=d.get("gt_answer_facts", []),
+            gt_answer_facts_v2=facts_v2,
             gt_keywords=d.get("gt_keywords", []),
             category=cat,
             difficulty=diff,

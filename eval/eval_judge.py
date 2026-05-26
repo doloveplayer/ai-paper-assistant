@@ -247,12 +247,32 @@ FACTUAL_CORRECTNESS_PROMPT = """你是一个严格的学术评估专家。你的
 
 
 class FactualCorrectnessJudge:
-    """事实正确性评估（需要 ground truth 事实列表）。"""
+    """事实正确性评估（需要 ground truth 事实列表）。
+
+    支持两种输入:
+      - gt_facts: list[str] — v1 纯文本
+      - gt_facts_v2: list[Fact] — v2 带来源标注，按 text/figure/table 分层评分
+    """
 
     def __init__(self):
         self.metric_name = "factual_correctness"
 
-    def evaluate(self, answer: str, gt_facts: list[str]) -> JudgeResult:
+    def evaluate(
+        self,
+        answer: str,
+        gt_facts: list[str],
+        gt_facts_v2: list | None = None,
+    ) -> JudgeResult:
+        """评估回答的事实正确性。
+
+        Args:
+            answer: AI 助手的回答
+            gt_facts: v1 纯文本事实列表（用于 prompt）
+            gt_facts_v2: v2 带来源标注的事实列表（可选）
+
+        Returns:
+            JudgeResult，details 中包含分来源的 scores
+        """
         gt_text = "\n".join(f"- {f}" for f in gt_facts)
         prompt = FACTUAL_CORRECTNESS_PROMPT.format(gt_facts=gt_text, answer=answer[:3000])
         raw = _call_judge_llm(prompt)
@@ -268,14 +288,51 @@ class FactualCorrectnessJudge:
         score = float(raw.get("score", 0))
         score = max(1.0, min(5.0, score))
 
+        details = {
+            "matched_facts": raw.get("matched_facts", []),
+            "missed_facts": raw.get("missed_facts", []),
+            "contradicted_facts": raw.get("contradicted_facts", []),
+        }
+
+        # ---- 分来源统计 (仅 v2) ----
+        if gt_facts_v2:
+            details["source_scores"] = self._compute_source_scores(raw, gt_facts_v2)
+
         return JudgeResult(
             metric_name=self.metric_name,
             score=score,
             reasoning=raw.get("reasoning", ""),
-            details={
-                "matched_facts": raw.get("matched_facts", []),
-                "missed_facts": raw.get("missed_facts", []),
-                "contradicted_facts": raw.get("contradicted_facts", []),
-            },
+            details=details,
             raw_response=json.dumps(raw, ensure_ascii=False),
         )
+
+    def _compute_source_scores(self, raw: dict, gt_facts_v2: list) -> dict:
+        """按来源类型 (text/figure/table) 分层计算分数。
+
+        Judge 只能看到文本，对 figure/table 类事实天然处于劣势。
+        分层分数可区分"文本理解能力"和"视觉理解能力"。
+        """
+        from eval.eval_dataset import Fact
+
+        facts: list[Fact] = gt_facts_v2
+        matched_texts = set(raw.get("matched_facts", []))
+        total_by_source = {}
+        matched_by_source = {}
+
+        for f in facts:
+            total_by_source[f.source] = total_by_source.get(f.source, 0) + 1
+            for m in matched_texts:
+                if f.text[:60] in m or m[:60] in f.text:
+                    matched_by_source[f.source] = matched_by_source.get(f.source, 0) + 1
+                    break
+
+        source_scores = {}
+        for source, total in total_by_source.items():
+            matched = matched_by_source.get(source, 0)
+            source_scores[source] = {
+                "total_facts": total,
+                "matched_facts": matched,
+                "match_rate": matched / total if total > 0 else 0.0,
+            }
+
+        return source_scores
